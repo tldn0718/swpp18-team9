@@ -1,13 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
-import { SignInComponent } from './sign-in/sign-in.component';
+import { AuthModule, SignInComponent } from './auth';
+import { CoreModule } from './core';
 
 export const appRoutes: Routes = [
   { path: 'signin', component: SignInComponent },
@@ -17,14 +14,12 @@ export const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    SignInComponent
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
-    FormsModule,
+    CoreModule,
     RouterModule.forRoot(appRoutes),
-    NgbModule,
+    AuthModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
