@@ -18,10 +18,10 @@ export class AuthService {
   }
 
   signIn(email:string, password: string) {
-    return this.http.post(SERVER_URL+'/api/signin', {username: email, password});
+    return this.http.post(SERVER_URL+'/api/signin/', {username: email, password});
   }
 
   signUp(email: string, password: string) {
-    return this.http.post(SERVER_URL+'/api/signup', {username: email, password});
+    return this.http.post(SERVER_URL+'/api/signup/', {username: email, password});
   }
 }
