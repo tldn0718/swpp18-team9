@@ -28,4 +28,8 @@ export class SignInComponent implements OnInit {
     });
   }
 
+  signUp() {
+    // show sign up modal
+  }
+
 }
