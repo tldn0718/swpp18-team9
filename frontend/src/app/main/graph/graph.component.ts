@@ -1,27 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { Network } from 'vis';
-import { DataSet, Node, Edge } from 'vis';
-
-export const mockNodes: DataSet<Node> = new DataSet([
-    {id: 1, label: 'Node 1'},
-    {id: 2, label: 'Node 2'},
-    {id: 3, label: 'Node 3'},
-    {id: 4, label: 'Node 4'},
-    {id: 5, label: 'Node 5'}
-]);
-
-export const mockEdges: DataSet<Edge> = new DataSet([
-    {from: 1, to: 3},
-    {from: 1, to: 2},
-    {from: 2, to: 4},
-    {from: 2, to: 5}
-]);
-
-export const mockData = {
-    nodes: mockNodes,
-    edges: mockEdges
-};
-
+import { GraphService } from './graph.service';
 
 @Component({
   selector: 'app-graph',
@@ -34,13 +13,15 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   network: Network;
 
-  constructor() { }
+  constructor(private graph: GraphService) { }
 
   ngOnInit() {
   }
 
   ngAfterViewInit() {
-    this.network = new Network(this.container.nativeElement, mockData, {});
+    this.graph.makeMockNetwork(this.container.nativeElement).subscribe((network) => {
+      this.network = network;
+    });
   }
 
 }
