@@ -19,18 +19,10 @@ export class AuthService {
   }
 
   signIn(email:string, password: string) {
-<<<<<<< HEAD
-    return this.http.post(SERVER_URL+'/api/signin/', {username: email, password});
-  }
-
-  signUp(email: string, password: string) {
-    return this.http.post(SERVER_URL+'/api/signup/', {username: email, password});
-=======
     return this.http.post(environment.serverUrl+'/api/signin', {username: email, password});
   }
 
   signUp(email: string, password: string) {
     return this.http.post(environment.serverUrl+'/api/signup', {username: email, password});
->>>>>>> c459c7529b9afeb956c48419b65cb4d22306f5c8
   }
 }
