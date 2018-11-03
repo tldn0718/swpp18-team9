@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth';
 import { CoreModule } from './core';
+import { MainModule } from './main';
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
@@ -14,6 +15,7 @@ import { AppRoutingModule } from './app-routing.module';
     BrowserModule,
     CoreModule,
     AuthModule,
+    MainModule,
     AppRoutingModule,
   ],
   providers: [],
