@@ -2,12 +2,12 @@ from django.shortcuts import render
 
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
-from django.views.decorators.csrf import csrf_exempt
-
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.contrib.auth import authenticate, login, logout
 import json
 from json.decoder import JSONDecodeError
-from .models import User
-
+#from .models import User
+from django.contrib.auth.models import User
 
 def index(request):
     return HttpResponse("index")
@@ -22,16 +22,10 @@ def signup(request):
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
         
-        new_user = User(username = new_username, password = new_password)
-        new_user.save()
-
-        response_dict = {
-            'username': new_user.username,
-            'password': new_user.password,
-        }
-        return JsonResponse(response_dict, status = 201)
+        User.objects.create_user(username = new_username, password = new_password)
+        return HttpResponse(status = 201)
     else:
-        return HttpResponseNotAllowed(['GET'])
+        return HttpResponseNotAllowed(['POST'])
 
 @csrf_exempt
 def signin(request):
@@ -43,17 +37,18 @@ def signin(request):
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
         
-        user = User.objects.get(username = input_username)
-        
-        if user == None:
-            return HttpResponseBadRequest()
-        elif user.password == input_password:
-            response_dict = {
-                'username': user.username,
-                'password': user.password,
-            }
-            return JsonResponse(response_dict, status = 201)
+        user = authenticate(username= input_username, password=input_password)
+        if user is not None:
+            login(request, user)
+            return HttpResponse(status=204)
         else:
-         return HttpResponseBadRequest()
+            return HttpResponse(status=401)
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+@ensure_csrf_cookie
+def token(request):
+    if request.method == 'GET':
+        return HttpResponse(status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
