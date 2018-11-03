@@ -22,5 +22,8 @@ import { SignUpComponent } from './sign-up/sign-up.component';
     CommonModule,
     CoreModule
   ],
+  entryComponents: [
+    SignUpComponent
+  ]
 })
 export class AuthModule { }
