@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { AuthService } from '../auth.service';
+import { SignUpComponent } from '../sign-up';
 
 @Component({
   selector: 'app-sign-in',
@@ -11,7 +15,7 @@ export class SignInComponent implements OnInit {
   email: string;
   password: string;
 
-  constructor(private auth: AuthService) { }
+  constructor(private auth: AuthService, private modal: NgbModal) { }
 
   ngOnInit() {
   }
@@ -26,6 +30,17 @@ export class SignInComponent implements OnInit {
     this.auth.signIn(this.email, this.password).subscribe((res) => {
       // if successfully signed in, route app to main page
     });
+  }
+
+  signUp() {
+    // show sign up modal
+    const modalConfig: any = {
+      centered: true,
+      size: 'lg',
+      backdrop: "static"
+    };
+    const signUpModal = this.modal.open(SignUpComponent, modalConfig);
+    console.log(signUpModal);
   }
 
 }

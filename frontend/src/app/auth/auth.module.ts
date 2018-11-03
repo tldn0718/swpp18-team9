@@ -8,10 +8,12 @@ import { AuthService } from './auth.service';
 
 // components
 import { SignInComponent } from './sign-in/sign-in.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
 
 @NgModule({
   declarations: [
     SignInComponent,
+    SignUpComponent,
   ],
   providers: [
     AuthService
@@ -20,5 +22,8 @@ import { SignInComponent } from './sign-in/sign-in.component';
     CommonModule,
     CoreModule
   ],
+  entryComponents: [
+    SignUpComponent
+  ]
 })
 export class AuthModule { }
