@@ -1,3 +1,13 @@
-<p>
-  menu works!
-</p>
+<nav class="col-2 bg-faded sidebar">
+	<ul class="nav nav-pills flex-column">
+		<li class="nav-item">
+			<a class="nav-link" [routerLink]="[{ outlets: { sidebar: ['search'] } }]"> Search</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" [routerLink]="[{ outlets: { sidebar: ['notification'] } }]"> Notifiaction</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" [routerLink]="[{ outlets: { sidebar: ['settings'] } }]"> Settings</a>
+		</li>
+	</ul>
+</nav>

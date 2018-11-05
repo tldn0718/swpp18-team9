@@ -11,7 +11,15 @@ import { SettingsComponent } from './settings/settings.component';
 import { MenuComponent } from './menu/menu.component';
 
 @NgModule({
-  declarations: [GraphComponent, MainComponent, SidebarComponent, SearchComponent, NotificationComponent, SettingsComponent, MenuComponent],
+  declarations: [
+    GraphComponent, 
+    MainComponent, 
+    SidebarComponent, 
+    SearchComponent, 
+    NotificationComponent, 
+    SettingsComponent, 
+    MenuComponent
+  ],
   providers: [
     GraphService
   ],
