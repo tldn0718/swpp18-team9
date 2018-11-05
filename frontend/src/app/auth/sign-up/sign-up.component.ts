@@ -10,8 +10,11 @@ import { AuthService } from '../auth.service';
 })
 export class SignUpComponent implements OnInit {
 
-  email: string;
+  username: string;
   password: string;
+  firstName: string;
+  lastName: string;
+  errorMessage: string;
 
   constructor(private activeModal: NgbActiveModal, private auth: AuthService) { }
 
@@ -19,9 +22,9 @@ export class SignUpComponent implements OnInit {
   }
 
   get signUpDisabled() {
-    const emailDisabled = !this.email || this.email.trim() === '';
+    const usernameDisabled = !this.username || this.username.trim() === '';
     const passwordDisabled = !this.password || this.password.trim() === '';
-    return emailDisabled || passwordDisabled;
+    return usernameDisabled || passwordDisabled;
   }
 
   closeModal(reason: string) {
@@ -29,10 +32,15 @@ export class SignUpComponent implements OnInit {
   }
 
   signUp() {
-    this.auth.signUp(this.email, this.password).subscribe((res) => {
-      // if successfully signed up, close modal with success result
-      this.activeModal.close('Sign Up Success');
-    });
+    this.auth.signUp(this.username, this.password, this.firstName, this.lastName).subscribe(
+      () => {
+        this.activeModal.close('Sign Up Success');
+      },
+      (err) => {
+        this.errorMessage = "Sign Up Error";
+        setTimeout(()=>{this.errorMessage=null},5000);
+      }
+    );
   }
 
 }

@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 })
 export class SignInComponent implements OnInit {
 
-  email: string;
+  username: string;
   password: string;
   errorMessage: string;
 
@@ -27,13 +27,13 @@ export class SignInComponent implements OnInit {
   }
 
   get loginDisabled() {
-    const emailDisabled = !this.email || this.email.trim() === '';
+    const usernameDisabled = !this.username || this.username.trim() === '';
     const passwordDisabled = !this.password || this.password.trim() === '';
-    return emailDisabled || passwordDisabled;
+    return usernameDisabled || passwordDisabled;
   }
 
   signIn() {
-    this.auth.signIn(this.email, this.password).subscribe(
+    this.auth.signIn(this.username, this.password).subscribe(
         () => {
           this.router.navigate(['/main']);
         },
