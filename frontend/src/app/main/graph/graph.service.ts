@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { map, pluck } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
 
 import { Node, Edge, Data, Network, DataSet } from 'vis';
 import { User, Friend } from '../../../models';
@@ -17,7 +16,7 @@ export class GraphService {
   // server API
 
   getFriends() {
-    return this.http.get(environment.serverUrl+'/api/friend')
+    return this.http.get('/api/friend')
   }
 
 
