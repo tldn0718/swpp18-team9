@@ -50,3 +50,10 @@ def token(request):
         return HttpResponse(status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
+
+def signout(request):
+    if request.method == 'GET':
+        logout(request);
+        return HttpResponse(status=204)
+    else:
+        return HttpResponseNotAllowed(['GET'])
