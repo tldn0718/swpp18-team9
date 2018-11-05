@@ -18,15 +18,11 @@ export class AuthGuard implements CanActivate {
     }
 
     checkLoginStatus(attemptedUrl: string) {
-        if(environment.production) {
-            if(this.auth.token) {
-                return true;
-            } else {
-                this.auth.redirectUrl = attemptedUrl;
-                this.router.navigate(['/signin']);
-            }
-        } else {
+        if(sessionStorage.getItem('login_status') == 'logged_in') {
             return true;
+        } else {
+            this.auth.redirectUrl = attemptedUrl;
+            this.router.navigate(['/signin']);
         }
     }
 }

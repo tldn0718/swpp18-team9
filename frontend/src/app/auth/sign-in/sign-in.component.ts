@@ -24,6 +24,7 @@ export class SignInComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    if(sessionStorage.getItem('login_status') == 'logged_in') this.router.navigate(['/main']);
   }
 
   get loginDisabled() {
