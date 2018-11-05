@@ -1,3 +1,5 @@
+<ngb-alert class="error-alert" *ngIf="errorMessage" type="danger"
+          (close)="errorMessage=null">{{errorMessage}}</ngb-alert>
 <div class="signin-container container">
   <h1 class="row justify-content-center">YEON</h1>
   <div class="row justify-content-center">

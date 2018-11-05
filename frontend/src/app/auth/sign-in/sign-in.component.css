@@ -5,3 +5,8 @@
 .signin-header {
     text-align: center;
 }
+.error-alert { 
+    position: fixed;
+    top: 0px;
+    width: 100%;
+}
