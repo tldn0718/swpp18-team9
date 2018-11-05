@@ -12,7 +12,6 @@ from django.contrib.auth.models import User
 def index(request):
     return HttpResponse("index")
 
-@csrf_exempt
 def signup(request):
     if request.method == 'POST':
         try:
@@ -27,7 +26,6 @@ def signup(request):
     else:
         return HttpResponseNotAllowed(['POST'])
 
-@csrf_exempt
 def signin(request):
     if request.method == 'POST':
         try:
