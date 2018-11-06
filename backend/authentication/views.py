@@ -17,10 +17,13 @@ def signup(request):
             body = request.body.decode()
             new_username = json.loads(body)['username']
             new_password = json.loads(body)['password']
+            new_firstname = json.loads(body)['firstName']
+            new_lastname = json.loads(body)['lastName']
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
         
-        Account.objects.create_user(username = new_username, password = new_password)
+        Account.objects.create_user(username = new_username, password = new_password,
+        	firstname = new_firstname, lastname = new_lastname)
         return HttpResponse(status = 201)
     else:
         return HttpResponseNotAllowed(['POST'])
