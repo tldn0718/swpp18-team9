@@ -44,16 +44,16 @@ def signin(request):
     else:
         return HttpResponseNotAllowed(['POST'])
 
-@ensure_csrf_cookie
-def token(request):
+def signout(request):
     if request.method == 'GET':
+        logout(request);
         return HttpResponse(status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
 
-def signout(request):
+@ensure_csrf_cookie
+def token(request):
     if request.method == 'GET':
-        logout(request);
         return HttpResponse(status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
