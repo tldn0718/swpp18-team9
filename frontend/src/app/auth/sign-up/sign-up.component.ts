@@ -24,7 +24,9 @@ export class SignUpComponent implements OnInit {
   get signUpDisabled() {
     const usernameDisabled = !this.username || this.username.trim() === '';
     const passwordDisabled = !this.password || this.password.trim() === '';
-    return usernameDisabled || passwordDisabled;
+    const firstNameDisabled = !this.firstName || this.firstName.trim() === '';
+    const lastNameDisabled = !this.lastName || this.lastName.trim() === '';
+    return usernameDisabled || passwordDisabled || firstNameDisabled || lastNameDisabled;
   }
 
   closeModal(reason: string) {
