@@ -2,12 +2,11 @@ from django.shortcuts import render
 
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
 import json
 from json.decoder import JSONDecodeError
-#from .models import User
-from django.contrib.auth.models import User
+from .models import Account
 
 def index(request):
     return HttpResponse("index")
@@ -21,7 +20,7 @@ def signup(request):
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
         
-        User.objects.create_user(username = new_username, password = new_password)
+        Account.objects.create_user(username = new_username, password = new_password)
         return HttpResponse(status = 201)
     else:
         return HttpResponseNotAllowed(['POST'])
