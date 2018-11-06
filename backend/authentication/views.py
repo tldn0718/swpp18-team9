@@ -2,12 +2,11 @@ from django.shortcuts import render
 
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
 import json
 from json.decoder import JSONDecodeError
-#from .models import User
-from django.contrib.auth.models import User
+from .models import Account
 
 def index(request):
     return HttpResponse("index")
@@ -18,10 +17,13 @@ def signup(request):
             body = request.body.decode()
             new_username = json.loads(body)['username']
             new_password = json.loads(body)['password']
+            new_firstname = json.loads(body)['firstName']
+            new_lastname = json.loads(body)['lastName']
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
         
-        User.objects.create_user(username = new_username, password = new_password)
+        Account.objects.create_user(email = new_username, password = new_password,
+        	first_name = new_firstname, last_name = new_lastname)
         return HttpResponse(status = 201)
     else:
         return HttpResponseNotAllowed(['POST'])
@@ -44,16 +46,16 @@ def signin(request):
     else:
         return HttpResponseNotAllowed(['POST'])
 
-@ensure_csrf_cookie
-def token(request):
+def signout(request):
     if request.method == 'GET':
+        logout(request);
         return HttpResponse(status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
 
-def signout(request):
+@ensure_csrf_cookie
+def token(request):
     if request.method == 'GET':
-        logout(request);
         return HttpResponse(status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
