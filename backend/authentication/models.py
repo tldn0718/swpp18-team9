@@ -18,6 +18,7 @@ class AccountManager(BaseUserManager):
 		user.set_password(password)
 		user.save(using=self._db)
 		return user
+
 	def create_superuser(self, email, first_name, last_name, password):
 		user = self.create_user(
 			email,
@@ -39,3 +40,12 @@ class Account(AbstractBaseUser):
 
 	USERNAME_FIELD = 'email'
 	REQUIRED_FIELDS = ['first_name', 'last_name']
+
+class Profile(models.Model):
+	account = models.OneToOneField(
+		settings.AUTH_USER_MODEL,
+		on_delete = models.CASCADE,
+		primary_key = True,
+		related_name = 'account_of',
+		)
+
