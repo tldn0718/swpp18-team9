@@ -48,4 +48,8 @@ class Profile(models.Model):
 		primary_key = True,
 		related_name = 'account_of',
 		)
+	friends = models.ManyToManyField(
+		'self',
+		related_name = 'friends_of'
+		)
 
