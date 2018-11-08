@@ -53,4 +53,3 @@ class Profile(models.Model):
 		'self',
 		related_name = 'friends_of'
 		)
-
