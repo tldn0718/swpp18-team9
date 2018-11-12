@@ -58,15 +58,32 @@ def signout(request):
 def friend(request):
     if request.method == 'GET':
         #Retrieve all users from Profile and save them into response_user
-        response_user = []
-        response_friend = []
+        response_users = []
+        response_friends = []
 
+        temp_friends = []
         for user in Profile.objects.all():
-            response_user.append(user.user_toJSON())
+            response_users.append(user.user_toJSON())
             for friend in user.friends.all():
-                response_friend.append(user.friend_toJSON(friend))
+                temp_friends.append(user.friend_toJSON(friend))
 
-        return JsonResponse({'users': response_user, 'friends': response_friend})
+        #check and remove overlapping friend relationships
+        for temp_friend in temp_friends:
+            temp_user_1 = temp_friend['user_1']
+            temp_user_2 = temp_friend['user_2']
+            print(str(temp_user_1) + " " + str(temp_user_2))
+            if len(response_friends) == 0:
+                response_friends.append(temp_friend)
+            for friend in response_friends:
+                user_1 = friend['user_1']
+                user_2 = friend['user_2']
+                if (temp_user_1 == user_1 and temp_user_2 == user_2) or (temp_user_1 == user_2 and temp_user_2 == user_1):
+                    break
+                num_last = len(response_friends)-1
+                if(friend == response_friends[num_last]):
+                    response_friends.append(temp_friend)
+
+        return JsonResponse({'users': response_users, 'friends': response_friends})
     else:
         return HttpResponseNotAllowed(['GET'])
 
