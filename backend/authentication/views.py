@@ -6,7 +6,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
 import json
 from json.decoder import JSONDecodeError
-from .models import Account
+from .models import Account, Profile
 
 def index(request):
     return HttpResponse("index")
@@ -22,8 +22,9 @@ def signup(request):
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
         
-        Account.objects.create_user(email = new_username, password = new_password,
+        createdUser = Account.objects.create_user(email = new_username, password = new_password,
         	first_name = new_firstname, last_name = new_lastname)
+        Profile.objects.create(account = createdUser)
         return HttpResponse(status = 201)
     else:
         return HttpResponseNotAllowed(['POST'])
