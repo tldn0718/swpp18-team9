@@ -1,3 +1,4 @@
+<app-info-window *ngIf="selectedProfiles.length > 0" [profiles]="selectedProfiles" (cancelSelected)="cancelSelected()"></app-info-window>
 <div id="networkContainer" #networkContainer></div>
 <div class="btn-group zoom-btns">
     <button class="btn btn-primary">&#43;</button>

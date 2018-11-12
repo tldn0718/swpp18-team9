@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { of, fromEvent } from 'rxjs';
+import { map, pluck } from 'rxjs/operators';
 
 import { Node, Edge, Data, Network, DataSet } from 'vis';
 import { User, Friend } from '../../../models';
@@ -9,7 +9,11 @@ import { User, Friend } from '../../../models';
 @Injectable()
 export class GraphService {
 
-  graphOptions: any = {};
+  graphOptions: any = {
+    interaction: {
+      multiselect: true
+    }
+  };
 
   constructor(private http: HttpClient) { }
 
@@ -66,6 +70,12 @@ export class GraphService {
         };
         return new Network(container, graphData, this.graphOptions);
       })
+    );
+  }
+
+  getClikedNodes(network: Network) {
+    return fromEvent(network, 'click').pipe(
+      pluck('nodes')
     );
   }
 }
