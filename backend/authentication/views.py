@@ -82,8 +82,24 @@ def friend(request):
                 num_last = len(response_friends)-1
                 if(friend == response_friends[num_last]):
                     response_friends.append(temp_friend)
+        
+        #Test Dijkstra
+        edges = []
+        for friend in response_friends:
+            edges.append((str(friend['user_1']), str(friend['user_2']), 1))
+        
+        print(dijkstra(edges, "6", "9"))
+
 
         return JsonResponse({'users': response_users, 'friends': response_friends})
+    else:
+        return HttpResponseNotAllowed(['GET'])
+
+from .utilities import dijkstra
+def shortest_path(request):
+    if request.method == 'GET':
+        users = []
+        friends = []
     else:
         return HttpResponseNotAllowed(['GET'])
 
