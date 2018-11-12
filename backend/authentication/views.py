@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
+from django.core import serializers
 import json
 from json.decoder import JSONDecodeError
 from .models import Account, Profile
@@ -51,6 +52,21 @@ def signout(request):
     if request.method == 'GET':
         logout(request);
         return HttpResponse(status=204)
+    else:
+        return HttpResponseNotAllowed(['GET'])
+
+def friend(request):
+    if request.method == 'GET':
+        #Retrieve all users from Profile and save them into response_user
+        response_user = []
+        response_friend = []
+
+        for user in Profile.objects.all():
+            response_user.append(user.user_toJSON())
+            for friend in user.friends.all():
+                response_friend.append(user.friend_toJSON(friend))
+
+        return JsonResponse({'users': response_user, 'friends': response_friend})
     else:
         return HttpResponseNotAllowed(['GET'])
 
