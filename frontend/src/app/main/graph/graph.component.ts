@@ -13,6 +13,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   network: Network;
 
+  selectedProfiles: any[] = [];
+
   constructor(private graph: GraphService) { }
 
   ngOnInit() {
@@ -21,7 +23,20 @@ export class GraphComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.graph.makeMockNetwork(this.container.nativeElement).subscribe((network) => {
       this.network = network;
+      this.setNodeHandler(this.network);
     });
   }
+
+  setNodeHandler(network: Network) {
+    this.graph.getClikedNodes(network).subscribe((nodes: any[])=>{
+      this.selectedProfiles = [...nodes];
+    })
+  }
+
+  cancelSelected() {
+    this.selectedProfiles = [];
+    this.network.unselectAll();
+  }
+
 
 }

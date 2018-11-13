@@ -9,6 +9,7 @@ import { SearchComponent } from './search/search.component';
 import { NotificationComponent } from './notification/notification.component';
 import { SettingsComponent } from './settings/settings.component';
 import { MenuComponent } from './menu/menu.component';
+import { InfoWindowComponent } from './info-window/info-window.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { MenuComponent } from './menu/menu.component';
     SearchComponent, 
     NotificationComponent, 
     SettingsComponent, 
-    MenuComponent
+    MenuComponent, InfoWindowComponent
   ],
   providers: [
     GraphService
