@@ -7,6 +7,10 @@
     </div>
   </div>
   <div *ngIf="confirmed">
-      <button class="btn btn-primary btn-sm" (click)="cancelProfiles()">Cancel</button>
+    <div *ngFor="let profile of profiles">
+      <h3>{{profile.name}}</h3>
+      <p>{{profile.username}}</p>
+    </div>
+    <button class="btn btn-primary btn-sm" (click)="cancelProfiles()">Cancel</button>
   </div>
 </div>

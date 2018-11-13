@@ -14,6 +14,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   selectedProfiles: any[] = [];
 
   mode: 'all' | 'level' = 'all';
+  level: number = 1;
 
   constructor(private graph: GraphService) { }
 
@@ -28,7 +29,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   setNodeHandler() {
     this.graph.getClikedNodes().subscribe((nodes: any[])=>{
-      this.selectedProfiles = [...nodes];
+      this.selectedProfiles = this.graph.getUsers(nodes);
+      console.log('profiles', this.selectedProfiles);
     });
   }
 
@@ -39,10 +41,22 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   showAll() {
     this.mode = 'all';
+    this.graph.makeAllNetwork().subscribe();
   }
 
   showLevel() {
     this.mode = 'level';
+    // this.graph.makeLevelNetwork(this.level).subscribe();
+  }
+
+  changeLevel(direction: boolean) {
+    if(direction && this.level < 5) {
+      this.level++;
+    } else if(!direction && this.level > 1) {
+      this.level--;
+    }
+    // this.graph.makeLevelNetwork(this.level).subscribe();
+    console.log('level', this.level);
   }
 
 }

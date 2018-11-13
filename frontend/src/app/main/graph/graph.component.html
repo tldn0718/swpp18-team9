@@ -1,8 +1,8 @@
 <app-info-window *ngIf="selectedProfiles.length > 0" [profiles]="selectedProfiles" (cancelSelected)="cancelSelected()"></app-info-window>
 <div id="networkContainer" #networkContainer></div>
 <div *ngIf="mode == 'level'" class="btn-group zoom-btns">
-    <button class="btn btn-primary">&#43;</button>
-    <button class="btn btn-primary">&#8722;</button>
+    <button class="btn btn-primary" (click)="changeLevel(true)">&#43;</button>
+    <button class="btn btn-primary" (click)="changeLevel(false)">&#8722;</button>
 </div>
 <div class="btn-group mode-btns">
     <button class="btn btn-primary" (click)="showAll()">Show All</button>

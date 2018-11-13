@@ -20,13 +20,18 @@ export class GraphService {
   nodes;
   edges;
 
+  users;
+
   constructor(private http: HttpClient, private auth: AuthService) { }
 
   // server API
 
   getFriends() {
     return this.http.get('/api/friend').pipe(
-      tap((friends)=>console.log('friends:', friends))
+      tap((friends: any)=>{
+        console.log('friends:', friends);
+        this.users = friends.users;
+      })
     );
   }
 
@@ -54,6 +59,8 @@ export class GraphService {
   initializeNetwork(container: HTMLElement) {
     return this.getFriends().pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
+        console.log('u', res.users)
+        console.log('f', res.friends)
         this.nodes = this.transformUserToNode(res.users); 
         this.edges = this.transformFriendToEdge(res.friends);
         const graphData: Data = {
@@ -108,4 +115,9 @@ export class GraphService {
   unselectAll() {
     this.network.unselectAll();
   }
+
+  getUsers(idList: any[]) {
+    return this.users.filter((user) => idList.includes(user.id));
+  }
+
 }
