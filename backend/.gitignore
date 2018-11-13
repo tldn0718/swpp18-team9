@@ -2,6 +2,9 @@
 # Created by https://www.gitignore.io/api/osx,python,django,sublimetext
 # Edit at https://www.gitignore.io/?templates=osx,python,django,sublimetext
 
+### misc files ###
+*.swp
+
 ### Django ###
 *.log
 *.pot
