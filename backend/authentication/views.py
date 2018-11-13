@@ -77,7 +77,6 @@ def friend(request):
         for temp_friend in temp_friends:
             temp_user_1 = temp_friend['user_1']
             temp_user_2 = temp_friend['user_2']
-            print(str(temp_user_1) + " " + str(temp_user_2))
             if len(response_friends) == 0:
                 response_friends.append(temp_friend)
             for friend in response_friends:
@@ -88,25 +87,46 @@ def friend(request):
                 num_last = len(response_friends)-1
                 if(friend == response_friends[num_last]):
                     response_friends.append(temp_friend)
-        
-        #Test Dijkstra
-        edges = []
-        for friend in response_friends:
-            edges.append((str(friend['user_1']), str(friend['user_2']), 1))
-        
-        print('dijkstra')
-        print(dijkstra(edges, "6", "11"))
-
 
         return JsonResponse({'users': response_users, 'friends': response_friends})
     else:
         return HttpResponseNotAllowed(['GET'])
 
-from .utilities import dijkstra
-def shortest_path(request):
+from .utilities import dijkstra, remove_overlapping_friend
+def shortest_path(request, level):
     if request.method == 'GET':
         users = []
         friends = []
+
+        temp_friends = []
+        for user in Profile.objects.all():
+            users.append(user.user_toJSON())
+            for friend in user.friends.all():
+                temp_friends.append(user.friend_toJSON(friend))
+
+        #check and remove overlapping friend relationships
+        friends = remove_overlapping_friend(temp_friends)
+
+        #Create edges
+        edges = []
+        for friend in friends:
+            edges.append((str(friend['user_1']), str(friend['user_2']), 1))
+        
+        current_account = request.user
+        current_Profile = Profile.objects.get(account = current_account)
+        current_id = current_Profile.account.id
+
+        result = []
+        all_users = Profile.objects.all()
+        for user in all_users:
+            user_id = user.account.id
+            if(current_id == user_id):
+                continue
+            distance = dijkstra(edges, str(current_id), str(user_id))
+            if distance[0] == level:
+                result.append(current_Profile.friend_toJSON(user))
+        return JsonResponse({'users': users, 'friends': result})
+
     else:
         return HttpResponseNotAllowed(['GET'])
 
