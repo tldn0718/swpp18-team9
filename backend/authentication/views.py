@@ -42,7 +42,13 @@ def signin(request):
         user = authenticate(username= input_username, password=input_password)
         if user is not None:
             login(request, user)
-            return HttpResponse(status=204)
+            userJson = {
+                'id': user.id,
+                'email': user.email,
+                'firstname': user.first_name,
+                'lastname': user.last_name
+            }
+            return JsonResponse(userJson)
         else:
             return HttpResponse(status=401)
     else:
