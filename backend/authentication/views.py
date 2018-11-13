@@ -94,7 +94,8 @@ def friend(request):
         for friend in response_friends:
             edges.append((str(friend['user_1']), str(friend['user_2']), 1))
         
-        print(dijkstra(edges, "6", "9"))
+        print('dijkstra')
+        print(dijkstra(edges, "6", "11"))
 
 
         return JsonResponse({'users': response_users, 'friends': response_friends})

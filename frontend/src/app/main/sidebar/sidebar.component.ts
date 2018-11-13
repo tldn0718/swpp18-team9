@@ -16,7 +16,6 @@ export class SidebarComponent implements OnInit {
 
   signOut() {
     this.auth.signOut().subscribe(()=>{
-      sessionStorage.removeItem('login_status');
       this.router.navigate(['/signin']);
     });
   }

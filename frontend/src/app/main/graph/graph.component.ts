@@ -11,9 +11,9 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   @ViewChild('networkContainer') container: ElementRef;
 
-  network: Network;
-
   selectedProfiles: any[] = [];
+
+  mode: 'all' | 'level' = 'all';
 
   constructor(private graph: GraphService) { }
 
@@ -21,22 +21,28 @@ export class GraphComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.graph.makeMockNetwork(this.container.nativeElement).subscribe((network) => {
-      this.network = network;
-      this.setNodeHandler(this.network);
+    this.graph.initializeNetwork(this.container.nativeElement).subscribe(() => {
+      this.setNodeHandler();
     });
   }
 
-  setNodeHandler(network: Network) {
-    this.graph.getClikedNodes(network).subscribe((nodes: any[])=>{
+  setNodeHandler() {
+    this.graph.getClikedNodes().subscribe((nodes: any[])=>{
       this.selectedProfiles = [...nodes];
-    })
+    });
   }
 
   cancelSelected() {
     this.selectedProfiles = [];
-    this.network.unselectAll();
+    this.graph.unselectAll();
   }
 
+  showAll() {
+    this.mode = 'all';
+  }
+
+  showLevel() {
+    this.mode = 'level';
+  }
 
 }
