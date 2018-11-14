@@ -55,7 +55,6 @@ export class SignInComponent implements OnInit {
       backdrop: "static"
     };
     const signUpModal = this.modal.open(SignUpComponent, modalConfig);
-    console.log(signUpModal);
   }
 
 }

@@ -7,8 +7,15 @@ export class AuthService {
 
   redirectUrl: string;
 
+  user: any;
+
   constructor(private http: HttpClient) { 
     if(!document.cookie) this.getToken().subscribe();
+  }
+
+  get userId() {
+    if(this.user) return this.user.id;
+    else return sessionStorage.getItem('login_user_id');
   }
 
   getToken() {
@@ -16,8 +23,14 @@ export class AuthService {
   }
 
   signIn(username:string, password: string) {
+    console.log(username, password);
     return this.http.post('/api/signin/', {username, password}).pipe(
-      tap(()=>{ sessionStorage.setItem('login_status', 'logged_in') })
+      tap((user: any)=>{ 
+        sessionStorage.setItem('login_status', 'logged_in');
+        sessionStorage.setItem('login_user_id', user.id);
+        console.log('logged in as:', user);
+        this.user = user;
+      })
     );
   }
 
@@ -27,6 +40,11 @@ export class AuthService {
   }
 
   signOut() {
-    return this.http.get('/api/signout/');
+    return this.http.get('/api/signout/').pipe(
+      tap(()=>{
+        sessionStorage.removeItem('login_status');
+        sessionStorage.removeItem('login_user_id');
+      })
+    );
   }
 }

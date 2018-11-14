@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { Network } from 'vis';
 import { GraphService } from './graph.service';
 
 @Component({
@@ -11,9 +10,10 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   @ViewChild('networkContainer') container: ElementRef;
 
-  network: Network;
-
   selectedProfiles: any[] = [];
+
+  mode: 'all' | 'level' = 'all';
+  level: number = 1;
 
   constructor(private graph: GraphService) { }
 
@@ -21,22 +21,42 @@ export class GraphComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.graph.makeMockNetwork(this.container.nativeElement).subscribe((network) => {
-      this.network = network;
-      this.setNodeHandler(this.network);
+    this.graph.initializeNetwork(this.container.nativeElement).subscribe(() => {
+      this.setNodeHandler();
     });
   }
 
-  setNodeHandler(network: Network) {
-    this.graph.getClikedNodes(network).subscribe((nodes: any[])=>{
-      this.selectedProfiles = [...nodes];
-    })
+  setNodeHandler() {
+    this.graph.getClikedNodes().subscribe((nodes: any[])=>{
+      this.selectedProfiles = this.graph.getUsers(nodes);
+      console.log('profiles', this.selectedProfiles);
+    });
   }
 
   cancelSelected() {
     this.selectedProfiles = [];
-    this.network.unselectAll();
+    this.graph.unselectAll();
   }
 
+  showAll() {
+    this.mode = 'all';
+    this.graph.makeAllNetwork().subscribe();
+  }
+
+  showLevel() {
+    this.mode = 'level';
+    this.graph.getLevel(this.level).subscribe((res)=>{console.log('res from getlevel', res)});
+    this.graph.makeLevelNetwork(this.level).subscribe();
+  }
+
+  changeLevel(direction: boolean) {
+    if(direction && this.level < 5) {
+      this.level++;
+    } else if(!direction && this.level > 1) {
+      this.level--;
+    }
+    this.graph.makeLevelNetwork(this.level).subscribe();
+    console.log('level', this.level);
+  }
 
 }
