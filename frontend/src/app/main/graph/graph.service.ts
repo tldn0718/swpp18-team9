@@ -85,7 +85,7 @@ export class GraphService {
         };
         this.network.setData(graphData);
         // focus not working for some reason
-        // this.network.focus(this.auth.userId, {animation: true});
+        this.network.focus(this.auth.userId, {animation: true});
       })
     );
   }
@@ -94,14 +94,15 @@ export class GraphService {
     return this.getLevel(level).pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
         this.nodes = this.transformUserToNode(res.users); 
-        this.edges = this.transformFriendToEdge(res.friends);
+        // TODO: friends array comming from server is not friend relationship, using all edges instead
+        // this.edges = this.transformFriendToEdge(res.friends);
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
         };
         this.network.setData(graphData);
         // focus not working for some reason
-        // this.network.focus(this.auth.userId, {animation: true});
+        this.network.focus(this.auth.userId, {animation: true});
       })
     );
   }

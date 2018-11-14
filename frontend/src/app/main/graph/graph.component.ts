@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { Network } from 'vis';
 import { GraphService } from './graph.service';
 
 @Component({
@@ -46,7 +45,8 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   showLevel() {
     this.mode = 'level';
-    // this.graph.makeLevelNetwork(this.level).subscribe();
+    this.graph.getLevel(this.level).subscribe((res)=>{console.log('res from getlevel', res)});
+    this.graph.makeLevelNetwork(this.level).subscribe();
   }
 
   changeLevel(direction: boolean) {
@@ -55,7 +55,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
     } else if(!direction && this.level > 1) {
       this.level--;
     }
-    // this.graph.makeLevelNetwork(this.level).subscribe();
+    this.graph.makeLevelNetwork(this.level).subscribe();
     console.log('level', this.level);
   }
 

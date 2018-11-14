@@ -36,10 +36,11 @@ def signin(request):
             body = request.body.decode()
             input_username = json.loads(body)['username']
             input_password = json.loads(body)['password']
+            print(input_username, input_password)
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
         
-        user = authenticate(username= input_username, password=input_password)
+        user = authenticate(email=input_username, password=input_password)
         if user is not None:
             login(request, user)
             userJson = {
@@ -109,7 +110,7 @@ def shortest_path(request, level):
 
         #Create edges
         edges = []
-        for friend in friends:
+        for friend in temp_friends:
             edges.append((str(friend['user_1']), str(friend['user_2']), 1))
         
         current_account = request.user
@@ -122,9 +123,16 @@ def shortest_path(request, level):
             user_id = user.account.id
             if(current_id == user_id):
                 continue
+            print('from to', current_id, user_id)
             distance = dijkstra(edges, str(current_id), str(user_id))
-            if distance[0] == level:
+            print(distance)
+            if distance[0] <= level: # get all results within specified distance
                 result.append(current_Profile.friend_toJSON(user))
+        result_filter = set([res['user_2'] for res in result]) # filter for users
+        users = [user for user in users if user['id'] in result_filter] # filter users with result
+        users.append(current_Profile.user_toJSON()) # append current user to users array
+        print('users', users)
+        # TODO: result is NOT friend relationship
         return JsonResponse({'users': users, 'friends': result})
 
     else:

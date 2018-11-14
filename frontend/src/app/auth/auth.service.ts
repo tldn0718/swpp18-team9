@@ -23,6 +23,7 @@ export class AuthService {
   }
 
   signIn(username:string, password: string) {
+    console.log(username, password);
     return this.http.post('/api/signin/', {username, password}).pipe(
       tap((user: any)=>{ 
         sessionStorage.setItem('login_status', 'logged_in');

@@ -9,6 +9,8 @@ def dijkstra(edges, f, t):
     q, seen, mins = [(0,f,())], set(), {f:0}
     while q:
         (cost, v1, path) = heappop(q)
+        print('cost, v1, path, t', cost, v1, path, t)
+        print('seen', seen)
         if v1 not in seen:
             seen.add(v1)
             path = (v1, path)
@@ -22,7 +24,7 @@ def dijkstra(edges, f, t):
                     mins[v2] = next
                     heappush(q, (next,v2,path))
 
-    return float("inf")
+    return (float("inf"), ())
 
 def remove_overlapping_friend(temp_friends):
     friends = []
