@@ -52,3 +52,13 @@ Profile {
 - **params:** `none required`
 - **response body:** `none required`
 
+### /api/friend/
+- **method: GET**
+- **request body:**
+- **response body:**
+
+### /api/friend/:level
+- **method: GET**
+- **request body:**
+- **response body:**
+
