@@ -17,10 +17,8 @@ export class GraphService {
   };
 
   network: Network;
-  nodes;
-  edges;
-
-  users;
+  nodes: User[];
+  edges: Friend[];
 
   constructor(private http: HttpClient, private auth: AuthService) { }
 
@@ -28,18 +26,20 @@ export class GraphService {
 
   getFriends() {
     return this.http.get('/api/friend').pipe(
-      tap((friends: any)=>{
+      tap((friends: {users: User[], friends: Friend[]})=>{
         console.log('friends:', friends);
-        this.users = friends.users;
+        this.nodes = friends.users;
+        this.edges = friends.friends;
       })
     );
   }
 
   getLevel(level: number) {
     return this.http.get(`/api/friend/${level}/`).pipe(
-      tap((friends: any)=>{
+      tap((friends: {users: User[], friends: Friend[]})=>{
         console.log(`level ${level} friends:`, friends);
-        this.users = friends.users;
+        this.nodes = friends.users;
+        this.edges = friends.friends;
       })
     );
   }
@@ -50,8 +50,6 @@ export class GraphService {
       tap((res: {users: User[], friends: Friend[]}) => {
         console.log('u', res.users)
         console.log('f', res.friends)
-        this.nodes = res.users; 
-        this.edges = res.friends;
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
@@ -66,8 +64,6 @@ export class GraphService {
   makeAllNetwork() {
     return this.getFriends().pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
-        this.nodes = res.users; 
-        this.edges = res.friends;
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
@@ -82,8 +78,6 @@ export class GraphService {
   makeLevelNetwork(level: number) {
     return this.getLevel(level).pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
-        this.nodes = res.users; 
-        this.edges = res.friends;
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
@@ -106,7 +100,7 @@ export class GraphService {
   }
 
   getUsers(idList: any[]) {
-    return this.users.filter((user) => idList.includes(user.id));
+    return this.nodes.filter((user) => idList.includes(user.id));
   }
 
 }
