@@ -37,32 +37,21 @@ export class GraphService {
 
   getLevel(level: number) {
     return this.http.get(`/api/friend/${level}/`).pipe(
-      tap((friends)=>console.log(`level ${level} friends:`, friends))
+      tap((friends: any)=>{
+        console.log(`level ${level} friends:`, friends);
+        this.users = friends.users;
+      })
     );
   }
 
-
-  // utilities
-
-  transformUserToNode(users: User[]): Node[] {
-    return users.map((user) => { 
-      return {id: user.id, label: user.name};
-    });
-  }
-
-  transformFriendToEdge(friends: Friend[]): Edge[] {
-    return friends.map((friend) => { 
-      return {from: friend.user_1, to: friend.user_2};
-    });
-  }
 
   initializeNetwork(container: HTMLElement) {
     return this.getFriends().pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
         console.log('u', res.users)
         console.log('f', res.friends)
-        this.nodes = this.transformUserToNode(res.users); 
-        this.edges = this.transformFriendToEdge(res.friends);
+        this.nodes = res.users; 
+        this.edges = res.friends;
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
@@ -77,8 +66,8 @@ export class GraphService {
   makeAllNetwork() {
     return this.getFriends().pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
-        this.nodes = this.transformUserToNode(res.users); 
-        this.edges = this.transformFriendToEdge(res.friends);
+        this.nodes = res.users; 
+        this.edges = res.friends;
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
@@ -93,9 +82,8 @@ export class GraphService {
   makeLevelNetwork(level: number) {
     return this.getLevel(level).pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
-        this.nodes = this.transformUserToNode(res.users); 
-        // TODO: friends array comming from server is not friend relationship, using all edges instead
-        // this.edges = this.transformFriendToEdge(res.friends);
+        this.nodes = res.users; 
+        this.edges = res.friends;
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
