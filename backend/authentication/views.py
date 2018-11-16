@@ -68,12 +68,12 @@ def friend(request):
         response_users = []
         response_friends = []
 
-        temp_friends = []
+        #temp_friends = []
         for user in Profile.objects.all():
             response_users.append(user.user_toJSON())
             for friend in user.friends.all():
                 if user.account.id < friend.account.id:
-                    temp_friends.append(user.friend_toJSON(friend))
+                    response_friends.append(user.friend_toJSON(friend))
 
         #check and remove overlapping friend relationships
         '''
