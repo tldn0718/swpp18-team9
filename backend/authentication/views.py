@@ -89,14 +89,11 @@ def shortest_path(request, level):
                     friends.append(user.friend_toJSON(friend))
 
         #Create edges
-        edges = []
-        for friend in temp_friends:
-            edges.append((str(friend['user_1']), str(friend['user_2']), 1))
-        
-        current_account = request.user
-        current_Profile = Profile.objects.get(account = current_account)
-        current_id = current_Profile.account.id
+        edges = [(str(friend['user_1']), str(friend['user_2']), 1) for friend in friends]
 
+        current_Profile = Profile.objects.get(account = request.user)
+        current_id = current_Profile.account.id
+        
         result = []
         all_users = Profile.objects.all()
         for user in all_users:
