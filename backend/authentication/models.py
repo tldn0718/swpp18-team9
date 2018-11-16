@@ -74,12 +74,11 @@ class Profile(models.Model):
         def user_toJSON(self):
             return {
                 'id': self.account.id,
-                'username': self.account.email,
-                'name': self.account.first_name
+                'label': self.account.first_name
             }
 
         def friend_toJSON(self, friend):
             return {
-                    'user_1': self.account.id,
-                    'user_2': friend.account.id
+                    'from': self.account.id,
+                    'to': friend.account.id
             }

@@ -90,7 +90,7 @@ def levelGraph(request, level):
             currentNode = openSet.get()
             if currentNode['level'] < level:
                 for nextNode in currentNode['node'].friends.all():
-                    if nextNode not in closedSet:
+                    if nextNode not in map(lambda x: x['node'],closedSet):
                         openSet.put({'node': nextNode, 'level': currentNode['level']+1})
                         edges.append(currentNode['node'].friend_toJSON(nextNode))
             if currentNode['node'] not in map(lambda x: x['node'],closedSet):
