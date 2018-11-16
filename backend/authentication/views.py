@@ -7,6 +7,8 @@ from django.core import serializers
 import json
 from json.decoder import JSONDecodeError
 from .models import Account, Profile
+from .utilities import dijkstra
+from queue import Queue
 
 def index(request):
     return HttpResponse("index")
@@ -60,9 +62,8 @@ def signout(request):
     else:
         return HttpResponseNotAllowed(['GET'])
 
-def friend(request):
+def totalGraph(request):
     if request.method == 'GET':
-        #Retrieve all users from Profile and save them into response_user
         response_users = []
         response_friends = []
 
@@ -76,39 +77,26 @@ def friend(request):
     else:
         return HttpResponseNotAllowed(['GET'])
 
-from .utilities import dijkstra
-def shortest_path(request, level):
+
+def levelGraph(request, level):
     if request.method == 'GET':
-        users = []
-        friends = []
+        closedSet = []
+        openSet = Queue()
+        edges = []
+        loginProfile = Profile.objects.get(account = request.user)
+        openSet.put({'node': loginProfile, 'level': 0})
 
-        for user in Profile.objects.all():
-            users.append(user.user_toJSON())
-            for friend in user.friends.all():
-                if user.account.id < friend.account.id:
-                    friends.append(user.friend_toJSON(friend))
-
-        #Create edges
-        edges = [(str(friend['user_1']), str(friend['user_2']), 1) for friend in friends]
-
-        current_Profile = Profile.objects.get(account = request.user)
-        current_id = current_Profile.account.id
-        
-        result = []
-        all_users = Profile.objects.all()
-        for user in all_users:
-            user_id = user.account.id
-            if(current_id == user_id):
-                continue
-            distance = dijkstra(edges, str(current_id), str(user_id))
-            if distance[0] <= level: # get all results within specified distance
-                result.append(current_Profile.friend_toJSON(user))
-        result_filter = set([res['user_2'] for res in result]) # filter for users
-        users = [user for user in users if user['id'] in result_filter] # filter users with result
-        users.append(current_Profile.user_toJSON()) # append current user to users array
-        # TODO: result is NOT friend relationship
-        print({'users': users, 'friends': result})
-        return JsonResponse({'users': users, 'friends': result})
+        while not openSet.empty():
+            currentNode = openSet.get()
+            if currentNode['level'] < level:
+                for nextNode in currentNode['node'].friends.all():
+                    if nextNode not in closedSet:
+                        openSet.put({'node': nextNode, 'level': currentNode['level']+1})
+                        edges.append(currentNode['node'].friend_toJSON(nextNode))
+            if currentNode['node'] not in map(lambda x: x['node'],closedSet):
+                closedSet.append(currentNode)
+        nodes = [nodeDictionary['node'].user_toJSON() for nodeDictionary in closedSet]
+        return JsonResponse({'users': nodes, 'friends': edges})
 
     else:
         return HttpResponseNotAllowed(['GET'])
