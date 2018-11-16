@@ -1,7 +1,6 @@
 from django.shortcuts import render
 
-from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
-from django.http import HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseNotFound
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
 from django.core import serializers
@@ -36,7 +35,6 @@ def signin(request):
             body = request.body.decode()
             input_username = json.loads(body)['username']
             input_password = json.loads(body)['password']
-            print(input_username, input_password)
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
         
@@ -68,48 +66,27 @@ def friend(request):
         response_users = []
         response_friends = []
 
-        #temp_friends = []
         for user in Profile.objects.all():
             response_users.append(user.user_toJSON())
             for friend in user.friends.all():
                 if user.account.id < friend.account.id:
                     response_friends.append(user.friend_toJSON(friend))
 
-        #check and remove overlapping friend relationships
-        '''
-        for temp_friend in temp_friends:
-            temp_user_1 = temp_friend['user_1']
-            temp_user_2 = temp_friend['user_2']
-            if len(response_friends) == 0:
-                response_friends.append(temp_friend)
-            for friend in response_friends:
-                user_1 = friend['user_1']
-                user_2 = friend['user_2']
-                if (temp_user_1 == user_1 and temp_user_2 == user_2) or (temp_user_1 == user_2 and temp_user_2 == user_1):
-                    break
-                num_last = len(response_friends)-1
-                if(friend == response_friends[num_last]):
-                    response_friends.append(temp_friend)
-        '''
-
         return JsonResponse({'users': response_users, 'friends': response_friends})
     else:
         return HttpResponseNotAllowed(['GET'])
 
-from .utilities import dijkstra, remove_overlapping_friend
+from .utilities import dijkstra
 def shortest_path(request, level):
     if request.method == 'GET':
         users = []
         friends = []
 
-        temp_friends = []
         for user in Profile.objects.all():
             users.append(user.user_toJSON())
             for friend in user.friends.all():
-                temp_friends.append(user.friend_toJSON(friend))
-
-        #check and remove overlapping friend relationships
-        friends = remove_overlapping_friend(temp_friends)
+                if user.account.id < friend.account.id:
+                    friends.append(user.friend_toJSON(friend))
 
         #Create edges
         edges = []
@@ -126,16 +103,14 @@ def shortest_path(request, level):
             user_id = user.account.id
             if(current_id == user_id):
                 continue
-            print('from to', current_id, user_id)
             distance = dijkstra(edges, str(current_id), str(user_id))
-            print(distance)
             if distance[0] <= level: # get all results within specified distance
                 result.append(current_Profile.friend_toJSON(user))
         result_filter = set([res['user_2'] for res in result]) # filter for users
         users = [user for user in users if user['id'] in result_filter] # filter users with result
         users.append(current_Profile.user_toJSON()) # append current user to users array
-        print('users', users)
         # TODO: result is NOT friend relationship
+        print({'users': users, 'friends': result})
         return JsonResponse({'users': users, 'friends': result})
 
     else:
