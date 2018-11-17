@@ -56,7 +56,7 @@ export class GraphService {
         };
         this.network = new Network(container, graphData, this.graphOptions);
         // focus not working for some reason
-        // this.network.focus(this.auth.userId, {animation: true});
+        this.network.focus(this.auth.userId, {animation: true});
       })
     );
   }
@@ -65,8 +65,8 @@ export class GraphService {
     return this.getFriends().pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
         const graphData: Data = {
-          nodes: this.nodes, 
-          edges: this.edges
+          nodes: res.users, 
+          edges: res.friends
         };
         this.network.setData(graphData);
         // focus not working for some reason
@@ -79,8 +79,8 @@ export class GraphService {
     return this.getLevel(level).pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
         const graphData: Data = {
-          nodes: this.nodes, 
-          edges: this.edges
+          nodes: res.users,
+          edges: res.friends
         };
         this.network.setData(graphData);
         // focus not working for some reason
