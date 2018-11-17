@@ -17,10 +17,8 @@ export class GraphService {
   };
 
   network: Network;
-  nodes;
-  edges;
-
-  users;
+  nodes: User[];
+  edges: Friend[];
 
   constructor(private http: HttpClient, private auth: AuthService) { }
 
@@ -28,48 +26,37 @@ export class GraphService {
 
   getFriends() {
     return this.http.get('/api/friend').pipe(
-      tap((friends: any)=>{
+      tap((friends: {users: User[], friends: Friend[]})=>{
         console.log('friends:', friends);
-        this.users = friends.users;
+        this.nodes = friends.users;
+        this.edges = friends.friends;
       })
     );
   }
 
   getLevel(level: number) {
     return this.http.get(`/api/friend/${level}/`).pipe(
-      tap((friends)=>console.log(`level ${level} friends:`, friends))
+      tap((friends: {users: User[], friends: Friend[]})=>{
+        console.log(`level ${level} friends:`, friends);
+        this.nodes = friends.users;
+        this.edges = friends.friends;
+      })
     );
   }
 
-
-  // utilities
-
-  transformUserToNode(users: User[]): Node[] {
-    return users.map((user) => { 
-      return {id: user.id, label: user.name};
-    });
-  }
-
-  transformFriendToEdge(friends: Friend[]): Edge[] {
-    return friends.map((friend) => { 
-      return {from: friend.user_1, to: friend.user_2};
-    });
-  }
 
   initializeNetwork(container: HTMLElement) {
     return this.getFriends().pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
         console.log('u', res.users)
         console.log('f', res.friends)
-        this.nodes = this.transformUserToNode(res.users); 
-        this.edges = this.transformFriendToEdge(res.friends);
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
         };
         this.network = new Network(container, graphData, this.graphOptions);
         // focus not working for some reason
-        // this.network.focus(this.auth.userId, {animation: true});
+        this.network.focus(this.auth.userId, {animation: true});
       })
     );
   }
@@ -77,11 +64,9 @@ export class GraphService {
   makeAllNetwork() {
     return this.getFriends().pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
-        this.nodes = this.transformUserToNode(res.users); 
-        this.edges = this.transformFriendToEdge(res.friends);
         const graphData: Data = {
-          nodes: this.nodes, 
-          edges: this.edges
+          nodes: res.users, 
+          edges: res.friends
         };
         this.network.setData(graphData);
         // focus not working for some reason
@@ -93,12 +78,9 @@ export class GraphService {
   makeLevelNetwork(level: number) {
     return this.getLevel(level).pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
-        this.nodes = this.transformUserToNode(res.users); 
-        // TODO: friends array comming from server is not friend relationship, using all edges instead
-        // this.edges = this.transformFriendToEdge(res.friends);
         const graphData: Data = {
-          nodes: this.nodes, 
-          edges: this.edges
+          nodes: res.users,
+          edges: res.friends
         };
         this.network.setData(graphData);
         // focus not working for some reason
@@ -118,7 +100,7 @@ export class GraphService {
   }
 
   getUsers(idList: any[]) {
-    return this.users.filter((user) => idList.includes(user.id));
+    return this.nodes.filter((user) => idList.includes(user.id));
   }
 
 }

@@ -70,15 +70,15 @@ class Profile(models.Model):
             'self',
             related_name = 'friends_of'
         )
+
         def user_toJSON(self):
-            return{
+            return {
                 'id': self.account.id,
-                'username': self.account.email,
-                'name': self.account.first_name
+                'label': self.account.first_name
             }
+
         def friend_toJSON(self, friend):
-            return{
-                    'id': self.account.id,
-                    'user_1': self.account.id,
-                    'user_2': friend.account.id
+            return {
+                    'from': self.account.id,
+                    'to': friend.account.id
             }
