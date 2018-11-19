@@ -1,6 +1,6 @@
 <div class="window-content">
   <div *ngIf="!confirmed">
-    <p class="number-info">{{profiles.length}} profiles selected</p>
+    <p class="number-info">{{profiles?.length}} profiles selected</p>
     <div class="btn-group confirm-btns">
       <button class="btn btn-primary btn-sm" (click)="confirmProfiles()">Confirm</button>
       <button class="btn btn-primary btn-sm" (click)="cancelProfiles()">Cancel</button>

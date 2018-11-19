@@ -89,7 +89,7 @@ export class GraphService {
     );
   }
 
-  getClikedNodes() {
+  getClickedNodes() {
     return fromEvent(this.network, 'click').pipe(
       pluck('nodes')
     );
