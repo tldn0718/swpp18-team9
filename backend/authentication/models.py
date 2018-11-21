@@ -59,6 +59,9 @@ class Account(AbstractBaseUser):
             # Simplest possible answer: All admins are staff
             return self.is_admin
 
+        def get_full_name(self):
+            return '{} {}'.format(self.first_name, self.last_name)
+
 class Profile(models.Model):
         account = models.OneToOneField(
             settings.AUTH_USER_MODEL,
@@ -82,3 +85,36 @@ class Profile(models.Model):
                     'from': self.account.id,
                     'to': friend.account.id
             }
+
+class Friend_Request(models.Model):
+    sender = models.ForiegnKey(
+            settings.AUTH_USER_MODEL,
+            on_delete = models.CASCADE,
+            related_name = 'sender_notification',
+        )
+
+    receiver = models.ForiegnKey(
+            settings.AUTH_USER_MODEL,
+            on_delete = models.CASCADE,
+            related_name = 'receiver_notification',
+        )
+
+    PENDING = 'PE'
+    ACCEPTED = 'AC'
+    DECLINED = 'DE'
+    STATUS_OF_REQUEST_CHOICES = (
+            (PENDING, 'pending'),
+            (ACCEPTED, 'accepted'),
+            (DECLINED, 'declined'),
+        )
+
+    status = models.CharField(
+        max_length = 2,
+        choices = STATUS_OF_REQUEST_CHOICES,
+        default = PENDING,
+        )
+
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+    sender_read = models.BooleanField(default=True)
+    receiver_read = models.BooleanField(default=False)
