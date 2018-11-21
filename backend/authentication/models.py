@@ -114,7 +114,6 @@ class Friend_Request(models.Model):
         default = PENDING,
         )
 
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
+    created_or_updated_at = models.DateTimeField()
     sender_read = models.BooleanField(default=True)
     receiver_read = models.BooleanField(default=False)
