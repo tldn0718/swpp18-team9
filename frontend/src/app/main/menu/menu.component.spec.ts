@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MenuComponent } from './menu.component';
+import { RouterLinkDirectiveStub } from 'src/testing/router-link-directive-stub';
+import { RouterOutletStubComponent } from 'src/testing/stub-component';
 
 describe('MenuComponent', () => {
   let component: MenuComponent;
@@ -8,7 +10,11 @@ describe('MenuComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MenuComponent ]
+      declarations: [ 
+        MenuComponent,
+        RouterLinkDirectiveStub,
+        RouterOutletStubComponent
+       ]
     })
     .compileComponents();
   }));

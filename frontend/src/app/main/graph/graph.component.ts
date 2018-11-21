@@ -27,7 +27,7 @@ export class GraphComponent implements OnInit, AfterViewInit {
   }
 
   setNodeHandler() {
-    this.graph.getClikedNodes().subscribe((nodes: any[])=>{
+    this.graph.getClickedNodes().subscribe((nodes: any[])=>{
       this.selectedProfiles = this.graph.getUsers(nodes);
       console.log('profiles', this.selectedProfiles);
     });

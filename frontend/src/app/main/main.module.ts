@@ -19,7 +19,8 @@ import { InfoWindowComponent } from './info-window/info-window.component';
     SearchComponent, 
     NotificationComponent, 
     SettingsComponent, 
-    MenuComponent, InfoWindowComponent
+    MenuComponent, 
+    InfoWindowComponent
   ],
   providers: [
     GraphService
