@@ -87,13 +87,13 @@ class Profile(models.Model):
             }
 
 class Friend_Request(models.Model):
-    sender = models.ForiegnKey(
+    sender = models.ForeignKey(
             settings.AUTH_USER_MODEL,
             on_delete = models.CASCADE,
             related_name = 'sender_notification',
         )
 
-    receiver = models.ForiegnKey(
+    receiver = models.ForeignKey(
             settings.AUTH_USER_MODEL,
             on_delete = models.CASCADE,
             related_name = 'receiver_notification',

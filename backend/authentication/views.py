@@ -7,7 +7,7 @@ from django.core import serializers
 import json
 from json.decoder import JSONDecodeError
 from .models import Account, Profile
-from .utilities import dijkstra
+#from .utilities import dijkstra
 from queue import Queue
 
 def index(request):
@@ -107,3 +107,4 @@ def token(request):
         return HttpResponse(status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
+
