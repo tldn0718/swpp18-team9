@@ -90,7 +90,7 @@ class Notification(models.Model):
     content = models.CharField(max_length=120)
     select = models.BooleanField()
     datetime = models.DateTimeField()
-    read = models.BooleanField()
+    read = models.BooleanField(default=False)
     sender = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete = models.CASCADE,

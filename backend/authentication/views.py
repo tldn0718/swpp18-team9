@@ -10,6 +10,7 @@ from .models import Account, Profile, Notification
 #from .utilities import dijkstra
 from queue import Queue
 #from django.db.models import Q
+from django.utils import timezone
 
 def index(request):
     return HttpResponse("index")
@@ -119,26 +120,28 @@ def specificFriendRequest(request, id):
     if request.method == 'GET':
         pass
     if request.method == 'POST':
+        sender = request.user
+        receiver = Account.objects.get(id = id)
+        now = datetime.now
         newSenderNoti = Notification(
-            content = ,
-            select = ,
-            datetime = ,
-            read = ,
-            sender = ,
-            receiver = ,
-            profile = ,
+            content = 'You sent a friend request to {}.'.format(receiver.get_full_name()),
+            select = False,
+            datetime = now,
+            sender = sender,
+            receiver = receiver,
+            profile = sender,
             )
         newReceiverNoti = Notification(
-            content = ,
-            select = ,
-            datetime = ,
-            read = ,
-            sender = ,
-            receiver = ,
-            profile = ,
+            content = '{} sent a friend request to you.'.format(sender.get_full_name()),
+            select = True,
+            datetime = now,
+            sender = sender,
+            receiver = receiver,
+            profile = receiver,
             )
         newSenderNoti.save()
         newReceiverNoti.save()
+        return HttpResponse(status = 201)
 
 @ensure_csrf_cookie
 def token(request):
