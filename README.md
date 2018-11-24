@@ -52,13 +52,47 @@ Profile {
 - **params:** `none required`
 - **response body:** `none required`
 
+### /api/graph/
+- **method: GET**
+- **request body:** `none required`
+- **response body:**
+```
+{
+  users: {
+    id: number,
+    label: string,
+  }
+  friends: {
+    from: number,
+    to: number,
+  }
+}
+```
+
+### /api/graph/:level
+- **method: GET**
+- **request body:** `none required`
+- **response body:**
+```
+{
+  users: {
+    id: number,
+    label: string,
+  }
+  friends: {
+    from: number,
+    to: number,
+  }
+}
+```
+
 ### /api/friend/
 - **method: GET**
 - **request body:**
 - **response body:**
 
-### /api/friend/:level
+
+### /api/friend/:id
 - **method: GET**
 - **request body:**
 - **response body:**
-
