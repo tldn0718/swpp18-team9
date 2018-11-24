@@ -109,6 +109,7 @@ def totalFriendRequest(request):
         notifications = [noti for noti 
           in request.user.noti_set.all().order_by('-datetime').values()]
         return JsonResponse(notifications, safe = False)
+
     if request.method == 'PUT':
         #set all notifications as read
         for notReadNotification in request.user.noti_set.filter(read = False):
@@ -117,8 +118,42 @@ def totalFriendRequest(request):
 
 
 def specificFriendRequest(request, id):
-    if request.method == 'GET':
-        pass
+    if request.method == 'PUT':
+        try:
+            body = request.body.decode()
+            answer = json.loads(body)['answer']
+        except(KeyError, JSONDecodeError) as e:
+            return HttpResponseBadRequest()
+
+        receiverNoti = Notification.objects.get(id = id)
+        sender = receiverNoti.sender
+        receiver = receiverNoti.receiver
+        senderNoti = sender.noti_set.get(receiver= receiver)
+        now = datetime.now
+
+        senderNoti.datetime = now
+        senderNoti.read = False
+        receiverNoti.select = False
+        receiverNoti.datetime = now
+        receiverNoti.read = False
+        
+        if answer == 'accept':
+            receiverNoti.content = 'You accepted a friend request from {}.'.format(
+                sender.get_full_name())
+            senderNoti.content = '{} accepted a friend request from you'.format(
+                receiver.get_full_name())
+            profileOfSender = Profile.objects.get(account = sender)
+            profileOfReceiver = Profile.objects.get(account = receiver)
+            profileOfSender.friends.add(profileOfReceiver)
+        else: #answer == 'decline'
+            receiverNoti.content = 'You declined a friend request from {}.'.format(
+                sender.get_full_name())
+            senderNoti.content = '{} declined a friend request from you'.format(
+                receiver.get_full_name())
+        receiverNoti.save()
+        senderNoti.save()
+        return HttpResponse(status = 200)
+
     if request.method == 'POST':
         sender = request.user
         receiver = Account.objects.get(id = id)
