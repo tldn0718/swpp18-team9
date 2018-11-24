@@ -7,7 +7,9 @@ urlpatterns = [
     path('signup/', views.signup, name = 'signup'),
     path('signin/', views.signin, name = 'signin'),
     path('signout/', views.signout, name='signout'),
-    path('friend/', views.totalGraph, name = 'friend'),
-    path('friend/<int:level>/', views.levelGraph, name = 'level'),
+    path('graph/', views.totalGraph, name = 'graph'),
+    path('graph/<int:level>/', views.levelGraph, name = 'levelGraph'),
+    path('friend/', views.totalFriendRequest, name= 'friend'),
+    path('friend/<int: id>', views.specificFriendRequest, name='friendRequest')
     path('token/', views.token, name='token'),
 ]
