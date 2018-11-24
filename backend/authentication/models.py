@@ -96,6 +96,7 @@ class Notification(models.Model):
         on_delete = models.CASCADE,
         )
     profile = models.ForeignKey(
-        Profile,
+        Account,
         on_delete = models.CASCADE,
+        related_name = 'noti_set',
         )

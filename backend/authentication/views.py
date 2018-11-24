@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 #from django.core import serializers
 import json
 from json.decoder import JSONDecodeError
-from .models import Account, Profile, Friend_Request
+from .models import Account, Profile, Notification
 #from .utilities import dijkstra
 from queue import Queue
 from djnago.db.models import Q
@@ -103,20 +103,16 @@ def levelGraph(request, level):
         return HttpResponseNotAllowed(['GET'])
 
 
-def friendRequest(request):
+def totalFriendRequest(request):
     if request.method == 'GET':
-        friendRequestOfUser = Friend_Request.objects.filter(
-            Q(sender = request.user) | Q(receiver = request.user)).order_by(datetime)
-        notificationList = []
-        for eachRequest in friendRequestOfUser:
-            
-            notification = {}
-        return JsonResponse({})
+        notifications = [noti for noti in request.user.noti_set.all().order_by('-datetime')]
+        return JsonResponse(notifications, safe = False)
     if request.method == 'PUT':
-        pass
+        #set all notifications as read
+        return HttpResponse(status 200)
 
 
-def friendRequest(request, targetID):
+def specificFriendRequest(request, targetID):
     if request.method == 'GET':
         pass
     if request.method == 'POST':
