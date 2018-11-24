@@ -8,8 +8,8 @@
   </div>
   <div *ngIf="confirmed">
     <div *ngFor="let profile of profiles">
-      <h3>{{profile.name}}</h3>
-      <p>{{profile.username}}</p>
+      <h3>{{profile.label}}</h3>
+      <p>{{profile.label}}</p>
     </div>
     <button class="btn btn-primary btn-sm" (click)="cancelProfiles()">Cancel</button>
   </div>

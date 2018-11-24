@@ -25,7 +25,7 @@ export class GraphService {
   // server API
 
   getFriends() {
-    return this.http.get('/api/friend').pipe(
+    return this.http.get('/api/graph').pipe(
       tap((friends: {users: User[], friends: Friend[]})=>{
         console.log('friends:', friends);
         this.nodes = friends.users;
@@ -35,7 +35,7 @@ export class GraphService {
   }
 
   getLevel(level: number) {
-    return this.http.get(`/api/friend/${level}/`).pipe(
+    return this.http.get(`/api/graph/${level}/`).pipe(
       tap((friends: {users: User[], friends: Friend[]})=>{
         console.log(`level ${level} friends:`, friends);
         this.nodes = friends.users;
