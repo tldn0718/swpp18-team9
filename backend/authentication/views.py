@@ -105,20 +105,40 @@ def levelGraph(request, level):
 
 def totalFriendRequest(request):
     if request.method == 'GET':
-        notifications = request.user.noti_set.all().order_by('-datetime')
+        notifications = [noti for noti 
+          in request.user.noti_set.all().order_by('-datetime').values()]
         return JsonResponse(notifications, safe = False)
     if request.method == 'PUT':
         #set all notifications as read
-        for noti in request.user.noti_set.all():
-            pass
+        for notReadNotification in request.user.noti_set.filter(read = False):
+            notReadNotification.read = True
         return HttpResponse(status=200)
 
 
-def specificFriendRequest(request, targetID):
+def specificFriendRequest(request, id):
     if request.method == 'GET':
         pass
     if request.method == 'POST':
-        pass
+        newSenderNoti = Notification(
+            content = ,
+            select = ,
+            datetime = ,
+            read = ,
+            sender = ,
+            receiver = ,
+            profile = ,
+            )
+        newReceiverNoti = Notification(
+            content = ,
+            select = ,
+            datetime = ,
+            read = ,
+            sender = ,
+            receiver = ,
+            profile = ,
+            )
+        newSenderNoti.save()
+        newReceiverNoti.save()
 
 @ensure_csrf_cookie
 def token(request):

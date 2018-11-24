@@ -91,12 +91,18 @@ class Notification(models.Model):
     select = models.BooleanField()
     datetime = models.DateTimeField()
     read = models.BooleanField()
-    pair = models.ForeignKey(
-        'self',
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         on_delete = models.CASCADE,
+        related_name = 'sender_set',
+        )
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE,
+        related_name = 'receiver_set',
         )
     profile = models.ForeignKey(
-        Account,
+        settings.AUTH_USER_MODEL,
         on_delete = models.CASCADE,
         related_name = 'noti_set',
         )
