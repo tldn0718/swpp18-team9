@@ -105,12 +105,13 @@ def levelGraph(request, level):
 
 def totalFriendRequest(request):
     if request.method == 'GET':
+        #return all notifications of user
         notifications = [noti for noti in request.user.noti_set.all().order_by('-datetime').values(
             'id','content','select','datetime','read')]
         return JsonResponse(notifications, safe=False)
 
     elif request.method == 'PUT':
-        #set all notifications as read
+        #set all notifications of user as read
         for notReadNotification in request.user.noti_set.filter(read = False):
             notReadNotification.read = True
             notReadNotification.save()
@@ -121,6 +122,7 @@ def totalFriendRequest(request):
 
 def specificFriendRequest(request, id):
     if request.method == 'PUT':
+        #change the notifications when receiver seleted 'accept' or 'decline'
         try:
             body = request.body.decode()
             answer = json.loads(body)['answer']
@@ -157,6 +159,7 @@ def specificFriendRequest(request, id):
         return HttpResponse(status = 200)
 
     elif request.method == 'POST':
+    #create a notification when user send a friend request
         sender = request.user
         receiver = Account.objects.get(id = id)
         now = timezone.now()
