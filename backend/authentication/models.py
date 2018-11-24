@@ -86,6 +86,9 @@ class Profile(models.Model):
                     'to': friend.account.id
             }
 
+        def __str__(self):
+            return self.account.email
+
 class Notification(models.Model):
     content = models.CharField(max_length=120)
     select = models.BooleanField()
@@ -106,3 +109,7 @@ class Notification(models.Model):
         on_delete = models.CASCADE,
         related_name = 'noti_set',
         )
+
+    def __str__(self):
+        return self.content
+

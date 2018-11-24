@@ -136,15 +136,15 @@ class FriendTestCase(TestCase):
 		notiOfReceiverChanged = Notification.objects.get(id=2)
 
 		self.assertEqual(notiOfSenderChanged.content, 'Nayeon Im accepted a friend request from you.')
-		self.assertEqual(notiOfSenderChanged.select, False)
+		self.assertFalse(notiOfSenderChanged.select)
 		self.assertNotEqual(notiOfSenderChanged.datetime, '2018-11-24T17:32:19.919Z')
-		self.assertEqual(notiOfSenderChanged.read, False)
+		self.assertFalse(notiOfSenderChanged.read)
 
 
 		self.assertEqual(notiOfReceiverChanged.content, 'You accepted a friend request from Jihyo Park.')
-		self.assertEqual(notiOfReceiverChanged.select, False)
+		self.assertFalse(notiOfReceiverChanged.select)
 		self.assertNotEqual(notiOfReceiverChanged.datetime, '2018-11-24T17:32:19.919Z')
-		self.assertEqual(notiOfReceiverChanged.read, False)
+		self.assertFalse(notiOfReceiverChanged.read)
 
 		self.assertIn(self.profile1, self.profile2.friends.all())
 		self.assertIn(self.profile2, self.profile1.friends.all())
