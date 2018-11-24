@@ -9,7 +9,6 @@ from json.decoder import JSONDecodeError
 from .models import Account, Profile, Notification
 #from .utilities import dijkstra
 from queue import Queue
-#from django.db.models import Q
 from django.utils import timezone
 
 def index(request):
@@ -106,15 +105,18 @@ def levelGraph(request, level):
 
 def totalFriendRequest(request):
     if request.method == 'GET':
-        notifications = [noti for noti 
-          in request.user.noti_set.all().order_by('-datetime').values()]
-        return JsonResponse(notifications, safe = False)
+        notifications = [noti for noti in request.user.noti_set.all().order_by('-datetime').values(
+            'id','content','select','datetime','read')]
+        return JsonResponse(notifications, safe=False)
 
-    if request.method == 'PUT':
+    elif request.method == 'PUT':
         #set all notifications as read
         for notReadNotification in request.user.noti_set.filter(read = False):
             notReadNotification.read = True
+            notReadNotification.save()
         return HttpResponse(status=200)
+    else:
+        return HttpResponseNotAllowed(['GET', 'PUT'])
 
 
 def specificFriendRequest(request, id):
@@ -129,7 +131,7 @@ def specificFriendRequest(request, id):
         sender = receiverNoti.sender
         receiver = receiverNoti.receiver
         senderNoti = sender.noti_set.get(receiver= receiver)
-        now = datetime.now
+        now = timezone.now()
 
         senderNoti.datetime = now
         senderNoti.read = False
@@ -140,7 +142,7 @@ def specificFriendRequest(request, id):
         if answer == 'accept':
             receiverNoti.content = 'You accepted a friend request from {}.'.format(
                 sender.get_full_name())
-            senderNoti.content = '{} accepted a friend request from you'.format(
+            senderNoti.content = '{} accepted a friend request from you.'.format(
                 receiver.get_full_name())
             profileOfSender = Profile.objects.get(account = sender)
             profileOfReceiver = Profile.objects.get(account = receiver)
@@ -154,10 +156,10 @@ def specificFriendRequest(request, id):
         senderNoti.save()
         return HttpResponse(status = 200)
 
-    if request.method == 'POST':
+    elif request.method == 'POST':
         sender = request.user
         receiver = Account.objects.get(id = id)
-        now = datetime.now
+        now = timezone.now()
         newSenderNoti = Notification(
             content = 'You sent a friend request to {}.'.format(receiver.get_full_name()),
             select = False,
@@ -176,7 +178,9 @@ def specificFriendRequest(request, id):
             )
         newSenderNoti.save()
         newReceiverNoti.save()
-        return HttpResponse(status = 201)
+        return JsonResponse({'createdTime': now}, status=201)
+    else:
+        return HttpResponseNotAllowed(['PUT', 'POST'])
 
 @ensure_csrf_cookie
 def token(request):
