@@ -88,11 +88,44 @@ Profile {
 
 ### /api/friend/
 - **method: GET**
-- **request body:**
+- **request body:** `none required`
 - **response body:**
+```
+{
+  0: {
+    id: number,
+    content: string,
+    select: boolean, #represent that it should show 'accept' and 'decline' buttons
+    datetime: string,
+    read: boolean,
+    },
+  1: {
+  ...
+  },
+  ...
+}
+```
+
+- **method: PUT** `This api sets all notificaions of user as read`
+- **request body:** `none required`
+- **response body:** `none required`
 
 
 ### /api/friend/:id
-- **method: GET**
-- **request body:**
+- **method: POST** `This api create a notification each to sender to receiver. id means the receiver's user id`
+- **request body:** `none required`
 - **response body:**
+```
+{
+  createdTime: string
+}
+```
+- **method: PUT**
+`This api modifies a notification after receiver accepts or declines the request. id means the id of notification of receiver`
+- **request body:**
+```
+{
+  answer: 'accept' | 'decline'
+}
+```
+- **response body:** `none required`
