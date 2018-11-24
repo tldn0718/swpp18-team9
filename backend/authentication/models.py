@@ -86,34 +86,16 @@ class Profile(models.Model):
                     'to': friend.account.id
             }
 
-class Friend_Request(models.Model):
-    sender = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            on_delete = models.CASCADE,
-            related_name = 'sender_notification',
+class Notification(models.Model):
+    content = models.CharField(max_length=120)
+    select = models.BooleanField()
+    datetime = models.DateTimeField()
+    read = models.BooleanField()
+    pair = models.ForeignKey(
+        'self',
+        on_delete = models.CASCADE,
         )
-
-    receiver = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            on_delete = models.CASCADE,
-            related_name = 'receiver_notification',
+    profile = models.ForeignKey(
+        Profile,
+        on_delete = models.CASCADE,
         )
-
-    PENDING = 'PE'
-    ACCEPTED = 'AC'
-    DECLINED = 'DE'
-    STATUS_OF_REQUEST_CHOICES = (
-            (PENDING, 'pending'),
-            (ACCEPTED, 'accepted'),
-            (DECLINED, 'declined'),
-        )
-
-    status = models.CharField(
-        max_length = 2,
-        choices = STATUS_OF_REQUEST_CHOICES,
-        default = PENDING,
-        )
-
-    created_or_updated_at = models.DateTimeField()
-    sender_read = models.BooleanField(default=True)
-    receiver_read = models.BooleanField(default=False)

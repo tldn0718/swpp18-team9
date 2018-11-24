@@ -3,12 +3,13 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseNotFound
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
-from django.core import serializers
+#from django.core import serializers
 import json
 from json.decoder import JSONDecodeError
-from .models import Account, Profile
+from .models import Account, Profile, Friend_Request
 #from .utilities import dijkstra
 from queue import Queue
+from djnago.db.models import Q
 
 def index(request):
     return HttpResponse("index")
@@ -100,6 +101,26 @@ def levelGraph(request, level):
 
     else:
         return HttpResponseNotAllowed(['GET'])
+
+
+def friendRequest(request):
+    if request.method == 'GET':
+        friendRequestOfUser = Friend_Request.objects.filter(
+            Q(sender = request.user) | Q(receiver = request.user)).order_by(datetime)
+        notificationList = []
+        for eachRequest in friendRequestOfUser:
+            
+            notification = {}
+        return JsonResponse({})
+    if request.method == 'PUT':
+        pass
+
+
+def friendRequest(request, targetID):
+    if request.method == 'GET':
+        pass
+    if request.method == 'POST':
+        pass
 
 @ensure_csrf_cookie
 def token(request):
