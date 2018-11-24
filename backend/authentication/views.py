@@ -9,7 +9,7 @@ from json.decoder import JSONDecodeError
 from .models import Account, Profile, Notification
 #from .utilities import dijkstra
 from queue import Queue
-from djnago.db.models import Q
+#from django.db.models import Q
 
 def index(request):
     return HttpResponse("index")
@@ -105,11 +105,13 @@ def levelGraph(request, level):
 
 def totalFriendRequest(request):
     if request.method == 'GET':
-        notifications = [noti for noti in request.user.noti_set.all().order_by('-datetime')]
+        notifications = request.user.noti_set.all().order_by('-datetime')
         return JsonResponse(notifications, safe = False)
     if request.method == 'PUT':
         #set all notifications as read
-        return HttpResponse(status 200)
+        for noti in request.user.noti_set.all():
+            pass
+        return HttpResponse(status=200)
 
 
 def specificFriendRequest(request, targetID):

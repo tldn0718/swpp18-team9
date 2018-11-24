@@ -10,6 +10,6 @@ urlpatterns = [
     path('graph/', views.totalGraph, name = 'graph'),
     path('graph/<int:level>/', views.levelGraph, name = 'levelGraph'),
     path('friend/', views.totalFriendRequest, name= 'friend'),
-    path('friend/<int: id>', views.specificFriendRequest, name='friendRequest')
+    path('friend/<int: id>', views.specificFriendRequest, name='friendRequest'),
     path('token/', views.token, name='token'),
 ]
