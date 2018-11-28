@@ -107,7 +107,7 @@ def totalFriendRequest(request):
     if request.method == 'GET':
         #return all notifications of user
         notifications = [noti for noti in request.user.noti_set.all().order_by('-datetime').values(
-            'id','content','select','datetime','read')]
+            'id','content','select','datetime','read', 'sender', 'receiver')]
         return JsonResponse(notifications, safe=False)
 
     elif request.method == 'PUT':
