@@ -24,10 +24,17 @@ export class GraphService {
 
   // server API
 
+  sendFriendRequest(id: string) {
+    return this.http.post(`/api/friend/${id}/`, null);
+  }
+
+  getNotifications() {
+    return this.http.get(`/api/friend/`);
+  }
+
   getFriends() {
-    return this.http.get('/api/graph').pipe(
+    return this.http.get('/api/graph/').pipe(
       tap((friends: {users: User[], friends: Friend[]})=>{
-        console.log('friends:', friends);
         this.nodes = friends.users;
         this.edges = friends.friends;
       })
@@ -37,9 +44,6 @@ export class GraphService {
   getLevel(level: number) {
     return this.http.get(`/api/graph/${level}/`).pipe(
       tap((friends: {users: User[], friends: Friend[]})=>{
-        console.log(`level ${level} friends:`, friends);
-        this.nodes = friends.users;
-        this.edges = friends.friends;
       })
     );
   }
@@ -48,8 +52,6 @@ export class GraphService {
   initializeNetwork(container: HTMLElement) {
     return this.getFriends().pipe(
       tap((res: {users: User[], friends: Friend[]}) => {
-        console.log('u', res.users)
-        console.log('f', res.friends)
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
