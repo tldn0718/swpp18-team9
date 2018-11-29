@@ -3,12 +3,13 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseNotFound
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
-from django.core import serializers
+#from django.core import serializers
 import json
 from json.decoder import JSONDecodeError
-from .models import Account, Profile
-from .utilities import dijkstra
+from .models import Account, Profile, Notification
+#from .utilities import dijkstra
 from queue import Queue
+from django.utils import timezone
 
 def index(request):
     return HttpResponse("index")
@@ -101,9 +102,93 @@ def levelGraph(request, level):
     else:
         return HttpResponseNotAllowed(['GET'])
 
+
+def totalFriendRequest(request):
+    if request.method == 'GET':
+        #return all notifications of user
+        notifications = [noti for noti in request.user.noti_set.all().order_by('-datetime').values(
+            'id','content','select','datetime','read', 'sender', 'receiver')]
+        return JsonResponse(notifications, safe=False)
+
+    elif request.method == 'PUT':
+        #set all notifications of user as read
+        for notReadNotification in request.user.noti_set.filter(read = False):
+            notReadNotification.read = True
+            notReadNotification.save()
+        return HttpResponse(status=200)
+    else:
+        return HttpResponseNotAllowed(['GET', 'PUT'])
+
+
+def specificFriendRequest(request, id):
+    if request.method == 'PUT':
+        #change the notifications when receiver seleted 'accept' or 'decline'
+        try:
+            body = request.body.decode()
+            answer = json.loads(body)['answer']
+        except(KeyError, JSONDecodeError) as e:
+            return HttpResponseBadRequest()
+
+        receiverNoti = Notification.objects.get(id = id)
+        sender = receiverNoti.sender
+        receiver = receiverNoti.receiver
+        senderNoti = sender.noti_set.get(receiver= receiver)
+        now = timezone.now()
+
+        senderNoti.datetime = now
+        senderNoti.read = False
+        receiverNoti.select = False
+        receiverNoti.datetime = now
+        receiverNoti.read = False
+        
+        if answer == 'accept':
+            receiverNoti.content = 'You accepted a friend request from {}.'.format(
+                sender.get_full_name())
+            senderNoti.content = '{} accepted a friend request from you.'.format(
+                receiver.get_full_name())
+            profileOfSender = Profile.objects.get(account = sender)
+            profileOfReceiver = Profile.objects.get(account = receiver)
+            profileOfSender.friends.add(profileOfReceiver)
+        else: #answer == 'decline'
+            receiverNoti.content = 'You declined a friend request from {}.'.format(
+                sender.get_full_name())
+            senderNoti.content = '{} declined a friend request from you'.format(
+                receiver.get_full_name())
+        receiverNoti.save()
+        senderNoti.save()
+        return HttpResponse(status = 200)
+
+    elif request.method == 'POST':
+    #create a notification when user send a friend request
+        sender = request.user
+        receiver = Account.objects.get(id = id)
+        now = timezone.now()
+        newSenderNoti = Notification(
+            content = 'You sent a friend request to {}.'.format(receiver.get_full_name()),
+            select = False,
+            datetime = now,
+            sender = sender,
+            receiver = receiver,
+            profile = sender,
+            )
+        newReceiverNoti = Notification(
+            content = '{} sent a friend request to you.'.format(sender.get_full_name()),
+            select = True,
+            datetime = now,
+            sender = sender,
+            receiver = receiver,
+            profile = receiver,
+            )
+        newSenderNoti.save()
+        newReceiverNoti.save()
+        return JsonResponse({'createdTime': now}, status=201)
+    else:
+        return HttpResponseNotAllowed(['PUT', 'POST'])
+
 @ensure_csrf_cookie
 def token(request):
     if request.method == 'GET':
         return HttpResponse(status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
+

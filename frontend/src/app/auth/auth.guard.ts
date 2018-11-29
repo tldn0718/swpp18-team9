@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { CanActivate, Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -8,20 +7,18 @@ import { environment } from '../../environments/environment';
 })
 export class AuthGuard implements CanActivate {
 
-    constructor(private auth: AuthService, private router: Router) {
+    constructor(private router: Router) {
 
     }
 
-    canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        const url = state.url;
-        return this.checkLoginStatus(url);
+    canActivate(): boolean {
+        return this.checkLoginStatus();
     }
 
-    checkLoginStatus(attemptedUrl: string) {
+    checkLoginStatus() {
         if(sessionStorage.getItem('login_status') == 'logged_in') {
             return true;
         } else {
-            this.auth.redirectUrl = attemptedUrl;
             this.router.navigate(['/signin']);
         }
     }

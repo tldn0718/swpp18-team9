@@ -59,6 +59,9 @@ class Account(AbstractBaseUser):
             # Simplest possible answer: All admins are staff
             return self.is_admin
 
+        def get_full_name(self):
+            return '{} {}'.format(self.first_name, self.last_name)
+
 class Profile(models.Model):
         account = models.OneToOneField(
             settings.AUTH_USER_MODEL,
@@ -82,3 +85,31 @@ class Profile(models.Model):
                     'from': self.account.id,
                     'to': friend.account.id
             }
+
+        def __str__(self):
+            return self.account.email
+
+class Notification(models.Model):
+    content = models.CharField(max_length=120)
+    select = models.BooleanField()
+    datetime = models.DateTimeField()
+    read = models.BooleanField(default=False)
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE,
+        related_name = 'sender_set',
+        )
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE,
+        related_name = 'receiver_set',
+        )
+    profile = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE,
+        related_name = 'noti_set',
+        )
+
+    def __str__(self):
+        return self.content
+

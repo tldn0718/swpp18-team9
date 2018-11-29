@@ -42,6 +42,7 @@ describe('AuthService', () => {
   it('should be created with cookie set', () => {
     document.cookie = '';
     let test = new AuthService(http);
+    expect().nothing();
   });
 
   it('#getToken should set browser cookie',()=>{
