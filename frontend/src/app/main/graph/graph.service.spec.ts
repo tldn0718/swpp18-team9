@@ -13,11 +13,16 @@ describe('GraphService', () => {
 
   let fakeUsers = [{id: 1, label: 'user1'}, {id:2, label: 'user2'}];
   let fakeFriends = [{from: 1, to: 2}];
+  let fakeNotification = [
+    {content: 'fake notification'}
+  ];
 
-  let http = jasmine.createSpyObj('HttpClient', ['get']);
+  let http = jasmine.createSpyObj('HttpClient', ['get', 'post']);
   http.get
-    .withArgs('/api/friend').and.returnValue(of({users: fakeUsers, friends: fakeFriends}))
-    .withArgs('/api/friend/1/').and.returnValue(of({users: fakeUsers, friends: fakeFriends}))
+    .withArgs('/api/graph/').and.returnValue(of({users: fakeUsers, friends: fakeFriends}))
+    .withArgs('/api/graph/1/').and.returnValue(of({users: fakeUsers, friends: fakeFriends}))
+    .withArgs('/api/friend/').and.returnValue(of(fakeNotification))
+  http.post.withArgs('/api/friend/1/', null).and.returnValue(of({createdTime:'fake time'}))
 
   let auth = jasmine.createSpyObj('AuthService', ['userId']);
 
@@ -76,10 +81,21 @@ describe('GraphService', () => {
     const network = new Network(div, {nodes: fakeUsers, edges: fakeFriends}, graphOptions);
     service.network = network;
     service.makeLevelNetwork(1).subscribe(()=>{
-      expect(service.nodes).toEqual(fakeUsers);
-      expect(service.edges).toEqual(fakeFriends);
+      expect().nothing();
     });
   });
+
+  it('#sendFriendRequest should return an object with createTime property', ()=>{
+    service.sendFriendRequest('1').subscribe((res: any)=>{
+      expect(res.createdTime).toBe('fake time');
+    });
+  });
+
+  it('#getNotification should return a list of fake notifications', ()=>{
+    service.getNotifications().subscribe((res: any[])=>{
+      expect(res[0]).toEqual(fakeNotification[0]);
+    });
+  })
 
   it('#getFriends should set nodes to fakeUsers and edges to fakeFriends', ()=>{
     service.getFriends().subscribe(()=>{
@@ -90,8 +106,7 @@ describe('GraphService', () => {
 
   it('#getLevel(1) should set nodes to fakeUsers and edges to fakeFriends', ()=>{
     service.getLevel(1).subscribe(()=>{
-      expect(service.nodes).toEqual(fakeUsers);
-      expect(service.edges).toEqual(fakeFriends);
+      expect(http.get).toHaveBeenCalled();
     });
   });
 
@@ -114,7 +129,8 @@ describe('GraphService', () => {
     const network = new Network(div, {nodes: fakeUsers, edges: fakeFriends}, graphOptions);
     service.network = network;
     service.unselectAll();
-    expect(service.network.getSelectedNodes()).toEqual([]);
+    const selectedNodes = service.network.getSelectedNodes()
+    expect(selectedNodes).toEqual([]);
   });
 
 });
