@@ -42,10 +42,7 @@ export class GraphService {
   }
 
   getLevel(level: number) {
-    return this.http.get(`/api/graph/${level}/`).pipe(
-      tap((friends: {users: User[], friends: Friend[]})=>{
-      })
-    );
+    return this.http.get(`/api/graph/${level}/`);
   }
 
 
