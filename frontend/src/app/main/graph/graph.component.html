@@ -1,4 +1,6 @@
 <app-info-window *ngIf="selectedProfiles?.length > 0" [profiles]="selectedProfiles" (cancelSelected)="cancelSelected()"></app-info-window>
+<app-notification (update)="ngAfterViewInit()"></app-notification>
+
 <div id="networkContainer" #networkContainer></div>
 <div *ngIf="mode == 'level'" class="btn-group zoom-btns">
     <button class="btn btn-primary" (click)="changeLevel(true)">&#43;</button>
