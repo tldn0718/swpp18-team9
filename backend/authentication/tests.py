@@ -70,6 +70,8 @@ class FriendTestCase(TestCase):
 				'select': False,
 				'datetime': now,
 				'read': False,
+				'sender': 1,
+				'receiver': 2
 			}])
 
 
@@ -99,6 +101,8 @@ class FriendTestCase(TestCase):
 				'select': False,
 				'datetime': '2018-11-24T17:32:19.919Z',
 				'read': True,
+				'sender': 1,
+				'receiver': 2
 			}])
 
 	
