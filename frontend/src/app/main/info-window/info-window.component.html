@@ -8,14 +8,25 @@
   </div>
   <div *ngIf="confirmed">
     <div *ngFor="let profile of profiles">
-      <button *ngIf="isPending(profile.id)" 
-              disabled type="button"
-              class="btn-sm btn-warning">Pending</button>
-      <button *ngIf="!isPending(profile.id) && !isFriend(profile.id)" 
-              class="btn-sm btn-primary" 
-              (click)="sendFriendRequest(profile.id)">Add Friend</button>
-      <h3>{{profile.label}}</h3>
+      <h3>
+        {{profile.label}}
+      </h3>
       <p>{{profile.label}}</p>
+      <div>
+        <button *ngIf="isPending(profile.id)" 
+                disabled type="button"
+                class="btn-sm btn-warning">
+                Pending
+                <span class="oi oi-clock"></span>
+        </button>
+        <button *ngIf="!isPending(profile.id) && !isFriend(profile.id)" 
+                class="btn-sm btn-primary" 
+                (click)="sendFriendRequest(profile.id)">
+                Add Friend
+                <span class="oi oi-person"></span>
+        </button>
+        <hr>
+      </div>
     </div>
     <button class="btn btn-primary btn-sm" (click)="cancelProfiles()">Cancel</button>
   </div>
