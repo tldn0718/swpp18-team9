@@ -1,3 +1,19 @@
-<p>
-  settings works!
-</p>
+<h3>Settings</h3>
+<div class="option-group">
+
+</div>
+<div class="option">
+  Notification
+  <span *ngIf="options.notification" (click)="toggleOption('notification')" 
+        class="badge badge-success float-right align-middle option-badge">ON</span>
+  <span *ngIf="!options.notification" (click)="toggleOption('notification')" 
+        class="badge badge-secondary float-right align-middle option-badge">OFF</span>
+</div>
+<div class="option">
+  Public
+  <span *ngIf="options.public" (click)="toggleOption('public')" 
+        class="badge badge-success float-right align-middle option-badge">ON</span>
+  <span *ngIf="!options.public" (click)="toggleOption('public')" 
+        class="badge badge-secondary float-right align-middle option-badge">OFF</span>
+</div>
+<button class="btn btn-primary btn-sm save-btn" (click)="save()">Save Settings</button>

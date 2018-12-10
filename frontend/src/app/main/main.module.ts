@@ -7,7 +7,7 @@ import { GraphComponent, GraphService } from './graph';
 import { SidebarComponent } from './sidebar';
 import { SearchComponent, SearchService } from './search';
 import { NotificationComponent } from './notification/notification.component';
-import { SettingsComponent } from './settings/settings.component';
+import { SettingsComponent, SettingsService } from './settings';
 import { MenuComponent } from './menu/menu.component';
 import { InfoWindowComponent } from './info-window/info-window.component';
 
@@ -24,7 +24,8 @@ import { InfoWindowComponent } from './info-window/info-window.component';
   ],
   providers: [
     GraphService,
-    SearchService
+    SearchService,
+    SettingsService
   ],
   imports: [
     CommonModule,

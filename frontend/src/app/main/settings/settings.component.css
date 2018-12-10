@@ -1,0 +1,14 @@
+.option-group {
+    padding-top: 10px;
+}
+.option {
+    margin-bottom: 10px;
+    padding-right: 30px;
+}
+.option-badge {
+    line-height: 1.3rem;
+    cursor: pointer;
+}
+.save-btn {
+    margin-top: 10px;
+}
