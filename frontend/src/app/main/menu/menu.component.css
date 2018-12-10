@@ -1,3 +1,5 @@
-ul {
-    margin: 70px 0 0 20px;
+.link {
+    padding: .5rem;
+    display: block;
+    color: black;
 }

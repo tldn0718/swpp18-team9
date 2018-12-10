@@ -2,7 +2,9 @@
     Back
     <img src="assets/open-iconic/svg/arrow-circle-left.svg" id="back-icon">
 </button>
-<router-outlet name="sidebar"></router-outlet>
+<div class="menu-btns">
+    <router-outlet name="sidebar"></router-outlet>
+</div>
 <button id="signout-btn" class="btn btn-primary" (click)="signOut()">
     Sign Out
     <img src="assets/open-iconic/svg/account-logout.svg" id="signout-icon">
