@@ -5,7 +5,7 @@ import { MainRoutingModule } from './main-routing.module';
 import { MainComponent } from './main.component';
 import { GraphComponent, GraphService } from './graph';
 import { SidebarComponent } from './sidebar';
-import { SearchComponent } from './search/search.component';
+import { SearchComponent, SearchService } from './search';
 import { NotificationComponent } from './notification/notification.component';
 import { SettingsComponent } from './settings/settings.component';
 import { MenuComponent } from './menu/menu.component';
@@ -23,7 +23,8 @@ import { InfoWindowComponent } from './info-window/info-window.component';
     InfoWindowComponent
   ],
   providers: [
-    GraphService
+    GraphService,
+    SearchService
   ],
   imports: [
     CommonModule,

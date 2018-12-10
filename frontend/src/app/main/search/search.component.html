@@ -1,3 +1,19 @@
-<p>
-  search works!
-</p>
+<h4>
+  Search User
+</h4>
+<div *ngIf="!showResult" class="input-group search-bar">
+  <input type="text" class="form-control" [(ngModel)]="searchTerm">
+  <div class="input-group-append">
+    <button class="btn btn-outline-dark" type="button" (click)="searchUser()">
+      <span class="oi oi-magnifying-glass"></span>
+    </button>
+  </div>
+</div>
+<div *ngIf="showResult" class="result-list">
+  <div *ngFor="let profile of profiles" class="card profile-card">
+    <div class="card-body">
+      <h5 class="card-title">{{profile.label}}</h5>
+    </div>
+  </div>
+  <button class="btn btn-sm btn-primary" (click)="cancelSearch()">Cancel</button>
+</div>
