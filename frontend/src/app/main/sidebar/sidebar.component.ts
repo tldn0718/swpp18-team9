@@ -14,6 +14,10 @@ export class SidebarComponent implements OnInit {
   ngOnInit() {
   }
 
+  back() {
+    this.router.navigate(['/main']);
+  }
+
   signOut() {
     this.auth.signOut().subscribe(()=>{
       this.router.navigate(['/signin']);

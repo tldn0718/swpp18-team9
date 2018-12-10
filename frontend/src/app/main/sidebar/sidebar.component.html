@@ -1,3 +1,9 @@
-<a [routerLink]="'/main'">Back</a>
+<button id="back-btn" class="btn btn-primary" (click)="back()">
+    Back
+    <img src="assets/open-iconic/svg/arrow-circle-left.svg" id="back-icon">
+</button>
 <router-outlet name="sidebar"></router-outlet>
-<button id="signout-btn" class="btn btn-primary" (click)="signOut()">Sign Out</button>
+<button id="signout-btn" class="btn btn-primary" (click)="signOut()">
+    Sign Out
+    <img src="assets/open-iconic/svg/account-logout.svg" id="signout-icon">
+</button>
