@@ -4,7 +4,7 @@ import { of, fromEvent } from 'rxjs';
 import { map, pluck, tap } from 'rxjs/operators';
 
 import { Node, Edge, Data, Network, DataSet } from 'vis';
-import { User, Friend } from '../../../models';
+import { Friend, UserNode } from '../../../models';
 import { AuthService } from 'src/app/auth';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class GraphService {
   };
 
   network: Network;
-  nodes: User[];
+  nodes: UserNode[];
   edges: Friend[];
 
   constructor(private http: HttpClient, private auth: AuthService) { }
@@ -34,7 +34,7 @@ export class GraphService {
 
   getFriends() {
     return this.http.get('/api/graph/').pipe(
-      tap((friends: {users: User[], friends: Friend[]})=>{
+      tap((friends: {users: UserNode[], friends: Friend[]})=>{
         this.nodes = friends.users;
         this.edges = friends.friends;
       })
@@ -48,7 +48,7 @@ export class GraphService {
 
   initializeNetwork(container: HTMLElement) {
     return this.getFriends().pipe(
-      tap((res: {users: User[], friends: Friend[]}) => {
+      tap((res: {users: UserNode[], friends: Friend[]}) => {
         const graphData: Data = {
           nodes: this.nodes, 
           edges: this.edges
@@ -62,7 +62,7 @@ export class GraphService {
 
   makeAllNetwork() {
     return this.getFriends().pipe(
-      tap((res: {users: User[], friends: Friend[]}) => {
+      tap((res: {users: UserNode[], friends: Friend[]}) => {
         const graphData: Data = {
           nodes: res.users, 
           edges: res.friends
@@ -76,7 +76,7 @@ export class GraphService {
 
   makeLevelNetwork(level: number) {
     return this.getLevel(level).pipe(
-      tap((res: {users: User[], friends: Friend[]}) => {
+      tap((res: {users: UserNode[], friends: Friend[]}) => {
         const graphData: Data = {
           nodes: res.users,
           edges: res.friends

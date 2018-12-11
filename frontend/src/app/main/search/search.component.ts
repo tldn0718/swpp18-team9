@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SearchService } from './search.service';
 import { map } from 'rxjs/operators';
+import { User } from '../../../models';
 
 @Component({
   selector: 'app-search',
@@ -29,7 +30,7 @@ export class SearchComponent implements OnInit {
           };
         });
       })
-    ).subscribe((searchResult: any[])=>{
+    ).subscribe((searchResult: User[])=>{
       this.profiles = searchResult;
       this.showResult = true;
     });

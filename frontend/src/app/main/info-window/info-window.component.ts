@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GraphService } from '../graph';
 import { AuthService  } from '../../auth';
 import { tap, map, pluck, filter } from 'rxjs/operators';
-import { User } from 'src/models';
+import { UserNode } from 'src/models';
 
 @Component({
   selector: 'app-info-window',
@@ -24,7 +24,7 @@ export class InfoWindowComponent implements OnInit {
   ngOnInit() {
     this.graph.getLevel(1).pipe(
       pluck('users'),
-      map((users: User[]) => users.map(user => user.id))
+      map((users: UserNode[]) => users.map(user => user.id))
     ).subscribe((friends)=>{
       this.friends = friends;
     });
