@@ -11,5 +11,6 @@ urlpatterns = [
     path('graph/<int:level>/', views.levelGraph, name = 'levelGraph'),
     path('friend/', views.totalFriendRequest, name= 'friend'),
     path('friend/<int:id>/', views.specificFriendRequest, name='friendRequest'),
+    path('search/<str:word>/',views.search , name='search'),
     path('token/', views.token, name='token'),
 ]
