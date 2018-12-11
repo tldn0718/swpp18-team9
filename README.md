@@ -132,6 +132,7 @@ Profile {
 
 ### /api/search/:term/
 - **method: GET**
+`Requests users whose firstname + lastname includes the query param indicated by /:term`
 - **request body:** `none required`
 - **response body:**
 ```
