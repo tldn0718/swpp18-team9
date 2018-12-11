@@ -18,6 +18,7 @@ export class GraphService {
 
   network: Network;
   nodes: UserNode[];
+  nodesDataset: DataSet<Node>;
   edges: Friend[];
 
   constructor(private http: HttpClient, private auth: AuthService) { }
@@ -45,18 +46,32 @@ export class GraphService {
     return this.http.get(`/api/graph/${level}/`);
   }
 
+  initializeView() {
+    this.network.once('stabilized', ()=>{
+      this.network.focus(this.auth.userId, {animation: true});
+      const currUserNode = <Node>this.nodesDataset.get(this.auth.userId);
+      currUserNode.color = {
+        background: '#f8ff96',
+        border: '#6a6d40',
+        highlight: {
+          background: '#f8ff96',
+          border: '#6a6d40',
+        }
+      };
+      this.nodesDataset.update(currUserNode);
+    });
+  }
 
   initializeNetwork(container: HTMLElement) {
     return this.getFriends().pipe(
       tap((res: {users: UserNode[], friends: Friend[]}) => {
+        this.nodesDataset = new DataSet(this.nodes);
         const graphData: Data = {
-          nodes: this.nodes, 
+          nodes: this.nodesDataset, 
           edges: this.edges
         };
         this.network = new Network(container, graphData, this.graphOptions);
-        this.network.once('stabilized', ()=>{
-          this.network.focus(this.auth.userId, {animation: true});
-        });
+        this.initializeView();
       })
     );
   }
@@ -69,9 +84,7 @@ export class GraphService {
           edges: res.friends
         };
         this.network.setData(graphData);
-        this.network.once('stabilized', ()=>{
-          this.network.focus(this.auth.userId, {animation: true});
-        });
+        this.initializeView();
       })
     );
   }
@@ -84,9 +97,7 @@ export class GraphService {
           edges: res.friends
         };
         this.network.setData(graphData);
-        this.network.once('stabilized', ()=>{
-          this.network.focus(this.auth.userId, {animation: true});
-        });
+        this.initializeView();
       })
     );
   }
