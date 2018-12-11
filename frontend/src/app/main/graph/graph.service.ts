@@ -54,8 +54,9 @@ export class GraphService {
           edges: this.edges
         };
         this.network = new Network(container, graphData, this.graphOptions);
-        // focus not working for some reason
-        this.network.focus(this.auth.userId, {animation: true});
+        this.network.once('stabilized', ()=>{
+          this.network.focus(this.auth.userId, {animation: true});
+        });
       })
     );
   }
@@ -68,8 +69,9 @@ export class GraphService {
           edges: res.friends
         };
         this.network.setData(graphData);
-        // focus not working for some reason
-        this.network.focus(this.auth.userId, {animation: true});
+        this.network.once('stabilized', ()=>{
+          this.network.focus(this.auth.userId, {animation: true});
+        });
       })
     );
   }
@@ -82,8 +84,9 @@ export class GraphService {
           edges: res.friends
         };
         this.network.setData(graphData);
-        // focus not working for some reason
-        this.network.focus(this.auth.userId, {animation: true});
+        this.network.once('stabilized', ()=>{
+          this.network.focus(this.auth.userId, {animation: true});
+        });
       })
     );
   }
