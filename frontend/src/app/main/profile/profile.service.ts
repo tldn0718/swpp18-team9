@@ -13,4 +13,17 @@ export class ProfileService {
   getUserInfo(selectedNodes: UserNode[]): Observable<User[]> {
     return this.http.post<User[]>('/api/user/', {selectedNodes});
   }
+
+  writePost(selectedUsers: User[], content: string) {
+    return this.http.post('/api/post/write/', {
+      selectedUsers,
+      content
+    });
+  }
+
+  getPost(selectedUsers: User[]) {
+    return this.http.post('/api/post/get/', {
+      selectedUsers
+    });
+  }
 }

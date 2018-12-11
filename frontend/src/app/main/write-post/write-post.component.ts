@@ -16,11 +16,11 @@ export class WritePostComponent implements OnInit {
   }
 
   closeModal(reason: string) {
-    this.activeModal.close(reason);
+    this.activeModal.dismiss(reason);
   }
 
   submit() {
-
+    this.activeModal.close(this.content);
   }
 
 }
