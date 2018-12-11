@@ -191,11 +191,11 @@ def search(request, term):
             firstName = term.split()[0]
             lastName = term.split()[1]
             result = [account for account
-                in Account.objects.filter(first_name__contain=firstname).filter(last_name__contain=lastName).values()]
+                in Account.objects.filter(first_name__icontains=firstName).filter(last_name__icontains=lastName).values('id','first_name','last_name')]
         else:
-            firstNameQuery = Q(first_name__contain=term)
-            lastNameQuery = Q(last_name__contain=term)
-            result = [account for account in Account.objects.filter(firstNameQuery|lastNameQuery).values()]
+            firstNameQuery = Q(first_name__icontains=term)
+            lastNameQuery = Q(last_name__icontains=term)
+            result = [account for account in Account.objects.filter(firstNameQuery|lastNameQuery).values('id','first_name','last_name')]
         return JsonResponse(result, safe=False)
     else:
         return HttpResponseNotAllowed(['PUT'])
