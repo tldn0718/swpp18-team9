@@ -1,17 +1,14 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   search(searchTerm: string) {
-    return of([
-      {id:100, label: "Test1"},
-      {id:101, label: "Test2"},
-    ]); // TODO: delete after implementation
+    return this.http.get(`/api/search/${searchTerm}`);
   }
 }
