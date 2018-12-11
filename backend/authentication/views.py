@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 import json
 from json.decoder import JSONDecodeError
 from .models import Account, Profile, Notification
-#from .utilities import dijkstra
+from django.db.models import Q
 from queue import Queue
 from django.utils import timezone
 
@@ -184,6 +184,22 @@ def specificFriendRequest(request, id):
         return JsonResponse({'createdTime': now}, status=201)
     else:
         return HttpResponseNotAllowed(['PUT', 'POST'])
+
+def search(request, term):
+    if request.method == 'GET':
+        if ' ' in term:
+            firstName = term.split()[0]
+            lastName = term.split()[1]
+            result = [account for account
+                in Account.objects.filter(first_name__icontains=firstName).filter(last_name__icontains=lastName).values('id','first_name','last_name')]
+        else:
+            firstNameQuery = Q(first_name__icontains=term)
+            lastNameQuery = Q(last_name__icontains=term)
+            result = [account for account in Account.objects.filter(firstNameQuery|lastNameQuery).values('id','first_name','last_name')]
+        return JsonResponse(result, safe=False)
+    else:
+        return HttpResponseNotAllowed(['PUT'])
+
 
 @ensure_csrf_cookie
 def token(request):
