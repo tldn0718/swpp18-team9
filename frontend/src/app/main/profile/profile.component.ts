@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileService } from './profile.service';
 import { User } from '../../../models';
+import { WritePostComponent } from '../write-post/write-post.component';
 
 @Component({
   selector: 'app-profile',
@@ -13,7 +14,11 @@ export class ProfileComponent implements OnInit {
   selectedNodes: any[];
   selectedUsers: User[];
 
-  constructor(private activeModal: NgbActiveModal, private profile: ProfileService) { }
+  constructor(
+    private modal: NgbModal,
+    private activeModal: NgbActiveModal, 
+    private profile: ProfileService
+    ) { }
 
   ngOnInit() {
     this.profile.getUserInfo(this.selectedNodes).subscribe((users: User[]) => {
@@ -26,7 +31,11 @@ export class ProfileComponent implements OnInit {
   }
 
   writePost() {
-
+    const modalConfig: any = {
+      size: 'lg',
+      backdrop: "static"
+    };
+    this.modal.open(WritePostComponent, modalConfig);
   }
 
 }

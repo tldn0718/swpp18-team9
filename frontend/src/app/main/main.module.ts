@@ -12,6 +12,7 @@ import { MenuComponent } from './menu/menu.component';
 import { InfoWindowComponent } from './info-window/info-window.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ProfileService } from './profile/profile.service';
+import { WritePostComponent } from './write-post/write-post.component';
 
 @NgModule({
   declarations: [
@@ -23,10 +24,12 @@ import { ProfileService } from './profile/profile.service';
     SettingsComponent, 
     MenuComponent, 
     InfoWindowComponent, 
-    ProfileComponent
+    ProfileComponent, 
+    WritePostComponent
   ],
   entryComponents: [
-    ProfileComponent
+    ProfileComponent,
+    WritePostComponent
   ],
   providers: [
     GraphService,
