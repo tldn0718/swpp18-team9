@@ -46,26 +46,30 @@ export class GraphService {
     return this.http.get(`/api/graph/${level}/`);
   }
 
+  makeNodesDataset(nodes) {
+    this.nodesDataset = new DataSet(nodes);
+    const currUserNode = <Node>this.nodesDataset.get(this.auth.userId);
+    currUserNode.color = {
+      background: '#f8ff96',
+      border: '#6a6d40',
+      highlight: {
+        background: '#f8ff96',
+        border: '#6a6d40',
+      }
+    };
+    this.nodesDataset.update(currUserNode);
+  }
+
   initializeView() {
     this.network.once('stabilized', ()=>{
       this.network.focus(this.auth.userId, {animation: true});
-      const currUserNode = <Node>this.nodesDataset.get(this.auth.userId);
-      currUserNode.color = {
-        background: '#f8ff96',
-        border: '#6a6d40',
-        highlight: {
-          background: '#f8ff96',
-          border: '#6a6d40',
-        }
-      };
-      this.nodesDataset.update(currUserNode);
     });
   }
 
   initializeNetwork(container: HTMLElement) {
     return this.getFriends().pipe(
       tap((res: {users: UserNode[], friends: Friend[]}) => {
-        this.nodesDataset = new DataSet(this.nodes);
+        this.makeNodesDataset(res.users);
         const graphData: Data = {
           nodes: this.nodesDataset, 
           edges: this.edges
@@ -79,8 +83,9 @@ export class GraphService {
   makeAllNetwork() {
     return this.getFriends().pipe(
       tap((res: {users: UserNode[], friends: Friend[]}) => {
+        this.makeNodesDataset(res.users);
         const graphData: Data = {
-          nodes: res.users, 
+          nodes: this.nodesDataset, 
           edges: res.friends
         };
         this.network.setData(graphData);
@@ -92,8 +97,9 @@ export class GraphService {
   makeLevelNetwork(level: number) {
     return this.getLevel(level).pipe(
       tap((res: {users: UserNode[], friends: Friend[]}) => {
+        this.makeNodesDataset(res.users);
         const graphData: Data = {
-          nodes: res.users,
+          nodes: this.nodesDataset,
           edges: res.friends
         };
         this.network.setData(graphData);
