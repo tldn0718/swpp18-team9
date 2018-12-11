@@ -150,3 +150,72 @@ Profile {
   ]
 }
 ```
+
+### /api/user/
+- **method: POST**
+`Requests user infos with given node info`
+- **request body:**
+```
+{
+  selectedNodes<UserNode[]>: [
+    {id: 3, label: 'John'},
+    {id: 15, label: 'David'},
+    ...
+  ]
+}
+```
+- **response body:**
+```
+{
+  selectedUsers<User[]>: [
+    {id: 3, firstName: 'John', lastName: 'Doe'},
+    {id: 15, firstName: 'David', lastName: 'Yeon'},
+    ...
+  ]
+}
+```
+
+### /api/post/get/
+- **method: POST**
+`Get posts with the tags of given users`
+- **request body:**
+```
+{
+  selectedUsers<User[]>: [
+    {id: 3, firstName: 'John', lastName: 'Doe'},
+    {id: 15, firstName: 'David', lastName: 'Yeon'},
+    ...
+  ]
+}
+```
+- **response body:**
+```
+{
+  posts<Post[]>: [
+    {id: 1, content: 'First Post', tags: [3, 15, ...]},
+    {id: 2, content: 'Second Post', tags: [3, 15, ...]}, 
+    ...
+  ]
+}
+```
+
+### /api/post/write/
+- **method: GET**
+`Create a new post with the tags of given users`
+- **request body:**
+```
+{
+  selectedUsers<User[]>: [
+    {id: 3, firstName: 'John', lastName: 'Doe'},
+    {id: 15, firstName: 'David', lastName: 'Yeon'},
+    ...
+  ],
+  content<string>: 'New post content'
+}
+```
+- **response body:**
+```
+{
+  message: 'success' | 'fail'
+}
+```
