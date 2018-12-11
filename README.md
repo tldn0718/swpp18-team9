@@ -129,3 +129,23 @@ Profile {
 }
 ```
 - **response body:** `none required`
+
+### /api/search/:term/
+- **method: GET**
+- **request body:** `none required`
+- **response body:**
+```
+{
+  results: [
+    {
+      id: string,
+      firstName: string,
+      lastName: string
+    },
+    {
+      ...
+    },
+    ...
+  ]
+}
+```
