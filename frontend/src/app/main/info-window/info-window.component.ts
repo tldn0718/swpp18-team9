@@ -1,8 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { map, pluck } from 'rxjs/operators';
+
 import { GraphService } from '../graph';
 import { AuthService  } from '../../auth';
-import { tap, map, pluck, filter } from 'rxjs/operators';
 import { UserNode } from 'src/models';
+import { ProfileComponent } from '../profile/profile.component';
 
 @Component({
   selector: 'app-info-window',
@@ -19,7 +22,11 @@ export class InfoWindowComponent implements OnInit {
 
   confirmed: boolean = false;
 
-  constructor(private graph: GraphService, private auth: AuthService) { }
+  constructor(
+    private graph: GraphService, 
+    private auth: AuthService,
+    private modal: NgbModal
+    ) { }
 
   ngOnInit() {
     this.graph.getLevel(1).pipe(
@@ -57,6 +64,15 @@ export class InfoWindowComponent implements OnInit {
 
   cancelProfiles() {
     this.cancelSelected.emit();
+  }
+
+  showProfile() {
+    const modalConfig: any = {
+      size: 'lg',
+      backdrop: "static"
+    };
+    const signUpModal = this.modal.open(ProfileComponent, modalConfig);
+    signUpModal.componentInstance.selectedNodes = this.profiles;
   }
 
   sendFriendRequest(id: string) {

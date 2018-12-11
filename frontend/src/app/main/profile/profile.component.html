@@ -1,0 +1,15 @@
+<div class="modal-header">
+  <h4 class="modal-title">Profile Information</h4>
+  <button type="button" class="close" aria-label="Close" (click)="closeModal('Close Button Clicked')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <p>Profile Info</p>
+</div>
+<div class="modal-footer">
+  <span ngbAutoFocus></span> <!-- Invisible span to avoid focusing on any element -->
+  <button type="button" class="btn btn-primary" (click)="writePost()">Write Post</button>
+  <button type="button" class="btn btn-outline-dark"
+          (click)="closeModal('Cancel Button Clicked')">Close</button>
+</div>

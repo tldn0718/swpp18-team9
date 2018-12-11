@@ -10,6 +10,8 @@ import { NotificationComponent } from './notification/notification.component';
 import { SettingsComponent, SettingsService } from './settings';
 import { MenuComponent } from './menu/menu.component';
 import { InfoWindowComponent } from './info-window/info-window.component';
+import { ProfileComponent } from './profile/profile.component';
+import { ProfileService } from './profile/profile.service';
 
 @NgModule({
   declarations: [
@@ -20,12 +22,17 @@ import { InfoWindowComponent } from './info-window/info-window.component';
     NotificationComponent, 
     SettingsComponent, 
     MenuComponent, 
-    InfoWindowComponent
+    InfoWindowComponent, 
+    ProfileComponent
+  ],
+  entryComponents: [
+    ProfileComponent
   ],
   providers: [
     GraphService,
     SearchService,
-    SettingsService
+    SettingsService,
+    ProfileService
   ],
   imports: [
     CommonModule,
