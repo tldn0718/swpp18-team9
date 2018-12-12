@@ -198,8 +198,34 @@ def search(request, term):
             result = [account for account in Account.objects.filter(firstNameQuery|lastNameQuery).values('id','first_name','last_name')]
         return JsonResponse(result, safe=False)
     else:
-        return HttpResponseNotAllowed(['PUT'])
+        return HttpResponseNotAllowed(['GET'])
 
+def getSelectedUsers(request):
+    if request.method == 'POST':
+        try:
+            body = request.body.decode()
+            selectedNodes = json.loads(body)['selectedNodes']
+        except(KeyError, JSONDecodeError) as e:
+            return HttpResponseBadRequest()
+        selectedID = []
+        for seletedNode in selectedNodes:
+            selectedID.append(seletedNode['id'])
+        seletedUsers = [user for user in Account.objects.filter(id__in = selectedID).values('id','first_name','last_name')]
+        return JsonResponse(seletedUsers, safe=False)
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+def postingGet(request):
+    if request.method == 'POST':
+        return HttpResponse()
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+def postingWrite(request):
+    if request.method == 'POST':
+        return HttpResponse()
+    else:
+        return HttpResponseNotAllowed(['POST'])
 
 @ensure_csrf_cookie
 def token(request):

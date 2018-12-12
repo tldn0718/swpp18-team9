@@ -167,11 +167,11 @@ class SearchTestCase(TestCase):
 		self.profile1 = Profile(account=self.account1)
 		self.profile2 = Profile(account=self.account2)
 		self.profile3 = Profile(account=self.account3)
-		self.profile4 = Profile(account=self.account3)
+		self.profile4 = Profile(account=self.account4)
 		self.profile1.save()
 		self.profile2.save()
 		self.profile3.save()
-		#self.profile4.save()
+		self.profile4.save()
 	def test_search(self):
 		client = Client()
 		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
@@ -187,3 +187,27 @@ class SearchTestCase(TestCase):
 		response = client.get('/api/search/sana/')
 		self.assertJSONEqual(response.content, [{'id':3, 'first_name': 'Sana', 'last_name': 'Minatozaki'},
 		 {'id':4, 'first_name': 'Sana', 'last_name': 'CuteSexy'}]) #Several Results Search Succeed
+
+class GetSelectedUsersTest(TestCase):
+	def setUp(self):
+		self.account1 = Account.objects.create_user(email='jihyo@twice.com', first_name='Jihyo', last_name='Park', password='jihyo')
+		self.account2 = Account.objects.create_user(email='nayeon@twice.com', first_name='Nayeon', last_name='Im', password='nayeon')
+		self.account3 = Account.objects.create_user(email='sana@twice.com', first_name='Sana', last_name='Minatozaki', password='sana')
+		self.profile1 = Profile(account=self.account1)
+		self.profile2 = Profile(account=self.account2)
+		self.profile3 = Profile(account=self.account3)
+		self.profile1.save()
+		self.profile2.save()
+		self.profile3.save()
+	def test_user(self):
+		client = Client()
+		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+			'password': 'nayeon'}), content_type = 'application/json')
+		self.assertEqual(response.status_code, 200) #SignIn Succeed
+
+		response = client.post('/api/user/', json.dumps({'selectedNodes': 
+			[{'id': 1, 'label': 'Jihyo'},
+			{'id': 2, 'label': 'Nayeon'}]}), content_type = 'application/json')
+		self.assertJSONEqual(response.content, [
+			{'id': 1, 'first_name': 'Jihyo', 'last_name': 'Park'},
+			{'id': 2, 'first_name': 'Nayeon', 'last_name': 'Im'}])
