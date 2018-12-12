@@ -113,3 +113,9 @@ class Notification(models.Model):
     def __str__(self):
         return self.content
 
+class Post(models.Model):
+    tags = models.ManyToManyField(
+            settings.AUTH_USER_MODEL,
+            related_name = 'posts'
+        )
+    content = models.TextField()

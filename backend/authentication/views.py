@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 #from django.core import serializers
 import json
 from json.decoder import JSONDecodeError
-from .models import Account, Profile, Notification
+from .models import Account, Profile, Notification, Post
 from django.db.models import Q
 from queue import Queue
 from django.utils import timezone
@@ -198,8 +198,59 @@ def search(request, term):
             result = [account for account in Account.objects.filter(firstNameQuery|lastNameQuery).values('id','first_name','last_name')]
         return JsonResponse(result, safe=False)
     else:
-        return HttpResponseNotAllowed(['PUT'])
+        return HttpResponseNotAllowed(['GET'])
 
+def getSelectedUsers(request):
+    if request.method == 'POST':
+        try:
+            body = request.body.decode()
+            selectedNodes = json.loads(body)['selectedNodes']
+        except(KeyError, JSONDecodeError) as e:
+            return HttpResponseBadRequest()
+        selectedID = []
+        for seletedNode in selectedNodes:
+            selectedID.append(seletedNode['id'])
+        seletedUsers = [user for user in Account.objects.filter(id__in = selectedID).values('id','first_name','last_name')]
+        return JsonResponse(seletedUsers, safe=False)
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+#Get posts with the tags of given users
+def postingGet(request):
+    if request.method == 'POST':
+        try:
+            body = request.body.decode()
+            selectedUsers = json.loads(body)['selectedUsers']
+        except:
+            return HttpResponseBadRequest()
+        selectedID = [user['id'] for user in selectedUsers]
+        posts = Post.objects.all().prefetch_related('tags')
+        postResult = []
+        for post in posts:
+            if all(tag.id in selectedID for tag in post.tags.all()):
+                postResult.append({'id': post.id, 'content': post.content,
+                    'tags': [tag['id'] for tag in post.tags.all().values('id')]})
+        return JsonResponse({'posts': postResult})
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+#Create a new post with the tags of given users
+def postingWrite(request):
+    if request.method == 'POST':
+        try:
+            body = request.body.decode()
+            seletedUsers = json.loads(body)['selectedUsers']
+            content = json.loads(body)['content']
+        except:
+            return HttpResponseBadRequest()
+        newPost = Post(content=content)
+        tagedID = [user['id'] for user in seletedUsers]
+        tagedUsers = Account.objects.filter(id__in = tagedID)
+        newPost.save()
+        newPost.tags.set(tagedUsers)
+        return HttpResponse(status=201)
+    else:
+        return HttpResponseNotAllowed(['POST'])
 
 @ensure_csrf_cookie
 def token(request):

@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 import json
-from authentication.models import Account, Profile, Notification
+from authentication.models import Account, Profile, Notification, Post
 
 class AuthenticationTestCase(TestCase):
 	def test(self):
@@ -167,11 +167,11 @@ class SearchTestCase(TestCase):
 		self.profile1 = Profile(account=self.account1)
 		self.profile2 = Profile(account=self.account2)
 		self.profile3 = Profile(account=self.account3)
-		self.profile4 = Profile(account=self.account3)
+		self.profile4 = Profile(account=self.account4)
 		self.profile1.save()
 		self.profile2.save()
 		self.profile3.save()
-		#self.profile4.save()
+		self.profile4.save()
 	def test_search(self):
 		client = Client()
 		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
@@ -187,3 +187,74 @@ class SearchTestCase(TestCase):
 		response = client.get('/api/search/sana/')
 		self.assertJSONEqual(response.content, [{'id':3, 'first_name': 'Sana', 'last_name': 'Minatozaki'},
 		 {'id':4, 'first_name': 'Sana', 'last_name': 'CuteSexy'}]) #Several Results Search Succeed
+
+class GetSelectedUsersTest(TestCase):
+	def setUp(self):
+		self.account1 = Account.objects.create_user(email='jihyo@twice.com', first_name='Jihyo', last_name='Park', password='jihyo')
+		self.account2 = Account.objects.create_user(email='nayeon@twice.com', first_name='Nayeon', last_name='Im', password='nayeon')
+		self.account3 = Account.objects.create_user(email='sana@twice.com', first_name='Sana', last_name='Minatozaki', password='sana')
+		self.profile1 = Profile(account=self.account1)
+		self.profile2 = Profile(account=self.account2)
+		self.profile3 = Profile(account=self.account3)
+		self.profile1.save()
+		self.profile2.save()
+		self.profile3.save()
+	def test_user(self):
+		client = Client()
+		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+			'password': 'nayeon'}), content_type = 'application/json')
+		self.assertEqual(response.status_code, 200) #SignIn Succeed
+
+		response = client.post('/api/user/', json.dumps({'selectedNodes': 
+			[{'id': 1, 'label': 'Jihyo'},
+			{'id': 2, 'label': 'Nayeon'}]}), content_type = 'application/json')
+		self.assertJSONEqual(response.content, [
+			{'id': 1, 'first_name': 'Jihyo', 'last_name': 'Park'},
+			{'id': 2, 'first_name': 'Nayeon', 'last_name': 'Im'}])
+
+class PostingTest(TestCase):
+	def setUp(self):
+		self.account1 = Account.objects.create_user(email='jihyo@twice.com', first_name='Jihyo', last_name='Park', password='jihyo')
+		self.account2 = Account.objects.create_user(email='nayeon@twice.com', first_name='Nayeon', last_name='Im', password='nayeon')
+		self.account3 = Account.objects.create_user(email='sana@twice.com', first_name='Sana', last_name='Minatozaki', password='sana')
+		self.profile1 = Profile(account=self.account1)
+		self.profile2 = Profile(account=self.account2)
+		self.profile3 = Profile(account=self.account3)
+		self.profile1.save()
+		self.profile2.save()
+		self.profile3.save()
+	def test_post_write(self):
+		client = Client()
+		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+			'password': 'nayeon'}), content_type = 'application/json')
+		self.assertEqual(response.status_code, 200) #SignIn Succeed
+
+		response = client.post('/api/post/write/', json.dumps({
+			'selectedUsers': [
+				{'id': 1, 'first_name': 'Jihyo', 'last_name': 'Park'},
+				{'id': 2, 'first_name': 'Nayeon', 'last_name': 'Im'}
+			],
+			'content': 'The Best Thing I Ever Did'
+			}), content_type = 'application/json')
+		newPost = Post.objects.get(id=1)
+		self.assertEqual(response.status_code, 201)
+		self.assertEqual(newPost.content, 'The Best Thing I Ever Did')
+		self.assertEqual(list(newPost.tags.all()), [self.account1, self.account2])
+	def test_post_get(self):
+		client = Client()
+		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+			'password': 'nayeon'}), content_type = 'application/json')
+		self.assertEqual(response.status_code, 200) #SignIn Succeed
+
+		newPost = Post(content='Likey')
+		newPost.save()
+		newPost.tags.add(self.account1)
+		newPost.tags.add(self.account2)
+		response = client.post('/api/post/get/', json.dumps({
+			'selectedUsers': [
+				{'id': 1, 'first_name': 'Jihyo', 'last_name': 'Park'},
+				{'id': 2, 'first_name': 'Nayeon', 'last_name': 'Im'}
+			]}), content_type = 'application/json')
+		self.assertJSONEqual(response.content, {'posts': [
+				{'id':1, 'content': 'Likey', 'tags':[1,2]}
+			]})
