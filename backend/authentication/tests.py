@@ -305,3 +305,17 @@ class PostingTest(TestCase):
 				{'id': 1, 'first_name': 'Jihyo', 'last_name': 'Park'}
 			]}), content_type = 'application/json')
 		self.assertJSONEqual(response.content, {'posts': []})
+
+		response = client.post('/api/post/get/', json.dumps({
+			'selectedUsers': [
+				{'id': 2, 'first_name': 'Nayeon', 'last_name': 'Im'}
+			]}), content_type = 'application/json')
+		self.assertJSONEqual(response.content, {'posts': []})
+
+		response = client.post('/api/post/get/', json.dumps({
+			'selectedUsers': [
+				{'id': 1, 'first_name': 'Jihyo', 'last_name': 'Park'},
+				{'id': 2, 'first_name': 'Nayeon', 'last_name': 'Im'}
+				{'id': 3, 'first_name': 'Sana', 'last_name': 'Minatozaki'},
+			]}), content_type = 'application/json')
+		self.assertJSONEqual(response.content, {'posts': []})

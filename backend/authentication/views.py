@@ -217,11 +217,7 @@ def postingGet(request):
         posts = Post.objects.all().prefetch_related('tags')
         postResult = []
         for post in posts:
-            #if all(tag.id in selectedID for tag in post.tags.all()):
-            #if all(i in post.tags.all().values() for i in selectedID):
-            #    postResult.append({'id': post.id, 'content': post.content,
-            #        'tags': [tag['id'] for tag in post.tags.all().values('id')]})
-            tagID = [i['id'] for i in list(post.tags.all().values('id'))]
+            tagID = [i['id'] for i in post.tags.all().values('id')]
             if set(selectedID) == set(tagID):
                 postResult.append({'id': post.id, 'content': post.content,
                     'tags': [tag['id'] for tag in post.tags.all().values('id')]})
