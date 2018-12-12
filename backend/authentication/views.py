@@ -165,20 +165,10 @@ def specificFriendRequest(request, id):
         now = timezone.now()
         newSenderNoti = Notification(
             content = 'You sent a friend request to {}.'.format(receiver.get_full_name()),
-            select = False,
-            datetime = now,
-            sender = sender,
-            receiver = receiver,
-            profile = sender,
-            )
+            select = False, datetime = now, sender = sender, receiver = receiver, profile = sender)
         newReceiverNoti = Notification(
             content = '{} sent a friend request to you.'.format(sender.get_full_name()),
-            select = True,
-            datetime = now,
-            sender = sender,
-            receiver = receiver,
-            profile = receiver,
-            )
+            select = True, datetime = now, sender = sender, receiver = receiver, profile = receiver)
         newSenderNoti.save()
         newReceiverNoti.save()
         return JsonResponse({'createdTime': now}, status=201)
