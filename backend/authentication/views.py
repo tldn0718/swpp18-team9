@@ -248,7 +248,7 @@ def postingWrite(request):
         tagedUsers = Account.objects.filter(id__in = tagedID)
         newPost.save()
         newPost.tags.set(tagedUsers)
-        return HttpResponse(status=201)
+        return JsonResponse({'message': 'success'});
     else:
         return HttpResponseNotAllowed(['POST'])
 
