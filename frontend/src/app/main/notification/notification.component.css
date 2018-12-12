@@ -1,0 +1,13 @@
+.noti-container {
+    height: 80vh;
+    overflow: scroll;
+}
+
+.noti-card {
+    margin: 0 15px 10px 0;
+}
+
+.noti-btns {
+    text-align: center;
+    display: block;
+}

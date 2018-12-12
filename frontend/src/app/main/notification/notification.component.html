@@ -1,6 +1,13 @@
-<div *ngFor="let notifiaction of notifications">
-	<button
-	(click)="checkAccept()">Accept</button>
-	<button 
-	(click)="checkDecline()">Decline</button>
+<div class="noti-container">
+	<div *ngFor="let notification of notifications" class="card noti-card">
+		<div class="card-body">
+			<p class="card-text">{{notification.content}}</p>
+		</div>
+		<div class="card-footer">
+			<div class="btn-group noti-btns">
+				<button class="btn btn-sm btn-primary" (click)="checkAccept()">Accept</button>
+				<button class="btn btn-sm btn-primary" (click)="checkDecline()">Decline</button>
+			</div>
+		</div>
+	</div>
 </div>

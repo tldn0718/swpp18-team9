@@ -12,8 +12,8 @@ import { User, Friend } from 'src/models';
 export class NotificationComponent implements OnInit {
   
   @Output() update: EventEmitter<void> = new EventEmitter();
-  notified : number[];
-  displayNoti : string[];
+
+  notifications: any[];
 
   constructor(private graph: GraphService, private auth: AuthService) { }
 
@@ -23,12 +23,14 @@ export class NotificationComponent implements OnInit {
 
   updateNotification() {
   	this.graph.getNotifications().pipe(
-      map((notifications: any[])=>{
-        let receiver = notifications.map((noti)=>noti.receiver);
+      map((allNoti: any[])=>{
+        console.log('allNoti', allNoti);
+        let receiver = allNoti.filter((noti) => noti.receiver === parseInt(this.auth.userId));
         return receiver;
       }),
-    ).subscribe((notified: any[])=>{
-      this.notified = notified.filter(id => id === parseInt(this.auth.userId));
+    ).subscribe((myNoti: any[])=>{
+      console.log('received notifications: ', myNoti);
+      this.notifications = myNoti;
     });
   }
 
