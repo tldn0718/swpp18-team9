@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { pluck, map } from 'rxjs/operators';
 import { User, UserNode } from '../../../models';
 
 @Injectable({
@@ -24,6 +25,8 @@ export class ProfileService {
   getPost(selectedUsers: User[]) {
     return this.http.post('/api/post/get/', {
       selectedUsers
-    });
+    }).pipe(
+      pluck('posts'),
+      map((posts: any[])=>posts.reverse()));
   }
 }

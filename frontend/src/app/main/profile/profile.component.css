@@ -1,0 +1,8 @@
+.profile-container {
+    max-height: 75vh;
+    overflow: scroll;
+}
+
+.post {
+    margin-bottom: 10px;
+}

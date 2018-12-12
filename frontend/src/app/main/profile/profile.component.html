@@ -4,8 +4,18 @@
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<div class="modal-body">
+<div class="modal-body profile-container">
+  <h4><span *ngFor="let user of selectedUsers">{{user.first_name+' '}}</span></h4>
   <p>Profile Info</p>
+  <hr>
+  <h4>Posts</h4>
+  <div *ngFor="let post of posts" class="card post">
+    <div class="card-body">
+      <p class="card-text">
+        {{post.content}}
+      </p>
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
   <span ngbAutoFocus></span> <!-- Invisible span to avoid focusing on any element -->

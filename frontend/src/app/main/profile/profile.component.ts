@@ -3,7 +3,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileService } from './profile.service';
 import { User } from '../../../models';
 import { WritePostComponent } from '../write-post/write-post.component';
-import { concatMap } from 'rxjs/operators';
+import { concatMap, pluck, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
 @Component({
@@ -15,7 +15,7 @@ export class ProfileComponent implements OnInit {
 
   selectedNodes: any[];
   selectedUsers: User[];
-  posts: any[];
+  posts: any[] = [];
 
   constructor(
     private modal: NgbModal,
@@ -27,10 +27,12 @@ export class ProfileComponent implements OnInit {
     this.profile.getUserInfo(this.selectedNodes).pipe(
       concatMap((users)=>{
         this.selectedUsers = users;
+        console.log('selected users', this.selectedUsers);
         return this.profile.getPost(this.selectedUsers);
-      })
+      }),
     ).subscribe((posts: any[]) => {
       this.posts = posts;
+      console.log('posts', this.posts);
     });
   }
 
@@ -49,7 +51,7 @@ export class ProfileComponent implements OnInit {
         concatMap((res: any)=>{
           if(res.message == 'success') return this.profile.getPost(this.selectedUsers);
           else return throwError('Write post failed');
-        })
+        }),
       ).subscribe({
         next: (posts: any[]) => { this.posts = posts; },
         error: (msg: string) => { console.error(msg); }
