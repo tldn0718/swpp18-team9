@@ -12,7 +12,7 @@ import { User, Friend } from 'src/models';
 export class NotificationComponent implements OnInit {
   
   @Output() update: EventEmitter<void> = new EventEmitter();
-  notifications : number[];
+  notified : number[];
   displayNoti : string[];
 
   constructor(private graph: GraphService, private auth: AuthService) { }
@@ -27,8 +27,8 @@ export class NotificationComponent implements OnInit {
         let receiver = notifications.map((noti)=>noti.receiver);
         return receiver;
       }),
-    ).subscribe((pending: any[])=>{
-      this.notifications = pending.filter(id => id === parseInt(this.auth.userId));
+    ).subscribe((notified: any[])=>{
+      this.notified = notified.filter(id => id === parseInt(this.auth.userId));
     });
   }
 
