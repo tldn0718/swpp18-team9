@@ -299,3 +299,9 @@ class PostingTest(TestCase):
 		self.assertJSONEqual(response.content, {'posts': [
 				{'id':1, 'content': 'Likey', 'tags':[1,2]}
 			]})
+
+		response = client.post('/api/post/get/', json.dumps({
+			'selectedUsers': [
+				{'id': 1, 'first_name': 'Jihyo', 'last_name': 'Park'}
+			]}), content_type = 'application/json')
+		self.assertJSONEqual(response.content, {'posts': []})
