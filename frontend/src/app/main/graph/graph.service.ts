@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { of, fromEvent } from 'rxjs';
-import { map, pluck, tap } from 'rxjs/operators';
+import { of, fromEvent, throwError } from 'rxjs';
+import { concatMap, map, pluck, tap } from 'rxjs/operators';
 
 import { Node, Edge, Data, Network, DataSet } from 'vis';
 import { Friend, UserNode } from '../../../models';
@@ -21,6 +21,9 @@ export class GraphService {
   nodesDataset: DataSet<Node>;
   edges: Friend[];
 
+  displayMode: 'all' | 'level';
+  level: number;
+
   constructor(private http: HttpClient, private auth: AuthService) { }
 
   // server API
@@ -31,6 +34,10 @@ export class GraphService {
 
   getNotifications() {
     return this.http.get(`/api/friend/`);
+  }
+
+  sendAnswer(id: number, answer: string) {
+    return this.http.put(`/api/friend/${id}/`, {answer});
   }
 
   getFriends() {
@@ -67,6 +74,7 @@ export class GraphService {
   }
 
   initializeNetwork(container: HTMLElement) {
+    this.displayMode = 'all';
     return this.getFriends().pipe(
       tap((res: {users: UserNode[], friends: Friend[]}) => {
         this.makeNodesDataset(res.users);
@@ -81,6 +89,7 @@ export class GraphService {
   }
 
   makeAllNetwork() {
+    this.displayMode = 'all';
     return this.getFriends().pipe(
       tap((res: {users: UserNode[], friends: Friend[]}) => {
         this.makeNodesDataset(res.users);
@@ -95,6 +104,8 @@ export class GraphService {
   }
 
   makeLevelNetwork(level: number) {
+    this.displayMode = 'level';
+    this.level = level;
     return this.getLevel(level).pipe(
       tap((res: {users: UserNode[], friends: Friend[]}) => {
         this.makeNodesDataset(res.users);

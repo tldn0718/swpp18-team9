@@ -1,3 +1,13 @@
-<p>
-  notification works!
-</p>
+<div class="noti-container">
+	<div *ngFor="let notification of notifications" class="card noti-card">
+		<div class="card-body">
+			<p class="card-text">{{notification.content}}</p>
+		</div>
+		<div *ngIf="notification.select" class="card-footer">
+			<div class="btn-group noti-btns">
+				<button class="btn btn-sm btn-primary" (click)="checkAccept(notification.id)">Accept</button>
+				<button class="btn btn-sm btn-primary" (click)="checkDecline(notification.id)">Decline</button>
+			</div>
+		</div>
+	</div>
+</div>
