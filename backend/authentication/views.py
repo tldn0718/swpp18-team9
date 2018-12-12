@@ -165,20 +165,10 @@ def specificFriendRequest(request, id):
         now = timezone.now()
         newSenderNoti = Notification(
             content = 'You sent a friend request to {}.'.format(receiver.get_full_name()),
-            select = False,
-            datetime = now,
-            sender = sender,
-            receiver = receiver,
-            profile = sender,
-            )
+            select = False, datetime = now, sender = sender, receiver = receiver, profile = sender)
         newReceiverNoti = Notification(
             content = '{} sent a friend request to you.'.format(sender.get_full_name()),
-            select = True,
-            datetime = now,
-            sender = sender,
-            receiver = receiver,
-            profile = receiver,
-            )
+            select = True, datetime = now, sender = sender, receiver = receiver, profile = receiver)
         newSenderNoti.save()
         newReceiverNoti.save()
         return JsonResponse({'createdTime': now}, status=201)
@@ -227,7 +217,12 @@ def postingGet(request):
         posts = Post.objects.all().prefetch_related('tags')
         postResult = []
         for post in posts:
-            if all(tag.id in selectedID for tag in post.tags.all()):
+            #if all(tag.id in selectedID for tag in post.tags.all()):
+            #if all(i in post.tags.all().values() for i in selectedID):
+            #    postResult.append({'id': post.id, 'content': post.content,
+            #        'tags': [tag['id'] for tag in post.tags.all().values('id')]})
+            tagID = [i['id'] for i in list(post.tags.all().values('id'))]
+            if set(selectedID) == set(tagID):
                 postResult.append({'id': post.id, 'content': post.content,
                     'tags': [tag['id'] for tag in post.tags.all().values('id')]})
         return JsonResponse({'posts': postResult})

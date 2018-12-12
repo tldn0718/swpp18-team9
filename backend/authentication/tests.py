@@ -153,6 +153,47 @@ class FriendTestCase(TestCase):
 		self.assertIn(self.profile1, self.profile2.friends.all())
 		self.assertIn(self.profile2, self.profile1.friends.all())
 
+	def test_notification(self):
+		noti1 = Notification(
+			content = 'Yes or Yes',
+			select = False,
+			datetime = '2018-11-24T17:32:19.919Z',
+			read = False,
+			sender = self.account1,
+			receiver = self.account2,
+			profile = self.account1
+		)
+		noti2 = Notification(
+			content = 'Likey',
+			select = False,
+			datetime = '2018-11-24T17:32:19.919Z',
+			read = False,
+			sender = self.account1,
+			receiver = self.account2,
+			profile = self.account1
+			)
+		noti1.save()
+		noti2.save()
+		client = Client()
+		response = client.post('/api/signin/', json.dumps({'username': 'sana@twice.com',
+			'password': 'sana'}), content_type = 'application/json')
+		self.assertEqual(response.status_code, 200) #SignIn Succeed
+
+		response = client.get('/api/friend/')
+		self.assertEqual(json.loads(response.content), []) #Get Empty Notification
+
+		response = client.get('/api/signout/')
+		self.assertEqual(response.status_code, 204)
+
+		response = client.post('/api/signin/', json.dumps({'username': 'jihyo@twice.com',
+			'password': 'jihyo'}), content_type = 'application/json')
+		self.assertEqual(response.status_code, 200) #SignIn Succeed
+
+		response = client.get('/api/friend/')
+		notis = json.loads(response.content)
+		self.assertEqual(notis[0]['content'], 'Yes or Yes')
+		self.assertEqual(notis[1]['content'], 'Likey')
+		self.assertEqual(len(notis),2)
 
 
 class GraphTestCase(TestCase):
@@ -258,3 +299,9 @@ class PostingTest(TestCase):
 		self.assertJSONEqual(response.content, {'posts': [
 				{'id':1, 'content': 'Likey', 'tags':[1,2]}
 			]})
+
+		response = client.post('/api/post/get/', json.dumps({
+			'selectedUsers': [
+				{'id': 1, 'first_name': 'Jihyo', 'last_name': 'Park'}
+			]}), content_type = 'application/json')
+		self.assertJSONEqual(response.content, {'posts': []})
