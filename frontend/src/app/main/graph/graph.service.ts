@@ -33,6 +33,10 @@ export class GraphService {
     return this.http.get(`/api/friend/`);
   }
 
+  sendAnswer(id: number, answer: string) {
+    return this.http.put('/api/friend/${id}', answer);
+  }
+
   getFriends() {
     return this.http.get('/api/graph/').pipe(
       tap((friends: {users: UserNode[], friends: Friend[]})=>{

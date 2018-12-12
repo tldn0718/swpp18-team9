@@ -1,3 +1,6 @@
-<p>
-  notification works!
-</p>
+<div *ngFor="let notifiaction of notifications">
+	<button
+	(click)="checkAccept()">Accept</button>
+	<button 
+	(click)="checkDecline()">Decline</button>
+</div>
