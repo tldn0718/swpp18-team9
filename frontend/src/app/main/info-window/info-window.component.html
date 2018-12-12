@@ -13,7 +13,7 @@
       </h3>
       <p>{{profile.label}}</p>
       <div>
-        <button *ngIf="isPending(profile.id)" 
+        <button *ngIf="isPending(profile.id) && !isFriend(profile.id)" 
                 disabled type="button"
                 class="btn-sm btn-warning">
                 Pending
