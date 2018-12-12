@@ -34,7 +34,7 @@ export class GraphService {
   }
 
   sendAnswer(id: number, answer: string) {
-    return this.http.put('/api/friend/${id}', answer);
+    return this.http.put(`/api/friend/${id}/`, {answer});
   }
 
   getFriends() {

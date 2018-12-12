@@ -25,6 +25,7 @@ export class NotificationComponent implements OnInit {
   	this.graph.getNotifications().pipe(
       map((allNoti: any[])=>{
         console.log('allNoti', allNoti);
+        console.log('userId', this.auth.userId)
         let receiver = allNoti.filter((noti) => noti.receiver === parseInt(this.auth.userId));
         return receiver;
       }),
@@ -36,13 +37,14 @@ export class NotificationComponent implements OnInit {
 
   //this id is notifiaction id
   checkAccept(id: number){
-    this.graph.sendAnswer(id, 'accept');
-    this.updateNotification();
-    this.update.emit();
+    this.graph.sendAnswer(id, 'accept').subscribe((res)=>{
+      this.updateNotification();
+    });
   }
 
   checkDecline(id: number){
-  	this.graph.sendAnswer(id, 'decline');
-    this.updateNotification();
+  	this.graph.sendAnswer(id, 'decline').subscribe((res)=>{
+      this.updateNotification();
+    });
   }
 }
