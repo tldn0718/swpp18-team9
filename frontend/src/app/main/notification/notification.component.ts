@@ -24,13 +24,10 @@ export class NotificationComponent implements OnInit {
   updateNotification() {
   	this.graph.getNotifications().pipe(
       map((allNoti: any[])=>{
-        console.log('allNoti', allNoti);
-        console.log('userId', this.auth.userId)
         let receiver = allNoti.filter((noti) => noti.receiver === parseInt(this.auth.userId));
         return receiver;
       }),
     ).subscribe((myNoti: any[])=>{
-      console.log('received notifications: ', myNoti);
       this.notifications = myNoti;
     });
   }
@@ -38,6 +35,8 @@ export class NotificationComponent implements OnInit {
   //this id is notifiaction id
   checkAccept(id: number){
     this.graph.sendAnswer(id, 'accept').subscribe((res)=>{
+      if(this.graph.displayMode == 'all') this.graph.makeAllNetwork().subscribe();
+      else if(this.graph.displayMode == 'level') this.graph.makeLevelNetwork(this.graph.level).subscribe();
       this.updateNotification();
     });
   }
