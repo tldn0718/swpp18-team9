@@ -6,6 +6,8 @@ import { WritePostComponent } from '../write-post/write-post.component';
 import { concatMap, pluck, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
+import { AuthService  } from '../../auth';
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -16,17 +18,26 @@ export class ProfileComponent implements OnInit {
   selectedNodes: any[];
   selectedUsers: User[];
   posts: any[] = [];
+  distance: any;
 
   constructor(
     private modal: NgbModal,
     private activeModal: NgbActiveModal, 
-    private profile: ProfileService
+    private profile: ProfileService,
+    private auth: AuthService
     ) { }
 
   ngOnInit() {
     this.profile.getUserInfo(this.selectedNodes).pipe(
       concatMap((users)=>{
         this.selectedUsers = users;
+        if(this.selectedNodes.length==1){
+          this.selectedNodes.concat(this.auth.user);
+          this.distance = this.profile.getDistance(this.selectedNodes);
+        }
+        else{
+          this.distance = this.profile.getDistance(this.selectedNodes);
+        }
         console.log('selected users', this.selectedUsers);
         return this.profile.getPost(this.selectedUsers);
       }),

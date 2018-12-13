@@ -15,6 +15,14 @@ export class ProfileService {
     return this.http.post<User[]>('/api/user/', {selectedNodes});
   }
 
+  getDistance(selectedNodes: UserNode[]) {
+    if(selectedNodes.length == 2){
+      return this.http.post('/api/distance/get/', {selectedNodes});
+    }else{
+      return null;
+    }
+  }
+
   writePost(selectedUsers: User[], content: string) {
     return this.http.post('/api/post/write/', {
       selectedUsers,
