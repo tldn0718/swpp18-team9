@@ -237,7 +237,7 @@ groups and mutual_friends filed can be blank. Then, these fields are [].
 {
   name: string,
   motto: string,
-  groups: ['Twice', 'Once', ...],
+  groups: string[],
   distance: integer,
   mutual_friends: [
     {
@@ -245,5 +245,27 @@ groups and mutual_friends filed can be blank. Then, these fields are [].
       name: string
     }
   ]
+}
+```
+
+### /api/profile/multi/
+- **method: POST**
+`Return profile of given users.`
+- **request body:**
+```
+{
+  selectedNodes<UserNode[]>: [
+    {id: 3, label: 'John'},
+    {id: 15, label: 'David'},
+    ...
+  ]
+}
+```
+- **response body:**
+```
+{
+  names: string[],
+  groups: string[],
+  distance: integer
 }
 ```
