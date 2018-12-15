@@ -15,5 +15,7 @@ urlpatterns = [
     path('search/<str:term>/',views.search , name='search'),
     path('post/get/',views.postingGet,name='postingGet'),
     path('post/write/',views.postingWrite,name='postingWrite'),
+    path('profile/one/<int:id>/',views.profile_one,name='profile_one'),
+    path('profile/multi/',views.profile_multiple,name='profile_multiple'),
     path('token/', views.token, name='token'),
 ]

@@ -319,3 +319,9 @@ class PostingTest(TestCase):
 				{'id': 3, 'first_name': 'Sana', 'last_name': 'Minatozaki'},
 			]}), content_type = 'application/json')
 		self.assertJSONEqual(response.content, {'posts': []})
+
+class ProfileTest(TestCase):
+	def setUp(self):
+		pass
+	def test_get_one_profile(self):
+		print("Hello World")

@@ -215,10 +215,10 @@ def postingGet(request):
         posts = Post.objects.all().prefetch_related('tags')
         postResult = []
         for post in posts:
-            tagID = [i['id'] for i in post.tags.all().values('id')]
+            tagID = post.tags.values_list('id', flat=True) # [i['id'] for i in post.tags.all().values('id')]
             if set(selectedID) == set(tagID):
                 postResult.append({'id': post.id, 'content': post.content,
-                    'tags': [tag['id'] for tag in post.tags.all().values('id')]})
+                    'tags': }) #[tag['id'] for tag in post.tags.all().values('id')]
         return JsonResponse({'posts': postResult})
     else:
         return HttpResponseNotAllowed(['POST'])
@@ -257,7 +257,7 @@ def group(request):
         group.members.add(request.user.account_of)
         return JsonResponse({'created': created})
     else:
-        return HttpResponseNotAllowed([''])
+        return HttpResponseNotAllowed(['GET', 'POST'])
 
 def group_detail(request, id):
     #return a graph info of the group whose id is 'id'.
@@ -273,13 +273,41 @@ def group_detail(request, id):
                 if (friend_id in members_id) and (member.id < friend_id):
                     nodes.append({'from': member.id,'to': friend_id})
         return JsonResponse({'users': nodes, 'friends': edges})
+    else:
+        return HttpResponseNotAllowed(['GET'])
 
-def profile(request):
+#Return or edit the profile of given user. The parameter is id of Profile model.
+def profile_one(request, id):
     if request.method == 'GET':
-        profile = request.user.account_of
-        motto = profile.motto
-        group = profile.group_set.name
-        return JsonResponse()
+        target_user = Profile.objects.get(id=id).prefetch_related('group_set')
+        name = target_user.account.get_full_name()
+        motto = target_user.motto
+        groups = target_user.group_set.values_list('name', flat=True)
+        if(request.user.id == id):
+            distance = 0
+            mutual_friends = []
+        else:
+            distance = distance(request.user.account_of, target_user)
+            target_friends_IDs = set(target_user.friends.values_list('id', flat=True))
+            my_friends_IDs = set(request.user.account_of.friends.values_list('id', flat=True))
+            mutual_friends_IDs = target_friends_IDs & my_friends_IDs
+            mutual_friends = Account.objects.filter(account_of__in=mutual_friends_IDs).values_list('id','first_name', 'last_name')
+            mutual_friends_result = [{'id': f[0], 'name': f[1] + " " + f[2]} for f in mutual_friends]
+        return JsonResponse({'full_name': name, 'motto': motto, 'groups': groups,
+            'distance': distance, 'mutual_friends': mutual_friends_result})
+    elif request.method == 'PUT':
+        if request.user.
+    else:
+        return HttpResponseNotAllowed(['GET', 'PUT'])
+
+
+def profile_multiple(request):
+    pass
+
+
+#The parameters are Profile model.
+def get_distance(start, target):
+    return 1
 
 @ensure_csrf_cookie
 def token(request):
