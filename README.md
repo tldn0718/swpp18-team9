@@ -232,7 +232,7 @@ None
 motto filed can be blank. Then, this field is ''.
 groups and mutual_friends filed can be blank. Then, these fields are [].
 {
-  full_name: string,
+  name: string,
   motto: string,
   groups: ['Twice', 'Once', ...],
   distance: integer,
