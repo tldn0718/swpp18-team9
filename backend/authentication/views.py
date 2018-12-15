@@ -243,6 +243,14 @@ def postingWrite(request):
     else:
         return HttpResponseNotAllowed(['POST'])
 
+
+def group(request):
+    if request.method == 'POST':
+        pass
+    else:
+        return HttpResponseNotAllowed([''])
+
+
 @ensure_csrf_cookie
 def token(request):
     if request.method == 'GET':

@@ -119,3 +119,10 @@ class Post(models.Model):
             related_name = 'posts'
         )
     content = models.TextField()
+
+class Group():
+    name = models.CharField(max_length=120)
+    members = models.ManyToManyField(
+            settings.AUTH_USER_MODEL,
+            related_name = 'group_set'
+        )
