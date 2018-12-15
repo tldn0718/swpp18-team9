@@ -219,3 +219,28 @@ Profile {
   message: 'success' | 'fail'
 }
 ```
+
+### /api/profile/one/<int:id>/
+- **method: GET**
+`Return profile of given user. The parameter is id of Account model.`
+- **request body:**
+```
+None
+```
+- **response body:**
+```
+motto filed can be blank. Then, this field is ''.
+groups and mutual_friends filed can be blank. Then, these fields are [].
+{
+  full_name: string,
+  motto: string,
+  groups: ['Twice', 'Once', ...],
+  distance: integer,
+  mutual_friends: [
+    {
+      id: integer,
+      name: string
+    }
+  ]
+}
+```
