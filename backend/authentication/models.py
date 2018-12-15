@@ -123,6 +123,6 @@ class Post(models.Model):
 class Group():
     name = models.CharField(max_length=120)
     members = models.ManyToManyField(
-            settings.AUTH_USER_MODEL,
+            Profile,
             related_name = 'group_set'
         )

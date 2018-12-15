@@ -187,6 +187,7 @@ def search(request, term):
     else:
         return HttpResponseNotAllowed(['GET'])
 
+#Change the node data to the user data
 def getSelectedUsers(request):
     if request.method == 'POST':
         try:
@@ -241,10 +242,11 @@ def postingWrite(request):
 
 
 def group(request):
+    #return all groups which the user belongs to
     if request.method == 'GET':
-        #get all groups which the user belongs to
-        groups = [group for group in request.user.group_set.all().values('id', 'name')]
+        groups = [group for group in request.user.account_of.group_set.all().values('id', 'name')]
         return JsonResponse(groups, safe = False)
+    #add the user to the specific group. It takes a name of group by Json
     else if request.method == 'POST':
         try:
             body = request.body.decode()
@@ -252,16 +254,24 @@ def group(request):
         except:
             return HttpResponseBadRequest()
         group, created = Group.objects.get_or_create(name=name)
+        group.members.add(request.user.account_of)
         return JsonResponse({'created': created})
     else:
         return HttpResponseNotAllowed([''])
 
 def group_detail(request, id):
+    #return a graph info of the group whose id is 'id'.
     if request.method == 'GET':
         group = Group.objects.get(id=id).prefetch_related('members')
-        members = group.members.all().values()
-        users = [{'id': member.id, 'label': member.get_full_name()} for member in members]
-        friends = []
+        members = group.members.all()
+        members_id = group.values_list('members__id', flat=True)
+        nodes = edges = []
+        for member in members:
+            nodes.append({'id': member.id, 'label': member.account.first_name})
+            for friend_id in member.values_list('friends__id', flat=True):
+                if (friend_id in members_id) and (member.id < friend_id):
+                    nodes.append({'from': member.id,'to': friend_id})
+        return JsonResponse({'users': nodes, 'friends': edges})
 
 @ensure_csrf_cookie
 def token(request):
