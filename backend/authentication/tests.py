@@ -278,7 +278,7 @@ class PostingTest(TestCase):
 			'content': 'The Best Thing I Ever Did'
 			}), content_type = 'application/json')
 		newPost = Post.objects.get(id=1)
-		self.assertEqual(response.status_code, 201)
+		self.assertEqual(response.status_code, 200)
 		self.assertEqual(newPost.content, 'The Best Thing I Ever Did')
 		self.assertEqual(list(newPost.tags.all()), [self.account1, self.account2])
 	def test_post_get(self):
@@ -315,7 +315,7 @@ class PostingTest(TestCase):
 		response = client.post('/api/post/get/', json.dumps({
 			'selectedUsers': [
 				{'id': 1, 'first_name': 'Jihyo', 'last_name': 'Park'},
-				{'id': 2, 'first_name': 'Nayeon', 'last_name': 'Im'}
+				{'id': 2, 'first_name': 'Nayeon', 'last_name': 'Im'},
 				{'id': 3, 'first_name': 'Sana', 'last_name': 'Minatozaki'},
 			]}), content_type = 'application/json')
 		self.assertJSONEqual(response.content, {'posts': []})
