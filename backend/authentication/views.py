@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 #from django.core import serializers
 import json
 from json.decoder import JSONDecodeError
-from .models import Account, Profile, Notification, Post
+from .models import Account, Profile, Notification, Post, Group
 from django.db.models import Q
 from queue import Queue
 from django.utils import timezone
@@ -68,7 +68,7 @@ def totalGraph(request):
         response_users = []
         response_friends = []
 
-        for user in Profile.objects.all():
+        for user in Profile.objects.all().prefetch_related('friends'):
             response_users.append(user.user_toJSON())
             for friend in user.friends.all():
                 if user.account.id < friend.account.id:
@@ -135,11 +135,8 @@ def specificFriendRequest(request, id):
         senderNoti = sender.noti_set.get(receiver= receiver)
         now = timezone.now()
 
-        senderNoti.datetime = now
-        senderNoti.read = False
-        receiverNoti.select = False
-        receiverNoti.datetime = now
-        receiverNoti.read = False
+        senderNoti.datetime = receiverNoti.datetime = now
+        senderNoti.read = receiverNoti.select = receiverNoti.read = False
         
         if answer == 'accept':
             receiverNoti.content = 'You accepted a friend request from {}.'.format(
@@ -234,10 +231,9 @@ def postingWrite(request):
             content = json.loads(body)['content']
         except:
             return HttpResponseBadRequest()
-        newPost = Post(content=content)
+        newPost = Post.objects.create(content=content)
         tagedID = [user['id'] for user in seletedUsers]
         tagedUsers = Account.objects.filter(id__in = tagedID)
-        newPost.save()
         newPost.tags.set(tagedUsers)
         return JsonResponse({'message': 'success'});
     else:
@@ -245,11 +241,27 @@ def postingWrite(request):
 
 
 def group(request):
-    if request.method == 'POST':
-        pass
+    if request.method == 'GET':
+        #get all groups which the user belongs to
+        groups = [group for group in request.user.group_set.all().values('id', 'name')]
+        return JsonResponse(groups, safe = False)
+    else if request.method == 'POST':
+        try:
+            body = request.body.decode()
+            name = json.loads(body)['name']
+        except:
+            return HttpResponseBadRequest()
+        group, created = Group.objects.get_or_create(name=name)
+        return JsonResponse({'created': created})
     else:
         return HttpResponseNotAllowed([''])
 
+def group_detail(request, id):
+    if request.method == 'GET':
+        group = Group.objects.get(id=id).prefetch_related('members')
+        members = group.members.all().values()
+        users = [{'id': member.id, 'label': member.get_full_name()} for member in members]
+        friends = []
 
 @ensure_csrf_cookie
 def token(request):
