@@ -98,6 +98,9 @@ Profile {
     select: boolean, #represent that it should show 'accept' and 'decline' buttons
     datetime: string,
     read: boolean,
+    sender_id: integer,
+		receiver_id: integer,
+    profile_id: integer
     },
   1: {
   ...
