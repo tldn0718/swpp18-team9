@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 import json
-from authentication.models import Account, Profile, Notification, Post
+from authentication.models import Account, Profile, Notification, Post, Group
 
 class AuthenticationTestCase(TestCase):
 	def test(self):
@@ -44,12 +44,9 @@ class FriendTestCase(TestCase):
 		self.account1 = Account.objects.create_user(email='jihyo@twice.com', first_name='Jihyo', last_name='Park', password='jihyo')
 		self.account2 = Account.objects.create_user(email='nayeon@twice.com', first_name='Nayeon', last_name='Im', password='nayeon')
 		self.account3 = Account.objects.create_user(email='sana@twice.com', first_name='Sana', last_name='Minatozaki', password='sana')
-		self.profile1 = Profile(account=self.account1)
-		self.profile2 = Profile(account=self.account2)
-		self.profile3 = Profile(account=self.account3)
-		self.profile1.save()
-		self.profile2.save()
-		self.profile3.save()
+		self.profile1 = Profile.objects.create(account=self.account1)
+		self.profile2 = Profile.objects.create(account=self.account2)
+		self.profile3 = Profile.objects.create(account=self.account3)
 
 	def test_send_friend_request(self):
 		client = Client()
@@ -205,14 +202,10 @@ class SearchTestCase(TestCase):
 		self.account2 = Account.objects.create_user(email='nayeon@twice.com', first_name='Nayeon', last_name='Im', password='nayeon')
 		self.account3 = Account.objects.create_user(email='sana@twice.com', first_name='Sana', last_name='Minatozaki', password='sana')
 		self.account4 = Account.objects.create_user(email='sana@once.com', first_name='Sana', last_name='CuteSexy', password='sana')
-		self.profile1 = Profile(account=self.account1)
-		self.profile2 = Profile(account=self.account2)
-		self.profile3 = Profile(account=self.account3)
-		self.profile4 = Profile(account=self.account4)
-		self.profile1.save()
-		self.profile2.save()
-		self.profile3.save()
-		self.profile4.save()
+		self.profile1 = Profile.objects.create(account=self.account1)
+		self.profile2 = Profile.objects.create(account=self.account2)
+		self.profile3 = Profile.objects.create(account=self.account3)
+		self.profile4 = Profile.objects.create(account=self.account4)
 	def test_search(self):
 		client = Client()
 		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
@@ -234,12 +227,9 @@ class GetSelectedUsersTest(TestCase):
 		self.account1 = Account.objects.create_user(email='jihyo@twice.com', first_name='Jihyo', last_name='Park', password='jihyo')
 		self.account2 = Account.objects.create_user(email='nayeon@twice.com', first_name='Nayeon', last_name='Im', password='nayeon')
 		self.account3 = Account.objects.create_user(email='sana@twice.com', first_name='Sana', last_name='Minatozaki', password='sana')
-		self.profile1 = Profile(account=self.account1)
-		self.profile2 = Profile(account=self.account2)
-		self.profile3 = Profile(account=self.account3)
-		self.profile1.save()
-		self.profile2.save()
-		self.profile3.save()
+		self.profile1 = Profile.objects.create(account=self.account1)
+		self.profile2 = Profile.objects.create(account=self.account2)
+		self.profile3 = Profile.objects.create(account=self.account3)
 	def test_user(self):
 		client = Client()
 		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
@@ -258,12 +248,9 @@ class PostingTest(TestCase):
 		self.account1 = Account.objects.create_user(email='jihyo@twice.com', first_name='Jihyo', last_name='Park', password='jihyo')
 		self.account2 = Account.objects.create_user(email='nayeon@twice.com', first_name='Nayeon', last_name='Im', password='nayeon')
 		self.account3 = Account.objects.create_user(email='sana@twice.com', first_name='Sana', last_name='Minatozaki', password='sana')
-		self.profile1 = Profile(account=self.account1)
-		self.profile2 = Profile(account=self.account2)
-		self.profile3 = Profile(account=self.account3)
-		self.profile1.save()
-		self.profile2.save()
-		self.profile3.save()
+		self.profile1 = Profile.objects.create(account=self.account1)
+		self.profile2 = Profile.objects.create(account=self.account2)
+		self.profile3 = Profile.objects.create(account=self.account3)
 	def test_post_write(self):
 		client = Client()
 		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
@@ -322,6 +309,23 @@ class PostingTest(TestCase):
 
 class ProfileTest(TestCase):
 	def setUp(self):
-		pass
+		self.account1 = Account.objects.create_user(email='jihyo@twice.com', first_name='Jihyo', last_name='Park', password='jihyo')
+		self.account2 = Account.objects.create_user(email='nayeon@twice.com', first_name='Nayeon', last_name='Im', password='nayeon')
+		self.account3 = Account.objects.create_user(email='sana@twice.com', first_name='Sana', last_name='Minatozaki', password='sana')
+		self.profile1 = Profile.objects.create(account=self.account1)
+		self.profile2 = Profile.objects.create(account=self.account2)
+		self.profile3 = Profile.objects.create(account=self.account3)
+		self.profile1.friends.add(self.profile2)
+		self.profile1.friends.add(self.profile3)
+		self.profile2.friends.add(self.profile3)
+		self.group1 = Group.objects.create(name='Twice')
+		self.group1.members.add(self.profile1, self.profile2, self.profile3)
 	def test_get_one_profile(self):
-		print("Hello World")
+		client = Client()
+		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+			'password': 'nayeon'}), content_type = 'application/json')
+		self.assertEqual(response.status_code, 200) #SignIn Succeed
+
+		response = client.get('/api/profile/one/1/')
+		self.assertJSONEqual(response.content, {'full_name': 'Jihyo Park', 'motto': '', 'groups': ['Twice'],
+            'distance': 1, 'mutual_friends': [{'id': 3, 'name': 'Sana Minatozaki'}]})

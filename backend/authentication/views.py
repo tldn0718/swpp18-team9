@@ -14,6 +14,10 @@ from django.utils import timezone
 def index(request):
     return HttpResponse("index")
 
+#The parameters are Profile model.
+def get_distance(start, target):
+    return 1
+
 def signup(request):
     if request.method == 'POST':
         try:
@@ -122,7 +126,7 @@ def totalFriendRequest(request):
 
 def specificFriendRequest(request, id):
     if request.method == 'PUT':
-        #change the notifications when receiver seleted 'accept' or 'decline'
+        #change the notifications when receiver selected 'accept' or 'decline'
         try:
             body = request.body.decode()
             answer = json.loads(body)['answer']
@@ -196,10 +200,10 @@ def getSelectedUsers(request):
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
         selectedID = []
-        for seletedNode in selectedNodes:
-            selectedID.append(seletedNode['id'])
-        seletedUsers = [user for user in Account.objects.filter(id__in = selectedID).values('id','first_name','last_name')]
-        return JsonResponse(seletedUsers, safe=False)
+        for selectedNode in selectedNodes:
+            selectedID.append(selectedNode['id'])
+        selectedUsers = [user for user in Account.objects.filter(id__in = selectedID).values('id','first_name','last_name')]
+        return JsonResponse(selectedUsers, safe=False)
     else:
         return HttpResponseNotAllowed(['POST'])
 
@@ -218,7 +222,7 @@ def postingGet(request):
             tagID = post.tags.values_list('id', flat=True) # [i['id'] for i in post.tags.all().values('id')]
             if set(selectedID) == set(tagID):
                 postResult.append({'id': post.id, 'content': post.content,
-                    'tags': }) #[tag['id'] for tag in post.tags.all().values('id')]
+                    'tags': list(post.tags.values_list('id', flat=True))}) #[tag['id'] for tag in post.tags.all().values('id')]
         return JsonResponse({'posts': postResult})
     else:
         return HttpResponseNotAllowed(['POST'])
@@ -228,12 +232,12 @@ def postingWrite(request):
     if request.method == 'POST':
         try:
             body = request.body.decode()
-            seletedUsers = json.loads(body)['selectedUsers']
+            selectedUsers = json.loads(body)['selectedUsers']
             content = json.loads(body)['content']
         except:
             return HttpResponseBadRequest()
         newPost = Post.objects.create(content=content)
-        tagedID = [user['id'] for user in seletedUsers]
+        tagedID = [user['id'] for user in selectedUsers]
         tagedUsers = Account.objects.filter(id__in = tagedID)
         newPost.tags.set(tagedUsers)
         return JsonResponse({'message': 'success'});
@@ -242,12 +246,8 @@ def postingWrite(request):
 
 
 def group(request):
-    #return all groups which the user belongs to
-    if request.method == 'GET':
-        groups = [group for group in request.user.account_of.group_set.all().values('id', 'name')]
-        return JsonResponse(groups, safe = False)
     #add the user to the specific group. It takes a name of group by Json
-    else if request.method == 'POST':
+    elif request.method == 'POST':
         try:
             body = request.body.decode()
             name = json.loads(body)['name']
@@ -259,6 +259,12 @@ def group(request):
     else:
         return HttpResponseNotAllowed(['GET', 'POST'])
 
+#note that the name of the group should be unique
+#note that the name of the group should be unique
+#note that the name of the group should be unique
+#note that the name of the group should be unique
+#note that the name of the group should be unique
+#note that the name of the group should be unique
 def group_detail(request, id):
     #return a graph info of the group whose id is 'id'.
     if request.method == 'GET':
@@ -276,38 +282,59 @@ def group_detail(request, id):
     else:
         return HttpResponseNotAllowed(['GET'])
 
-#Return or edit the profile of given user. The parameter is id of Profile model.
+#Return or edit the profile of given user. The parameter is id of Account model.
 def profile_one(request, id):
     if request.method == 'GET':
-        target_user = Profile.objects.get(id=id).prefetch_related('group_set')
+        target_user_q = Profile.objects.filter(account_id=id).prefetch_related('group_set', 'account')
+        target_user = target_user_q[0]
         name = target_user.account.get_full_name()
         motto = target_user.motto
-        groups = target_user.group_set.values_list('name', flat=True)
+        groups = list(target_user.group_set.values_list('name', flat=True))
         if(request.user.id == id):
             distance = 0
             mutual_friends = []
         else:
-            distance = distance(request.user.account_of, target_user)
-            target_friends_IDs = set(target_user.friends.values_list('id', flat=True))
-            my_friends_IDs = set(request.user.account_of.friends.values_list('id', flat=True))
+            distance = get_distance(request.user.account_of, target_user)
+            target_friends_IDs = set(target_user.friends.values_list('account_id', flat=True))
+            my_friends_IDs = set(request.user.account_of.friends.values_list('account_id', flat=True))
             mutual_friends_IDs = target_friends_IDs & my_friends_IDs
-            mutual_friends = Account.objects.filter(account_of__in=mutual_friends_IDs).values_list('id','first_name', 'last_name')
+            mutual_friends = Account.objects.filter(id__in=mutual_friends_IDs).values_list('id','first_name', 'last_name')
             mutual_friends_result = [{'id': f[0], 'name': f[1] + " " + f[2]} for f in mutual_friends]
-        return JsonResponse({'full_name': name, 'motto': motto, 'groups': groups,
+        return JsonResponse({'name': name, 'motto': motto, 'groups': groups,
             'distance': distance, 'mutual_friends': mutual_friends_result})
     elif request.method == 'PUT':
-        if request.user.
+        if(request.id != id):
+            return HttpResponse(status=401)
+        try:
+            body = request.body.decode()
+            selectedUsers = json.loads(body)['selectedUsers']
+        except:
+            return HttpResponseBadRequest()
     else:
         return HttpResponseNotAllowed(['GET', 'PUT'])
 
 
 def profile_multiple(request):
-    pass
+    if request.method == 'GET':
+        try:
+            body = request.body.decode()
+            selectedNodes = json.loads(body)['selectedNodes']
+        except:
+            return HttpResponseBadRequest()
+        selectedIDs = [map(lambda x: x['id'],selectedNodes)]
+        selectedUsers = Profle.objects.filter(account_id__in=selectedID).prefetch_related('account', 'group_set')
+        names = selectedUsers.values_list('account_name', flat=True)
+        common_groups = set(selectedUsers[0].group_set.values_list('id', flat=True))
+        for user in selectedUsers[1:]:
+            common_groups = common_groups & set(user.group_set.values_list('id', flat=True))
+        if len()==2:
+            distance=get_distance(selectedUsers[0], selectedUsers[1])
+        else:
+            distance=0
+        return JsonResponse({'names': names, 'groups':, 'distance':distance})
+    else:
+        return HttpResponseNotAllowed(['GET'])
 
-
-#The parameters are Profile model.
-def get_distance(start, target):
-    return 1
 
 @ensure_csrf_cookie
 def token(request):
