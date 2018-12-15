@@ -262,6 +262,7 @@ def group(request):
 def group_detail(request, id):
     #return a graph info of the group whose id is 'id'.
     if request.method == 'GET':
+        #Error Handling? - What should it work when the group whose id is 'id' does not exist?
         group = Group.objects.get(id=id).prefetch_related('members')
         members = group.members.all()
         members_id = group.values_list('members__id', flat=True)
@@ -272,6 +273,13 @@ def group_detail(request, id):
                 if (friend_id in members_id) and (member.id < friend_id):
                     nodes.append({'from': member.id,'to': friend_id})
         return JsonResponse({'users': nodes, 'friends': edges})
+
+def profile(request):
+    if request.method == 'GET':
+        profile = request.user.account_of
+        motto = profile.motto
+        group = profile.group_set.name
+        return JsonResponse()
 
 @ensure_csrf_cookie
 def token(request):

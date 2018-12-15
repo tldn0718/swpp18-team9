@@ -73,6 +73,7 @@ class Profile(models.Model):
             'self',
             related_name = 'friends_of'
         )
+        motto = models.CharField(max_length=200)
 
         def user_toJSON(self):
             return {
