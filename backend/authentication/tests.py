@@ -32,7 +32,7 @@ class AuthenticationTestCase(TestCase):
 
 		response = client.post('/api/signin/', json.dumps({'username': 'admin@yeon.com',
 			'password': 'admin'}), content_type = 'application/json', HTTP_X_CSRFTOKEN = csrftoken)
-		self.assertEqual(response.status_code, 200)		
+		self.assertEqual(response.status_code, 200)
 		response = client.get('/api/graph/')
 		self.assertEqual(response.status_code, 200)
 		response = client.get('/api/graph/2/')
@@ -102,7 +102,7 @@ class FriendTestCase(TestCase):
 				'receiver': 2
 			}])
 
-	
+
 	def test_receive_friend_request(self):
 		client = Client()
 		notiOfSender = Notification(
@@ -236,7 +236,7 @@ class GetSelectedUsersTest(TestCase):
 			'password': 'nayeon'}), content_type = 'application/json')
 		self.assertEqual(response.status_code, 200) #SignIn Succeed
 
-		response = client.post('/api/user/', json.dumps({'selectedNodes': 
+		response = client.post('/api/user/', json.dumps({'selectedNodes':
 			[{'id': 1, 'label': 'Jihyo'},
 			{'id': 2, 'label': 'Nayeon'}]}), content_type = 'application/json')
 		self.assertJSONEqual(response.content, [
@@ -320,6 +320,9 @@ class ProfileTest(TestCase):
 		self.profile2.friends.add(self.profile3)
 		self.group1 = Group.objects.create(name='Twice')
 		self.group1.members.add(self.profile1, self.profile2, self.profile3)
+		self.group2 = Group.objects.create(name='Korean')
+		self.group2.members.add(self.profile1, self.profile2)
+
 	def test_get_one_profile(self):
 		client = Client()
 		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
@@ -327,5 +330,21 @@ class ProfileTest(TestCase):
 		self.assertEqual(response.status_code, 200) #SignIn Succeed
 
 		response = client.get('/api/profile/one/1/')
-		self.assertJSONEqual(response.content, {'full_name': 'Jihyo Park', 'motto': '', 'groups': ['Twice'],
+		self.assertJSONEqual(response.content, {'name': 'Jihyo Park', 'motto': '', 'groups': ['Twice','Korean'],
             'distance': 1, 'mutual_friends': [{'id': 3, 'name': 'Sana Minatozaki'}]})
+
+	def test_get_multiple_profile(self):
+		client = Client()
+		response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+			'password': 'nayeon'}), content_type = 'application/json')
+		self.assertEqual(response.status_code, 200) #SignIn Succeed
+
+		response = client.post('/api/profile/multi/', json.dumps({'selectedNodes':
+			[{'id': 1, 'label': 'Jihyo'}, {'id': 2, 'label': 'Sana'}]}), content_type='application/json')
+		#self.assertJSONEqual(response.content, {'names': ['Jihyo Park','Nayeon Im'], 'groups': ['Twice','Korean'], 'distance':1})
+		result = json.loads(response.content)
+		self.assertEqual(result['names'], ['Jihyo Park','Nayeon Im'])
+		self.assertIn('Twice',result['groups'])
+		self.assertIn('Korean',result['groups'])
+		self.assertEqual(len(result['groups']), 2)
+		self.assertEqual(result['distance'], 1)
