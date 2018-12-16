@@ -247,10 +247,22 @@ groups and mutual_friends filed can be blank. Then, these fields are [].
   ]
 }
 ```
+- **method: PUT**
+- **request body:**
+```
+{
+  motto: string
+}
+```
+- **response body:**
+```
+None
+```
 
 ### /api/profile/multi/
+`` get names and common groups of users.
+If users are more than two, then this also return the distance between two users.``
 - **method: POST**
-`Return profile of given users.`
 - **request body:**
 ```
 {
@@ -270,51 +282,65 @@ groups and mutual_friends filed can be blank. Then, these fields are [].
 }
 ```
 
-### /api/post/<int:postId>/comment/
-- **method: GET**
-`Return list of comments written in the specified post`
-- **request body:** `none`
+### /api/group/
+``create a group with the info given by Json``
+- **method: POST**
+- **request body:**
+```
+{
+  name: string,
+  motto: string,
+  selectedNodes<UserNode[]>: [
+    {id: 3, label: 'John'},
+    {id: 15, label: 'David'},
+    ...
+  ]
+}
+```
 - **response body:**
 ```
-[
-  {id:0, content: "test content", author: "test author name"},
-  {id:1, content: "test content", author: "test author name"},
-  {id:2, content: "test content", author: "test author name"},
-  ...
-]
+None
 ```
-- **method: POST**
-`Submit a comment to a post`
+
+### /api/group/<int:id>
+- **method: GET**
+`return a graph info of the group whose id is 'id'.`
+- **request body:**
+```
+None
+```
+- **response body:**
+```
+{
+  users: {
+    id: number,
+    label: string,
+  }
+  friends: {
+    from: number,
+    to: number,
+  }
+}
+```
+- **method: PUT**
+`add the user to the specific group.`
+- **request body:**
+```
+None
+```
+- **response body:**
+```
+None
+```
+- **method: DELETE**
+`let the user leave a group`
 - **request body:**
 ```
 {
-  postId: number,
-  content: string,
-  userId: number
+  None
 }
 ```
-- **response body:** `none`
-
-### /api/post/<int:postId>/like/
-- **method: POST**
-`Like a certain post`
-- **request body:**
+- **response body:**
 ```
-{
-  userId: number
-}
-```
-- **response body:** `none` 
-
-### Post Model Interface - for reference
-```
-export interface Post {
-    id: number, // id of the post
-    content: string, // content of the post
-    tags: number[], // ids of the users tagged
-    author: number, // id of the author
-    createdTime: string, // post creation time
-    likes: number[], // array of ids of users
-    comments: number[] // ids of the comments
-}
+None
 ```
