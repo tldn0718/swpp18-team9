@@ -7,7 +7,7 @@
 <div class="modal-body profile-container">
   <h5><span *ngFor="let user of selectedUsers">{{' @' + user.first_name}}</span></h5>
     <div *ngIf="one" class="info-body-one">
-      <pre class="motto">{{info.motto}}</pre>
+      <pre class="motto">{{': ' + info.motto}}</pre>
       <pre class="disatnce">{{'(He is ' + info.distance + ' nodes away from you)'}}</pre>
       <pre class="group">
         <h6>Groups</h6>
