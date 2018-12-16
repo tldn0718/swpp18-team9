@@ -122,7 +122,8 @@ class Post(models.Model):
     content = models.TextField()
 
 class Group(models.Model):
-    name = models.CharField(max_length=120, unique=True)
+    name = models.CharField(max_length=120)
+    motto = models.CharField(max_length=200, blank=True)
     members = models.ManyToManyField(
             Profile,
             related_name = 'group_set'

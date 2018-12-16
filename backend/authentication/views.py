@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from django.http import HttpResponseNotAllowed, HttpResponseBadRequest
+from django.http import HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseNotFound
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
 import json
@@ -17,7 +17,6 @@ def index(request):
 # The parameters are Profile model.
 def get_distance(start, target):
     return 1
-
 
 def signup(request):
     if request.method == 'POST':
@@ -189,12 +188,19 @@ def search(request, term):
         if ' ' in term:
             firstName = term.split()[0]
             lastName = term.split()[1]
-            result = [account for account in Account.objects.filter(first_name__icontains=firstName).filter(last_name__icontains=lastName).values('id', 'first_name', 'last_name')]
+            persons_result = [account for account in Account.objects.filter(
+                first_name__iendswith=firstName).filter(
+                last_name__istartswith=lastName).values(
+                'id', 'first_name', 'last_name')]
         else:
             firstNameQuery = Q(first_name__icontains=term)
             lastNameQuery = Q(last_name__icontains=term)
-            result = [account for account in Account.objects.filter(firstNameQuery | lastNameQuery).values('id', 'first_name', 'last_name')]
-        return JsonResponse(result, safe=False)
+            persons_result = [account for account in Account.objects.filter(
+                firstNameQuery | lastNameQuery).values(
+                'id', 'first_name', 'last_name')]
+        groups_result = [group for group in Group.objects.filter(
+            name__icontains=term).values('id','name', 'motto')]
+        return JsonResponse({'persons': persons_result, 'groups': groups_result})
     else:
         return HttpResponseNotAllowed(['GET'])
 
@@ -207,11 +213,10 @@ def getSelectedUsers(request):
             selectedNodes = json.loads(body)['selectedNodes']
         except(KeyError, JSONDecodeError) as e:
             return HttpResponseBadRequest()
-        selectedID = []
-        for selectedNode in selectedNodes:
-            selectedID.append(selectedNode['id'])
-        selectedUsers = [user for user in (Account.objects.filter(id__in=selectedID).
-        values('id', 'first_name', 'last_name'))]
+        selectedIDs = [node['id'] for node in selectedNodes]
+        selectedUsers = [user for user in (Account.objects.filter(
+            id__in=selectedIDs).values(
+            'id', 'first_name', 'last_name'))]
         return JsonResponse(selectedUsers, safe=False)
     else:
         return HttpResponseNotAllowed(['POST'])
@@ -225,12 +230,12 @@ def postingGet(request):
             selectedUsers = json.loads(body)['selectedUsers']
         except:
             return HttpResponseBadRequest()
-        selectedID = [user['id'] for user in selectedUsers]
+        selectedIDs = [user['id'] for user in selectedUsers]
         posts = Post.objects.all().prefetch_related('tags')
         postResult = []
         for post in posts:
             tagID = post.tags.values_list('id', flat=True)
-            if set(selectedID) == set(tagID):
+            if set(selectedIDs) == set(tagID):
                 postResult.append({'id': post.id, 'content': post.content,
                                 'tags': list(post.tags.values_list('id', flat=True))})
         return JsonResponse({'posts': postResult})
@@ -262,26 +267,24 @@ def group(request):
         try:
             body = request.body.decode()
             name = json.loads(body)['name']
+            motto = json.loads(body)['motto']
+            selectedNodes = json.loads(body)['selectedNodes']
         except:
-            return HttpResponseBadRequest()
-        group, created = Group.objects.get_or_create(name=name)
-        group.members.add(request.user.account_of)
-        return JsonResponse({'created': created})
+            return HttpResponseNotFound()
+        selectedIDs = [node['id'] for node in selectedNodes]
+        created_group = Group.objects.create(name=name,motto=motto)
+        created_group.members.add(selectedIDs)
     else:
         return HttpResponseNotAllowed(['GET', 'POST'])
 
 
-# note that the name of the group should be unique
-# note that the name of the group should be unique
-# note that the name of the group should be unique
-# note that the name of the group should be unique
-# note that the name of the group should be unique
-# note that the name of the group should be unique
 def group_detail(request, id):
     # return a graph info of the group whose id is 'id'.
     if request.method == 'GET':
-        # Error Handling? - What should it work when the group whose id is 'id' does not exist?
-        group = Group.objects.get(id=id).prefetch_related('members')
+        try:
+            group = Group.objects.get(id=id).prefetch_related('members')
+        except:
+            return HttpResponseNotFound()
         members = group.members.all()
         members_id = group.values_list('members__id', flat=True)
         nodes = edges = []
@@ -291,6 +294,14 @@ def group_detail(request, id):
                 if (friend_id in members_id) and (member.id < friend_id):
                     nodes.append({'from': member.id, 'to': friend_id})
         return JsonResponse({'users': nodes, 'friends': edges})
+    elif request.method == 'PUT':
+        try:
+            group = Group.objects.get(id=id).prefetch_related('members')
+        except:
+            return HttpResponseNotFound()
+        user = Profile.objects.get(account_id=request.user)
+        group.members.add(user)
+        return HttpResponse(status=201)
     else:
         return HttpResponseNotAllowed(['GET'])
 
@@ -347,7 +358,7 @@ def profile_multiple(request):
             distance = 0
         return JsonResponse({'names': names, 'groups': list(common_groups), 'distance': distance})
     else:
-        return HttpResponseNotAllowed(['GET'])
+        return HttpResponseNotAllowed(['POST'])
 
 
 @ensure_csrf_cookie
