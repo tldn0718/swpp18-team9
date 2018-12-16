@@ -13,6 +13,7 @@ import { InfoWindowComponent } from './info-window/info-window.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ProfileService } from './profile/profile.service';
 import { WritePostComponent } from './write-post/write-post.component';
+import { PostComponent } from './post/post.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { WritePostComponent } from './write-post/write-post.component';
     MenuComponent, 
     InfoWindowComponent, 
     ProfileComponent, 
-    WritePostComponent
+    WritePostComponent, 
+    PostComponent
   ],
   entryComponents: [
     ProfileComponent,
