@@ -5,11 +5,26 @@
   </button>
 </div>
 <div class="modal-body profile-container">
-  <h4><span *ngFor="let user of selectedUsers">{{user.first_name+' '}}</span></h4>
-  <p>Profile Info</p>
-  <div class="info-body">
-      <pre class="disatnce">{{'Distance: ' + distance}}</pre>
-  </div>
+  <h5><span *ngFor="let user of selectedUsers">{{user.first_name+' '}}</span></h5>
+    <div *ngIf="one" class="info-body-one">
+      <pre class="motto">{{info.motto}}</pre>
+      <pre class="disatnce">{{'(He is ' + info.distance + ' nodes away from you)'}}</pre>
+      <pre class="group">
+        <h6>Groups</h6>
+        <h6><span *ngFor="let group of info.groups">{{group+' '}}</span></h6>
+      </pre>
+      <pre class="mutuals">
+        <h6>Mutual Friends</h6>
+        <h6><span *ngFor="let friend of info.mutual_friends">{{friend.name+' '}}</span></h6>
+      </pre>
+    </div>
+    <div *ngIf="!one" class ="info-body-multi">
+      <pre class="group">
+        <h6>Mutual Groups</h6>
+        <h6><span *ngFor="let group of info.groups">{{group+' '}}</span></h6>
+      </pre>
+    </div>
+  
   <hr>
   <h4>Posts</h4>
   <div *ngFor="let post of posts" class="card post">

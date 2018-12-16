@@ -18,7 +18,8 @@ export class ProfileComponent implements OnInit {
   selectedNodes: any[];
   selectedUsers: User[];
   posts: any[] = [];
-  distance: any;
+  info: any;
+  one: boolean = false
 
   constructor(
     private modal: NgbModal,
@@ -32,11 +33,11 @@ export class ProfileComponent implements OnInit {
       concatMap((users)=>{
         this.selectedUsers = users;
         if(this.selectedNodes.length==1){
-          this.selectedNodes.concat(this.auth.user);
-          this.distance = this.profile.getDistance(this.selectedNodes);
+          this.info = this.profile.getProfileInfo(this.selectedNodes);
+          this.one = true;
         }
         else{
-          this.distance = this.profile.getDistance(this.selectedNodes);
+          this.info = this.profile.getProfileInfo(this.selectedNodes);
         }
         console.log('selected users', this.selectedUsers);
         return this.profile.getPost(this.selectedUsers);
