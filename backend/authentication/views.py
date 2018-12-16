@@ -70,7 +70,7 @@ def signout(request):
     else:
         return HttpResponseNotAllowed(['GET'])
 
-
+# get a graph whose nodes are all users of Yeon
 def totalGraph(request):
     if request.method == 'GET':
         response_users = []
@@ -87,7 +87,8 @@ def totalGraph(request):
     else:
         return HttpResponseNotAllowed(['GET'])
 
-
+# get a graph with the nodes whose distances
+# from the user are less than or equal to value of 'level'
 def levelGraph(request, level):
     if request.method == 'GET':
         closedSet = []
@@ -182,7 +183,7 @@ def specificFriendRequest(request, id):
     else:
         return HttpResponseNotAllowed(['PUT', 'POST'])
 
-
+# return persons and groups whose names include the search word
 def search(request, term):
     if request.method == 'GET':
         if ' ' in term:
@@ -276,7 +277,7 @@ def group(request):
         created_group.members.add(*selectedIDs)
         return HttpResponse(status=201)
     else:
-        return HttpResponseNotAllowed(['GET', 'POST'])
+        return HttpResponseNotAllowed(['POST'])
 
 
 def group_detail(request, id):
@@ -299,15 +300,21 @@ def group_detail(request, id):
     # add the user to the specific group.
     elif request.method == 'PUT':
         try:
-            group_q = Group.objects.filter(id=id).prefetch_related('members')
+            group = Group.objects.get(id=id)
         except:
             return HttpResponseNotFound()
-        group = group_q[0]
-        current_user = Profile.objects.get(account_id=request.user.id)
-        group.members.add(current_user)
+        group.members.add(request.user.id)
         return HttpResponse(status=201)
+    # let the user leave a group
+    elif request.method == 'DELETE':
+        try:
+            group = Group.objects.get(id=id)
+        except:
+            return HttpResponseNotFound()
+        group.members.remove(request.user.id)
+        return HttpResponse(status=200)
     else:
-        return HttpResponseNotAllowed(['GET'])
+        return HttpResponseNotAllowed(['GET', 'PUT', 'DELETE'])
 
 
 # Return or edit the profile of given user. The parameter is id of Account model.

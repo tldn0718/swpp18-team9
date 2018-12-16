@@ -462,3 +462,13 @@ class GroupTest(TestCase):
         response = client.put('/api/group/2/')
         self.assertEqual(response.status_code, 201)
         self.assertIn(self.profile3, Group.objects.get(id=2).members.all())
+
+    def test_leave_a_group(self):
+        client = Client()
+        response = client.post('/api/signin/', json.dumps({'username': 'sana@twice.com',
+            'password': 'sana'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
+
+        self.assertIn(self.profile3, self.group1.members.all())
+        response = client.delete('/api/group/1/')
+        self.assertNotIn(self.profile3, self.group1.members.all())
