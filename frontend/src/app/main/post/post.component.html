@@ -1,0 +1,28 @@
+<div class="card post">
+  <div class="card-body">
+    <h5 class="card-title">{{post.author? author.name : "Test Author Name"}}</h5>
+    <p class="card-text" style="margin-bottom:2rem">
+      {{post.content}}
+    </p>
+    <div class="comment-area">
+      <h5>Comments</h5>
+      <div class="like-area">
+        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="likePost()">
+          {{post.likes?.length}} likes <span class="oi oi-thumb-up"></span>
+        </button>
+      </div>
+      <div class="comment-content" *ngFor="let comment of comments">
+        <h6>{{comment.author}}</h6>
+        {{comment.content}}
+      </div>
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Comment" [(ngModel)]="commentContent">
+        <div class="input-group-append">
+          <button class="btn btn-secondary" type="button" (click)="submitComment()">
+              <span class="oi oi-pencil"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
