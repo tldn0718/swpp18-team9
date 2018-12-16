@@ -8,7 +8,7 @@ class AuthenticationTestCase(TestCase):
         response = client.post('api/signup/', json.dumps({'username': 'admin@yeon.com',
             'password': 'admin', 'firstName': 'yeon', 'lastName': 'admin'}),
         content_type = 'application/json')
-        #self.assertEqual(response.status_code, 403)
+        # self.assertEqual(response.status_code, 403)
 
         response = client.get('/api/token/')
         csrftoken = response.cookies['csrftoken'].value
@@ -56,10 +56,10 @@ class FriendTestCase(TestCase):
 
         response = client.post('/api/signin/', json.dumps({'username': 'jihyo@twice.com',
             'password': 'jihyo'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         response = client.post('/api/friend/2/')
-        self.assertEqual(response.status_code, 201) #Sent a Friend Request Succeed
+        self.assertEqual(response.status_code, 201) # Sent a Friend Request Succeed
         now = response.json()['createdTime']
 
         response = client.get('/api/friend/')
@@ -90,7 +90,7 @@ class FriendTestCase(TestCase):
 
         response = client.post('/api/signin/', json.dumps({'username': 'jihyo@twice.com',
             'password': 'jihyo'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         response = client.put('/api/friend/')
         self.assertEqual(response.status_code, 200)
@@ -131,7 +131,7 @@ class FriendTestCase(TestCase):
 
         response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
             'password': 'nayeon'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         response = client.put('/api/friend/2/', json.dumps({'answer':'accept'}), content_type = 'application/json')
         self.assertEqual(response.status_code, 200)
@@ -177,17 +177,17 @@ class FriendTestCase(TestCase):
         client = Client()
         response = client.post('/api/signin/', json.dumps({'username': 'sana@twice.com',
             'password': 'sana'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         response = client.get('/api/friend/')
-        self.assertEqual(json.loads(response.content), []) #Get Empty Notification
+        self.assertEqual(json.loads(response.content), []) # Get Empty Notification
 
         response = client.get('/api/signout/')
         self.assertEqual(response.status_code, 204)
 
         response = client.post('/api/signin/', json.dumps({'username': 'jihyo@twice.com',
             'password': 'jihyo'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         response = client.get('/api/friend/')
         notis = json.loads(response.content)
@@ -221,26 +221,26 @@ class SearchTestCase(TestCase):
         client = Client()
         response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
             'password': 'nayeon'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         response = client.get('/api/search/jihyo/')
         self.assertJSONEqual(response.content,
             {'persons': [
                     {'id':1, 'first_name': 'Jihyo', 'last_name': 'Park'}
-                ], 'groups': []}) #firstName Search Succeed
+                ], 'groups': []}) # firstName Search Succeed
 
         response = client.get('/api/search/sana%20minatozaki/')
         self.assertJSONEqual(response.content,
             {'persons': [
                 {'id':3, 'first_name': 'Sana', 'last_name': 'Minatozaki'}
-                ], 'groups': []}) #fullname Search Succeed
+                ], 'groups': []}) # fullname Search Succeed
 
         response = client.get('/api/search/sana/')
         self.assertJSONEqual(response.content,
         {'persons' : [
             {'id':3, 'first_name': 'Sana', 'last_name': 'Minatozaki'},
             {'id':4, 'first_name': 'Sana', 'last_name': 'CuteSexy'}
-            ], 'groups': []}) #Several Results Search Succeed
+            ], 'groups': []}) # Several Results Search Succeed
 
         response = client.get('/api/search/twice/')
         self.assertJSONEqual(response.content, {'persons': [],'groups' : [
@@ -262,7 +262,7 @@ class GetSelectedUsersTest(TestCase):
         client = Client()
         response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
             'password': 'nayeon'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         response = client.post('/api/user/', json.dumps({'selectedNodes':
             [{'id': 1, 'label': 'Jihyo'},
@@ -286,7 +286,7 @@ class PostingTest(TestCase):
         client = Client()
         response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
             'password': 'nayeon'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         response = client.post('/api/post/write/', json.dumps({
             'selectedUsers': [
@@ -303,7 +303,7 @@ class PostingTest(TestCase):
         client = Client()
         response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
             'password': 'nayeon'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         newPost = Post(content='Likey')
         newPost.save()
@@ -361,7 +361,7 @@ class ProfileTest(TestCase):
         client = Client()
         response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
             'password': 'nayeon'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
         response = client.get('/api/profile/one/1/')
         self.assertJSONEqual(response.content, {'name': 'Jihyo Park', 'motto': '', 'groups': ['Twice','Korean'],
@@ -375,7 +375,7 @@ class ProfileTest(TestCase):
 
         response = client.post('/api/profile/multi/', json.dumps({'selectedNodes':
             [{'id': 1, 'label': 'Jihyo'}, {'id': 2, 'label': 'Sana'}]}), content_type='application/json')
-        #self.assertJSONEqual(response.content, {'names': ['Jihyo Park','Nayeon Im'], 'groups': ['Twice','Korean'], 'distance':1})
+        # self.assertJSONEqual(response.content, {'names': ['Jihyo Park','Nayeon Im'], 'groups': ['Twice','Korean'], 'distance':1})
         result = json.loads(response.content)
         self.assertEqual(result['names'], ['Jihyo Park','Nayeon Im'])
         self.assertIn('Twice',result['groups'])
@@ -398,34 +398,67 @@ class GroupTest(TestCase):
         self.profile1.friends.add(self.profile2)
         self.profile1.friends.add(self.profile3)
         self.profile2.friends.add(self.profile3)
-        '''self.group1 = Group.objects.create(name='Twice')
+        self.group1 = Group.objects.create(name='Twice')
         self.group1.members.add(self.profile1, self.profile2, self.profile3)
-        self.group2 = Group.objects.create(name='Korean')
-        self.group2.members.add(self.profile1, self.profile2)'''
+
+
+    def make_Korean_group(self, client):
+        return client.post('/api/group/', json.dumps({
+                'name': 'Korean',
+                'motto': 'We are Koreans in Twice',
+                'selectedNodes': [
+                    {'id': 1, 'label': 'Jihyo'},
+                    {'id': 2, 'label': 'Nayeon'},
+                ]
+            }), content_type='application/json')
+
+
     def test_make_group(self):
         client = Client()
         response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
             'password': 'nayeon'}), content_type = 'application/json')
-        self.assertEqual(response.status_code, 200) #SignIn Succeed
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
-        response = client.post('/api/group/', json.dumps({
-                'name': 'Twice',
-                'motto': 'ONE IN A MILLION',
-                'selectedNodes': [
+        response = self.make_Korean_group(client)
+        self.assertEqual(response.status_code, 201)
+        created_group = Group.objects.get(id=2)
+        self.assertEqual(created_group.name, 'Korean')
+        self.assertEqual(created_group.motto, 'We are Koreans in Twice')
+        self.assertIn(self.profile1, created_group.members.all())
+        self.assertIn(self.profile2, created_group.members.all())
+        self.assertEqual(created_group.members.count(), 2)
+
+
+    def test_get_group_graph(self):
+        client = Client()
+        response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+            'password': 'nayeon'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
+
+        response = client.get('/api/group/1/')
+        self.assertJSONEqual(response.content, {
+                'users': [
                     {'id': 1, 'label': 'Jihyo'},
                     {'id': 2, 'label': 'Nayeon'},
                     {'id': 3, 'label': 'Sana'}
+                ],
+                'friends': [
+                    {'from': 1, 'to': 2},
+                    {'from': 1, 'to': 3},
+                    {'from': 2, 'to': 3}
                 ]
-            }), content_type='application/json')
-        self.assertEqual(response.status_code, 201)
-        created_group = Group.objects.get(id=1)
-        self.assertEqual(created_group.name, 'Twice')
-        self.assertEqual(created_group.motto, 'ONE IN A MILLION')
-        self.assertIn(self.profile1, created_group.members.all())
-        self.assertIn(self.profile2, created_group.members.all())
-        self.assertIn(self.profile3, created_group.members.all())
-        self.assertEqual(created_group.members.count(), 3)
-    def test_get_group_graph(self):
-        pass
+            })
+
+
     def test_join_to_group(self):
-        pass
+        client = Client()
+        response = client.post('/api/signin/', json.dumps({'username': 'sana@twice.com',
+            'password': 'sana'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
+
+        response = self.make_Korean_group(client)
+        self.assertEqual(response.status_code, 201)
+
+        response = client.put('/api/group/2/')
+        self.assertEqual(response.status_code, 201)
+        self.assertIn(self.profile3, Group.objects.get(id=2).members.all())

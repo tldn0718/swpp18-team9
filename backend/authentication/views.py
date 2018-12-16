@@ -283,26 +283,28 @@ def group_detail(request, id):
     # return a graph info of the group whose id is 'id'.
     if request.method == 'GET':
         try:
-            group = Group.objects.get(id=id).prefetch_related('members')
+            group_q = Group.objects.filter(id=id).prefetch_related('members')
         except:
             return HttpResponseNotFound()
+        group = group_q[0]
         members = group.members.all()
-        members_id = group.values_list('members__id', flat=True)
-        nodes = edges = []
+        members_id = group_q.values_list('members__account_id', flat=True)
+        nodes, edges = ([], [])
         for member in members:
-            nodes.append({'id': member.id, 'label': member.account.first_name})
-            for friend_id in member.values_list('friends__id', flat=True):
-                if (friend_id in members_id) and (member.id < friend_id):
-                    nodes.append({'from': member.id, 'to': friend_id})
+            nodes.append({'id': member.account_id, 'label': member.account.first_name})
+            for friend_id in member.friends.all().values_list('account_id', flat=True):
+                if (friend_id in members_id) and (member.account_id < friend_id):
+                    edges.append({'from': member.account_id, 'to': friend_id})
         return JsonResponse({'users': nodes, 'friends': edges})
     # add the user to the specific group.
     elif request.method == 'PUT':
         try:
-            group = Group.objects.get(id=id).prefetch_related('members')
+            group_q = Group.objects.filter(id=id).prefetch_related('members')
         except:
             return HttpResponseNotFound()
-        user = Profile.objects.get(account_id=request.user)
-        group.members.add(user)
+        group = group_q[0]
+        current_user = Profile.objects.get(account_id=request.user.id)
+        group.members.add(current_user)
         return HttpResponse(status=201)
     else:
         return HttpResponseNotAllowed(['GET'])
