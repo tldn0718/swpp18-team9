@@ -5,7 +5,7 @@
   </button>
 </div>
 <div class="modal-body profile-container">
-  <h5><span *ngFor="let user of selectedUsers">{{user.first_name+' '}}</span></h5>
+  <h5><span *ngFor="let user of selectedUsers">{{' @' + user.first_name}}</span></h5>
     <div *ngIf="one" class="info-body-one">
       <pre class="motto">{{info.motto}}</pre>
       <pre class="disatnce">{{'(He is ' + info.distance + ' nodes away from you)'}}</pre>
@@ -24,7 +24,6 @@
         <h6><span *ngFor="let group of info.groups">{{group+' '}}</span></h6>
       </pre>
     </div>
-  
   <hr>
   <h4>Posts</h4>
   <div *ngFor="let post of posts" class="card post">
