@@ -352,7 +352,8 @@ def profile_one(request, id):
     else:
         return HttpResponseNotAllowed(['GET', 'PUT'])
 
-
+# get names and common groups of users.
+# If users are more than two, then this also return the distance between two users.
 def profile_multiple(request):
     if request.method == 'POST':
         try:
