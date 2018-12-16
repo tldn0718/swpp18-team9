@@ -398,12 +398,34 @@ class GroupTest(TestCase):
         self.profile1.friends.add(self.profile2)
         self.profile1.friends.add(self.profile3)
         self.profile2.friends.add(self.profile3)
-        self.group1 = Group.objects.create(name='Twice')
+        '''self.group1 = Group.objects.create(name='Twice')
         self.group1.members.add(self.profile1, self.profile2, self.profile3)
         self.group2 = Group.objects.create(name='Korean')
-        self.group2.members.add(self.profile1, self.profile2)
+        self.group2.members.add(self.profile1, self.profile2)'''
     def test_make_group(self):
-        pass
+        client = Client()
+        response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+            'password': 'nayeon'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 200) #SignIn Succeed
+
+        response = client.post('/api/group/', json.dumps({
+                'name': 'Twice',
+                'motto': 'ONE IN A MILLION',
+                'selectedNodes': [
+                    {'id': 1, 'label': 'Jihyo'},
+                    {'id': 2, 'label': 'Nayeon'},
+                    {'id': 3, 'label': 'Sana'}
+                ]
+            }), content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        created_group = Group.objects.get(id=1)
+        self.assertEqual(created_group.name, 'Twice')
+        self.assertEqual(created_group.motto, 'ONE IN A MILLION')
+        self.assertIn(self.profile1, created_group.members.all())
+        self.assertIn(self.profile2, created_group.members.all())
+        self.assertIn(self.profile3, created_group.members.all())
+        self.assertEqual(created_group.members.count(), 3)
     def test_get_group_graph(self):
         pass
     def test_join_to_group(self):
+        pass

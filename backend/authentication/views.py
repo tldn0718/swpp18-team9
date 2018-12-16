@@ -262,7 +262,7 @@ def postingWrite(request):
 
 
 def group(request):
-    # add the user to the specific group. It takes a name of group by Json
+    # create a group with the info given by Json
     if request.method == 'POST':
         try:
             body = request.body.decode()
@@ -273,7 +273,8 @@ def group(request):
             return HttpResponseNotFound()
         selectedIDs = [node['id'] for node in selectedNodes]
         created_group = Group.objects.create(name=name,motto=motto)
-        created_group.members.add(selectedIDs)
+        created_group.members.add(*selectedIDs)
+        return HttpResponse(status=201)
     else:
         return HttpResponseNotAllowed(['GET', 'POST'])
 
@@ -294,6 +295,7 @@ def group_detail(request, id):
                 if (friend_id in members_id) and (member.id < friend_id):
                     nodes.append({'from': member.id, 'to': friend_id})
         return JsonResponse({'users': nodes, 'friends': edges})
+    # add the user to the specific group.
     elif request.method == 'PUT':
         try:
             group = Group.objects.get(id=id).prefetch_related('members')
