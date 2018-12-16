@@ -20,6 +20,7 @@ export class ProfileComponent implements OnInit {
   posts: any[] = [];
   info: any;
   one: boolean = false
+  me: boolean = false
 
   constructor(
     private modal: NgbModal,
@@ -35,6 +36,9 @@ export class ProfileComponent implements OnInit {
         if(this.selectedNodes.length==1){
           this.info = this.profile.getProfileInfo(this.selectedNodes);
           this.one = true;
+          if(users[0].id == this.auth.userId){
+            this.me = true
+          }
         }
         else{
           this.info = this.profile.getProfileInfo(this.selectedNodes);
