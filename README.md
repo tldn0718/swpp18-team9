@@ -98,6 +98,9 @@ Profile {
     select: boolean, #represent that it should show 'accept' and 'decline' buttons
     datetime: string,
     read: boolean,
+    sender_id: integer,
+		receiver_id: integer,
+    profile_id: integer
     },
   1: {
   ...
@@ -217,5 +220,52 @@ Profile {
 ```
 {
   message: 'success' | 'fail'
+}
+```
+
+### /api/profile/one/<int:id>/
+- **method: GET**
+`Return profile of given user. The parameter is id of Account model.`
+- **request body:**
+```
+None
+```
+- **response body:**
+```
+motto filed can be blank. Then, this field is ''.
+groups and mutual_friends filed can be blank. Then, these fields are [].
+{
+  name: string,
+  motto: string,
+  groups: string[],
+  distance: integer,
+  mutual_friends: [
+    {
+      id: integer,
+      name: string
+    }
+  ]
+}
+```
+
+### /api/profile/multi/
+- **method: POST**
+`Return profile of given users.`
+- **request body:**
+```
+{
+  selectedNodes<UserNode[]>: [
+    {id: 3, label: 'John'},
+    {id: 15, label: 'David'},
+    ...
+  ]
+}
+```
+- **response body:**
+```
+{
+  names: string[],
+  groups: string[],
+  distance: integer
 }
 ```
