@@ -15,11 +15,11 @@ export class ProfileService {
     return this.http.post<User[]>('/api/user/', {selectedNodes});
   }
 
-  getDistance(selectedNodes: UserNode[]) {
-    if(selectedNodes.length == 2){
-      return this.http.post('/api/distance/get/', {selectedNodes});
+  getProfileInfo(selectedNodes: UserNode[]) {
+    if(selectedNodes.length == 1){
+      return this.http.get('/api/profile/one/${selectedNodes[0].id}');
     }else{
-      return null;
+      return this.http.post('/api/profile/multi', {selectedNodes});
     }
   }
 
