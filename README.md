@@ -140,17 +140,16 @@ Profile {
 - **response body:**
 ```
 {
-  results: [
-    {
-      id: string,
-      firstName: string,
-      lastName: string
-    },
-    {
-      ...
-    },
-    ...
-  ]
+  persons: [{
+    id: integer,
+    first_name: string,
+    last_name: string
+  }],
+  groups: [{
+    id: integer,
+    name: string,
+    motto: string
+  }]
 }
 ```
 
