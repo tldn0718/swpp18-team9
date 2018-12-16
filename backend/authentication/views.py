@@ -338,13 +338,17 @@ def profile_one(request, id):
         return JsonResponse({'name': name, 'motto': motto, 'groups': groups,
                             'distance': distance, 'mutual_friends': mutual_friends_result})
     elif request.method == 'PUT':
-        if(request.id != id):
+        if(request.user.id != id):
             return HttpResponse(status=401)
         try:
             body = request.body.decode()
-            selectedUsers = json.loads(body)['selectedUsers']
+            motto = json.loads(body)['motto']
         except:
             return HttpResponseBadRequest()
+        current_user = Profile.objects.get(account_id=request.user.id)
+        current_user.motto = motto
+        current_user.save()
+        return HttpResponse()
     else:
         return HttpResponseNotAllowed(['GET', 'PUT'])
 

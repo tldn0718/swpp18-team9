@@ -367,6 +367,17 @@ class ProfileTest(TestCase):
         self.assertJSONEqual(response.content, {'name': 'Jihyo Park', 'motto': '', 'groups': ['Twice','Korean'],
             'distance': 1, 'mutual_friends': [{'id': 3, 'name': 'Sana Minatozaki'}]})
 
+        response = client.put('/api/profile/one/1/', json.dumps({
+                'motto': 'ONE IN A MILLION'
+            }), content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+        response = client.put('/api/profile/one/2/', json.dumps({
+                'motto': 'ONE IN A MILLION'
+            }), content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Profile.objects.get(account_id=2).motto,'ONE IN A MILLION')
+
     def test_get_multiple_profile(self):
         client = Client()
         response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
