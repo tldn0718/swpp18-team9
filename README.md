@@ -269,3 +269,52 @@ groups and mutual_friends filed can be blank. Then, these fields are [].
   distance: integer
 }
 ```
+
+### /api/post/<int:postId>/comment/
+- **method: GET**
+`Return list of comments written in the specified post`
+- **request body:** `none`
+- **response body:**
+```
+[
+  {id:0, content: "test content", author: "test author name"},
+  {id:1, content: "test content", author: "test author name"},
+  {id:2, content: "test content", author: "test author name"},
+  ...
+]
+```
+- **method: POST**
+`Submit a comment to a post`
+- **request body:**
+```
+{
+  postId: number,
+  content: string,
+  userId: number
+}
+```
+- **response body:** `none`
+
+### /api/post/<int:postId>/like/
+- **method: POST**
+`Like a certain post`
+- **request body:**
+```
+{
+  userId: number
+}
+```
+- **response body:** `none` 
+
+### Post Model Interface - for reference
+```
+export interface Post {
+    id: number, // id of the post
+    content: string, // content of the post
+    tags: number[], // ids of the users tagged
+    author: number, // id of the author
+    createdTime: string, // post creation time
+    likes: number[], // array of ids of users
+    comments: number[] // ids of the comments
+}
+```
