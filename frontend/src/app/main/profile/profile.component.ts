@@ -43,12 +43,10 @@ export class ProfileComponent implements OnInit {
         else{
           this.info = this.profile.getProfileInfo(this.selectedNodes);
         }
-        console.log('selected users', this.selectedUsers);
         return this.profile.getPost(this.selectedUsers);
       }),
     ).subscribe((posts: any[]) => {
       this.posts = posts;
-      console.log('posts', this.posts);
     });
   }
 

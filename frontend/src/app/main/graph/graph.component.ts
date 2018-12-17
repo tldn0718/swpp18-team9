@@ -29,7 +29,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
   setNodeHandler() {
     this.graph.getClickedNodes().subscribe((nodes: any[])=>{
       this.selectedProfiles = this.graph.getUsers(nodes);
-      console.log('selected profiles', this.selectedProfiles);
     });
   }
 
@@ -45,7 +44,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
 
   showLevel() {
     this.mode = 'level';
-    this.graph.getLevel(this.level).subscribe((res)=>{console.log('res from getlevel', res)});
     this.graph.makeLevelNetwork(this.level).subscribe();
   }
 
@@ -56,7 +54,6 @@ export class GraphComponent implements OnInit, AfterViewInit {
       this.level--;
     }
     this.graph.makeLevelNetwork(this.level).subscribe();
-    console.log('level', this.level);
   }
 
 }
