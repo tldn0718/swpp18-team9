@@ -75,8 +75,6 @@ class Profile(models.Model):
         )
         motto = models.CharField(max_length=200, blank=True)
 
-        image = models.ImageField(upload_to='profile_image', blank=True)
-
         def user_toJSON(self):
             return {
                 'id': self.account.id,
@@ -122,6 +120,9 @@ class Post(models.Model):
             related_name = 'posts'
         )
     content = models.TextField()
+
+class UploadImage(models.Model):
+    image = models.ImageField('uploaded image') #stores uploaded image
 
 class Group(models.Model):
     name = models.CharField(max_length=120)

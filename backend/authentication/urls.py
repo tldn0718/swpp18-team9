@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 
 from . import views
 
-
 urlpatterns = [
     path('', views.index, name = 'index'),
     path('signup/', views.signup, name = 'signup'),
@@ -23,4 +22,5 @@ urlpatterns = [
     path('group/', views.group, name='group'),
     path('group/<int:id>/', views.group_detail, name='group_detail'),
     path('token/', views.token, name='token'),
+    path('image/', views.upload_image, name='upload_image'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

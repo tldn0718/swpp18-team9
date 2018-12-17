@@ -8,7 +8,7 @@ from .models import Account, Profile, Notification, Post, Group
 from django.db.models import Q
 from queue import Queue
 from django.utils import timezone
-
+from .forms import UploadImageForm
 
 def index(request):
     return HttpResponse("index")
@@ -413,6 +413,17 @@ def profile_multiple(request):
         else:
             distance = 0
         return JsonResponse({'names': names, 'groups': list(common_groups), 'distance': distance})
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+
+def upload_image(request):
+    if request.method == 'POST':
+        form = UploadImageForm(request.POST, request.FILES)
+
+
+
+        return
     else:
         return HttpResponseNotAllowed(['POST'])
 
