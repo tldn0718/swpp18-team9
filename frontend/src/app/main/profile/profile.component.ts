@@ -3,7 +3,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileService } from './profile.service';
 import { User } from '../../../models';
 import { WritePostComponent } from '../write-post/write-post.component';
-import { concatMap, pluck, map } from 'rxjs/operators';
+import { concatMap, switchMap, pluck, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
 import { AuthService  } from '../../auth';
@@ -31,22 +31,23 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.profile.getUserInfo(this.selectedNodes).pipe(
-      concatMap((users)=>{
+      switchMap((users)=>{
         this.selectedUsers = users;
-        if(this.selectedNodes.length==1){
-          this.info = this.profile.getProfileInfo(this.selectedNodes);
+        this.info = this.profile.getProfileInfo(this.selectedNodes);
+        if(this.selectedNodes.length === 1){
           this.one = true;
-          if(users[0].id == this.auth.userId){
+          if(users[0].id === this.auth.userId){
             this.me = true
           }
         }
-        else{
-          this.info = this.profile.getProfileInfo(this.selectedNodes);
-        }
         return this.profile.getPost(this.selectedUsers);
       }),
-    ).subscribe((posts: any[]) => {
-      this.posts = posts;
+      switchMap((posts: any[])=> {
+        this.posts = posts;
+        return this.profile.getProfileInfo(this.selectedNodes);
+      }),
+    ).subscribe((info: any) => {
+      this.info = info;
     });
   }
 

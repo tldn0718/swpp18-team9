@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Profile Information</h4>
+  <h4 class="modal-title">Timeline</h4>
   <button type="button" class="close" aria-label="Close" (click)="closeModal('Close Button Clicked')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -7,22 +7,22 @@
 <div class="modal-body profile-container">
   <h5><span *ngFor="let user of selectedUsers">{{' @' + user.first_name}}</span></h5>
     <div *ngIf="one" class="info-body-one">
-      <pre class="motto">{{': ' + info.motto}}</pre>
+      <pre class="motto">{{': ' + info.motto?info.motto:'Be Happy!'}}</pre>
       <pre class="disatnce">{{'(He is ' + info.distance + ' nodes away from you)'}}</pre>
-      <pre class="group">
+      <div class="group" *ngIf="info.groups">
         <h6>Groups</h6>
         <h6><span *ngFor="let group of info.groups">{{group+' '}}</span></h6>
-      </pre>
-      <pre class="mutuals">
+      </div>
+      <div class="mutuals" *ngIf="info.mutual_friends">
         <h6>Mutual Friends</h6>
         <h6><span *ngFor="let friend of info.mutual_friends">{{friend.name+' '}}</span></h6>
-      </pre>
+      </div>
     </div>
     <div *ngIf="!one" class ="info-body-multi">
-      <pre class="group">
+      <div class="group" *ngIf="info?.groups">
         <h6>Mutual Groups</h6>
-        <h6><span *ngFor="let group of info.groups">{{group+' '}}</span></h6>
-      </pre>
+        <h6><span *ngFor="let group of info?.groups">{{group+' '}}</span></h6>
+      </div>
     </div>
   <hr>
   <h4>Posts</h4>
