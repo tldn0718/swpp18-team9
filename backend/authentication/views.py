@@ -16,7 +16,47 @@ def index(request):
 
 # The parameters are Profile model.
 def get_distance(start, target):
-    return 1
+    #Use Dijkstra algorithm to find the target
+    dist = dijkstra(start)
+    target_dist = dist[target.account.id-1]
+
+    if target_dist == 9999:
+        return -1
+    return target_dist
+
+
+def dijkstra(source):
+    users = Profile.objects.all()
+    dist = []
+    Q = []
+    for user in users:
+        dist.insert(user.account.id-1, 9999)
+        Q.append(user)
+    dist[source.account.id-1] = 0
+    while len(Q) > 0:
+        #Use min-heap for better performance
+        min_dist = 9999
+        min_user = None
+        id = -1
+        for v in Q:
+            if dist[v.account.id-1] < min_dist:
+                min_dist = dist[v.account.id-1]
+                id = v.account.id-1
+                min_user = v
+        for x in Q:
+            if x.account.id-1 == id:
+                Q.remove(min_user)
+                break
+
+        for friend in min_user.friends.all():
+            new_dist = dist[min_user.account.id-1] + 1
+            if new_dist < dist[friend.account.id-1]:
+                dist[friend.account.id-1] = new_dist
+
+    return dist
+
+
+
 
 def signup(request):
     if request.method == 'POST':

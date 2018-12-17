@@ -1,6 +1,9 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import views
+
 
 urlpatterns = [
     path('', views.index, name = 'index'),
@@ -20,4 +23,4 @@ urlpatterns = [
     path('group/', views.group, name='group'),
     path('group/<int:id>/', views.group_detail, name='group_detail'),
     path('token/', views.token, name='token'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

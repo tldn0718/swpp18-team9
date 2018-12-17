@@ -75,6 +75,8 @@ class Profile(models.Model):
         )
         motto = models.CharField(max_length=200, blank=True)
 
+        image = models.ImageField(upload_to='profile_image', blank=True)
+
         def user_toJSON(self):
             return {
                 'id': self.account.id,
