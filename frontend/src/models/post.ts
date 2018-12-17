@@ -5,5 +5,6 @@ export interface Post {
     author?: number, // id of the author
     createdTime?: string, // post creation time
     likes?: number[], // array of ids of users
-    comments?: number[] // ids of the comments
+    comments?: number[], // ids of the comments
+    images: string[], // paths of the uploaded images
 }
