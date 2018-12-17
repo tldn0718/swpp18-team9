@@ -33,7 +33,6 @@ export class ProfileComponent implements OnInit {
     this.profile.getUserInfo(this.selectedNodes).pipe(
       switchMap((users)=>{
         this.selectedUsers = users;
-        this.info = this.profile.getProfileInfo(this.selectedNodes);
         if(this.selectedNodes.length === 1){
           this.one = true;
           if(users[0].id === this.auth.userId){
@@ -48,6 +47,7 @@ export class ProfileComponent implements OnInit {
       }),
     ).subscribe((info: any) => {
       this.info = info;
+      console.log(this.info)
     });
   }
 
