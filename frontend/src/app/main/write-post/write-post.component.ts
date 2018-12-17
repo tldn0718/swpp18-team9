@@ -18,8 +18,6 @@ export class WritePostComponent implements OnInit {
   }
 
   onFileChange(e: any) {
-    console.log('file', e);
-    console.log('file element', this.file);
   }
 
   closeModal(reason: string) {

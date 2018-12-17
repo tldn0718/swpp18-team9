@@ -17,17 +17,8 @@ export class MakeGroupComponent implements OnInit {
   ngOnInit() {
   }
 
-
   closeModal(reason: string) {
     this.activeModal.dismiss(reason);
-  }
-
-  makeImageForm(file: File[]) {
-    let form = new FormData();
-    for(let i = 0; i < file.length; i++) {
-      form.append(`image${i}`, file[0]);
-    }
-    return form;
   }
 
   submit() {

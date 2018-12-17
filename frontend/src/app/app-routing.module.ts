@@ -6,7 +6,8 @@ import { SignInComponent } from './auth';
 
 export const appRoutes: Routes = [
   { path: 'signin', component: SignInComponent },
-  { path: '', redirectTo: 'signin', pathMatch: 'full'}
+  { path: '', redirectTo: 'signin', pathMatch: 'full'},
+  { path: '**', redirectTo: 'signin', pathMatch: 'full' }
 ]
 
 @NgModule({
