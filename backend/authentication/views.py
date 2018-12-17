@@ -27,10 +27,10 @@ def get_distance(start, target):
 
 def dijkstra(source):
     users = Profile.objects.all()
-    dist = []
+    dist = dict();
     Q = []
     for user in users:
-        dist.insert(user.account.id-1, 9999)
+        dist[user.account.id-1] = 9999
         Q.append(user)
     dist[source.account.id-1] = 0
     while len(Q) > 0:
@@ -52,7 +52,6 @@ def dijkstra(source):
             new_dist = dist[min_user.account.id-1] + 1
             if new_dist < dist[friend.account.id-1]:
                 dist[friend.account.id-1] = new_dist
-
     return dist
 
 
@@ -365,6 +364,7 @@ def profile_one(request, id):
         name = target_user.account.get_full_name()
         motto = target_user.motto
         groups = list(target_user.group_set.values_list('name', flat=True))
+        mutual_friends_result = []
         if(request.user.id == id):
             distance = 0
             mutual_friends = []
