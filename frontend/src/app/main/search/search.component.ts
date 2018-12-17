@@ -21,8 +21,8 @@ export class SearchComponent implements OnInit {
 
   searchUser() {
     this.search.search(this.searchTerm).pipe(
-      map((rawResult: any[])=>{
-        return rawResult.map((rawUserInfo) => { 
+      map((rawResult: any)=>{
+        return rawResult.persons.map((rawUserInfo) => { 
           return {
             ...rawUserInfo,
             firstName: rawUserInfo.first_name,

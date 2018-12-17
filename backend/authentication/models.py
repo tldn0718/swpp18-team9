@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.conf import settings
+import os
 
 class AccountManager(BaseUserManager):
         def create_user(self, email, first_name, last_name, password=None):
@@ -119,10 +120,18 @@ class Post(models.Model):
             settings.AUTH_USER_MODEL,
             related_name = 'posts'
         )
-    content = models.TextField()
+    content = models.TextField(blank = True)
+    image = models.CharField(max_length = 120, blank = True)
 
-class UploadImage(models.Model):
-    image = models.ImageField('uploaded image') #stores uploaded image
+class UploadedImage(models.Model):
+    image_file = models.ImageField('image', upload_to='images',blank=True) #stores uploaded image
+    image_url = models.URLField('image_url', max_length = 400, blank=True)
+
+    def __str__(self):
+        return self.image_url
+
+    def filename(self):
+        return os.path.basename(self.image_file.name)
 
 class Group(models.Model):
     name = models.CharField(max_length=120)

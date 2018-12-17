@@ -4,7 +4,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
 import json
 from json.decoder import JSONDecodeError
-from .models import Account, Profile, Notification, Post, Group
+from .models import Account, Profile, Notification, Post, Group, UploadedImage
 from django.db.models import Q
 from queue import Queue
 from django.utils import timezone
@@ -27,13 +27,13 @@ def get_distance(start, target):
 
 def dijkstra(source):
     users = Profile.objects.all()
-    dist = []
+    dist = dict();
     Q = []
     for user in users:
-        dist.insert(user.account.id-1, 9999)
+        dist[user.account.id-1] = 9999
         Q.append(user)
     dist[source.account.id-1] = 0
-    while len(Q) > 0:
+    while len(Q) > 1:
         #Use min-heap for better performance
         min_dist = 9999
         min_user = None
@@ -47,12 +47,10 @@ def dijkstra(source):
             if x.account.id-1 == id:
                 Q.remove(min_user)
                 break
-
         for friend in min_user.friends.all():
             new_dist = dist[min_user.account.id-1] + 1
             if new_dist < dist[friend.account.id-1]:
                 dist[friend.account.id-1] = new_dist
-
     return dist
 
 
@@ -262,7 +260,8 @@ def getSelectedUsers(request):
     else:
         return HttpResponseNotAllowed(['POST'])
 
-
+from django.conf import settings
+from django.conf.urls.static import static
 # Get posts with the tags of given users
 def postingGet(request):
     if request.method == 'POST':
@@ -275,10 +274,13 @@ def postingGet(request):
         posts = Post.objects.all().prefetch_related('tags')
         postResult = []
         for post in posts:
+            image_path = []
+            image_path.append(post.image)
+            print(post.image)
             tagID = post.tags.values_list('id', flat=True)
             if set(selectedIDs) == set(tagID):
                 postResult.append({'id': post.id, 'content': post.content,
-                                'tags': list(post.tags.values_list('id', flat=True))})
+                                'tags': list(post.tags.values_list('id', flat=True)), 'images': ["http://localhost:8000/media/images/" + post.image]})
         return JsonResponse({'posts': postResult})
     else:
         return HttpResponseNotAllowed(['POST'])
@@ -291,12 +293,18 @@ def postingWrite(request):
             body = request.body.decode()
             selectedUsers = json.loads(body)['selectedUsers']
             content = json.loads(body)['content']
+            image_path = json.loads(body)['imagePaths']
         except:
             return HttpResponseBadRequest()
-        newPost = Post.objects.create(content=content)
+
+        if len(image_path) == 0:
+            newPost = Post.objects.create(content=content)
+        else:
+            newPost = Post.objects.create(content=content, image=image_path[0])
         tagedID = [user['id'] for user in selectedUsers]
         tagedUsers = Account.objects.filter(id__in=tagedID)
         newPost.tags.set(tagedUsers)
+
         return JsonResponse({'message': 'success'})
     else:
         return HttpResponseNotAllowed(['POST'])
@@ -360,11 +368,12 @@ def group_detail(request, id):
 # Return or edit the profile of given user. The parameter is id of Account model.
 def profile_one(request, id):
     if request.method == 'GET':
-        target_user_q = Profile.objects.filter(account_id=id).prefetch_related('group_set', 'account')
+        target_user_q = Profile.objects.filter(account_id=id).prefetch_related('group_set', 'account','friends')
         target_user = target_user_q[0]
         name = target_user.account.get_full_name()
         motto = target_user.motto
         groups = list(target_user.group_set.values_list('name', flat=True))
+        mutual_friends_result = []
         if(request.user.id == id):
             distance = 0
             mutual_friends = []
@@ -416,14 +425,18 @@ def profile_multiple(request):
     else:
         return HttpResponseNotAllowed(['POST'])
 
+from django.shortcuts import render
+
 
 def upload_image(request):
     if request.method == 'POST':
-        form = UploadImageForm(request.POST, request.FILES)
-
-
-
-        return
+        path = []
+        for file in request.FILES:
+            new_image = UploadedImage(image_file = request.FILES[file])
+            new_image.image_url = new_image.filename()
+            new_image.save()
+            path.append(new_image.filename())
+        return JsonResponse(path, safe = False)
     else:
         return HttpResponseNotAllowed(['POST'])
 

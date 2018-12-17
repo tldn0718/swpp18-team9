@@ -4,6 +4,11 @@
     <p class="card-text" style="margin-bottom:2rem">
       {{post.content}}
     </p>
+    <ngb-carousel class="image-carousel mb-3" *ngIf="post?.images">
+      <ng-template ngbSlide *ngFor="let image of post.images">
+        <img [src]="image" class="post-image">
+      </ng-template>
+    </ngb-carousel>
     <div class="comment-area">
       <h5>Comments</h5>
       <div class="like-area">

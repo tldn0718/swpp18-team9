@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { pluck, map } from 'rxjs/operators';
+import { pluck, map, concatMap } from 'rxjs/operators';
 import { User, UserNode } from '../../../models';
 
 @Injectable({
@@ -17,17 +17,22 @@ export class ProfileService {
 
   getProfileInfo(selectedNodes: UserNode[]) {
     if(selectedNodes.length == 1){
-      return this.http.get('/api/profile/one/${selectedNodes[0].id}');
+      return this.http.get(`/api/profile/one/${selectedNodes[0].id}/`);
     }else{
-      return this.http.post('/api/profile/multi', {selectedNodes});
+      return this.http.post('/api/profile/multi/', {selectedNodes});
     }
   }
 
-  writePost(selectedUsers: User[], content: string) {
-    return this.http.post('/api/post/write/', {
-      selectedUsers,
-      content
-    });
+  writePost(selectedUsers: User[], postContent: {content: string, imageForm: FormData}) {
+    return this.http.post('/api/image/', postContent.imageForm).pipe(
+      concatMap((paths: string[])=>{
+        return this.http.post('/api/post/write/', {
+          selectedUsers,
+          content: postContent.content,
+          imagePaths: paths
+        });
+      })
+    )
   }
 
   getPost(selectedUsers: User[]) {

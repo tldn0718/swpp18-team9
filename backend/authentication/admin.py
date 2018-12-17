@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Account, Profile, UploadImage
+from .models import Account, Profile, UploadedImage
 from django import forms
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -8,7 +8,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 # Register your models here.
 admin.site.register(Profile)
-admin.site.register(UploadImage)
+admin.site.register(UploadedImage)
 
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label = 'Password', widget=forms.PasswordInput)
