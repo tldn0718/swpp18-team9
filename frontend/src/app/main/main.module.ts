@@ -37,7 +37,7 @@ import { PostComponent } from './post/post.component';
     GraphService,
     SearchService,
     SettingsService,
-    ProfileService
+    ProfileService,
   ],
   imports: [
     CommonModule,

@@ -9,6 +9,15 @@
     <textarea class="form-control" rows="8" [(ngModel)]="content"></textarea>
   </div>
 </div>
+<div class="input-group file-input">
+  <div class="custom-file">
+    <input (change)="onFileChange($event)" #file type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+    <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+  </div>
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04">Button</button>
+  </div>
+</div>
 <div class="modal-footer">
   <span ngbAutoFocus></span> <!-- Invisible span to avoid focusing on any element -->
   <button type="button" class="btn btn-primary" (click)="submit()">Submit Post</button>
