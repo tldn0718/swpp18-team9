@@ -212,7 +212,8 @@ Profile {
     {id: 15, firstName: 'David', lastName: 'Yeon'},
     ...
   ],
-  content<string>: 'New post content'
+  content<string>: 'New post content',
+  imagePaths<string[]>: ['./image1.png', './image2.png', ...]
 }
 ```
 - **response body:**
@@ -342,4 +343,24 @@ None
 - **response body:**
 ```
 None
+```
+
+### /api/image
+- **method: POST**
+`Upload images`
+- **request body:**
+```
+imageForm<FormData> {
+  image0: File,
+  image1: File,
+  ...
+}
+```
+- **response body:**
+```
+paths<string[]> [
+  './image1.png',
+  './image2.png',
+  ...
+]
 ```
