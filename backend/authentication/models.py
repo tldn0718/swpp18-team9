@@ -73,6 +73,9 @@ class Profile(models.Model):
             'self',
             related_name = 'friends_of'
         )
+        motto = models.CharField(max_length=200, blank=True)
+
+        image = models.ImageField(upload_to='profile_image', blank=True)
 
         def user_toJSON(self):
             return {
@@ -119,3 +122,11 @@ class Post(models.Model):
             related_name = 'posts'
         )
     content = models.TextField()
+
+class Group(models.Model):
+    name = models.CharField(max_length=120)
+    motto = models.CharField(max_length=200, blank=True)
+    members = models.ManyToManyField(
+            Profile,
+            related_name = 'group_set'
+        )

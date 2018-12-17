@@ -1,6 +1,9 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import views
+
 
 urlpatterns = [
     path('', views.index, name = 'index'),
@@ -13,7 +16,11 @@ urlpatterns = [
     path('friend/', views.totalFriendRequest, name= 'friend'),
     path('friend/<int:id>/', views.specificFriendRequest, name='friendRequest'),
     path('search/<str:term>/',views.search , name='search'),
-    path('post/get/',views.postingGet,name='postingGet'),
-    path('post/write/',views.postingWrite,name='postingWrite'),
+    path('post/get/', views.postingGet, name='postingGet'),
+    path('post/write/', views.postingWrite, name='postingWrite'),
+    path('profile/one/<int:id>/', views.profile_one, name='profile_one'),
+    path('profile/multi/', views.profile_multiple, name='profile_multiple'),
+    path('group/', views.group, name='group'),
+    path('group/<int:id>/', views.group_detail, name='group_detail'),
     path('token/', views.token, name='token'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
