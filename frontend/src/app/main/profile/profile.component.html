@@ -7,22 +7,23 @@
 <div class="modal-body profile-container">
   <h5><span *ngFor="let user of selectedUsers">{{' @' + user.first_name}}</span></h5>
     <div *ngIf="one" class="info-body-one">
-      <pre class="motto">{{': ' + info.motto}}</pre>
-      <pre class="disatnce">{{'(He is ' + info.distance + ' nodes away from you)'}}</pre>
-      <pre class="group">
-        <h6>Groups</h6>
+      <div class="motto">{{': ' + info.motto}}</div>
+      <div class="disatnce">{{'(He is ' + info.distance + ' nodes away from you)'}}</div>
+      <hr>
+      <div class="group">
+        <p>Groups</p>
         <h6><span *ngFor="let group of info.groups">{{group+' '}}</span></h6>
-      </pre>
-      <pre class="mutuals">
-        <h6>Mutual Friends</h6>
+      </div>
+      <div class="mutuals">
+        <p>Mutual Friends</p>
         <h6><span *ngFor="let friend of info.mutual_friends">{{friend.name+' '}}</span></h6>
-      </pre>
+      </div>
     </div>
     <div *ngIf="!one" class ="info-body-multi">
-      <pre class="group">
-        <h6>Mutual Groups</h6>
+      <div class="group">
+        <p>Mutual Groups</p>
         <h6><span *ngFor="let group of info.groups">{{group+' '}}</span></h6>
-      </pre>
+      </div>
     </div>
   <hr>
   <h4>Posts</h4>
@@ -31,6 +32,7 @@
 <div class="modal-footer">
   <span ngbAutoFocus></span> <!-- Invisible span to avoid focusing on any element -->
   <button type="button" class="btn btn-primary" (click)="writePost()">Write Post</button>
+  <button type="button" class="btn btn-primary" (click)="makeGroup()">Make Group</button>
   <button type="button" class="btn btn-outline-dark"
           (click)="closeModal('Cancel Button Clicked')">Close</button>
 </div>

@@ -3,6 +3,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileService } from './profile.service';
 import { User } from '../../../models';
 import { WritePostComponent } from '../write-post/write-post.component';
+import { MakeGroupComponent } from '../make-group/make-group.component';
 import { concatMap, pluck, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
@@ -75,6 +76,17 @@ export class ProfileComponent implements OnInit {
     }).catch((dismissedReason: string)=>{
       console.log(dismissedReason);
     });
+  }
+
+  makeGroup() {
+    const modalConfig: any = {
+      size: 'lg',
+      backdrop: "static"
+    };
+    const makeGroupModal = this.modal.open(MakeGroupComponent, modalConfig);
+    makeGroupModal.result.then((groupInfo) =>{
+      this.profile.makeGroup(this.selectedUsers, groupInfo);
+    })
   }
 
 }

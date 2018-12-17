@@ -14,6 +14,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { ProfileService } from './profile/profile.service';
 import { WritePostComponent } from './write-post/write-post.component';
 import { PostComponent } from './post/post.component';
+import { GroupComponent } from './group/group.component';
+import { MakeGroupComponent } from './make-group/make-group.component';
 
 @NgModule({
   declarations: [
@@ -27,11 +29,12 @@ import { PostComponent } from './post/post.component';
     InfoWindowComponent, 
     ProfileComponent, 
     WritePostComponent, 
-    PostComponent
+    PostComponent, GroupComponent, MakeGroupComponent
   ],
   entryComponents: [
     ProfileComponent,
-    WritePostComponent
+    WritePostComponent,
+    MakeGroupComponent,
   ],
   providers: [
     GraphService,
