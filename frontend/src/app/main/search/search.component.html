@@ -1,5 +1,5 @@
 <h4>
-  Search User
+  Search
 </h4>
 <div *ngIf="!showResult" class="input-group search-bar">
   <input type="text" class="form-control" [(ngModel)]="searchTerm">
@@ -12,7 +12,13 @@
 <div *ngIf="showResult" class="result-list">
   <div *ngFor="let profile of profiles" class="card profile-card">
     <div class="card-body">
-      <h5 class="card-title">{{profile.firstName+' '+profile.lastName}}</h5>
+      <h5 class="card-title">{{profile.first_name+' '+profile.last_name}}</h5>
+    </div>
+  </div>
+  <div *ngFor="let group of groups" class="card profile-card">
+    <div class="card-body">
+      <h5 class="card-title">{{group.name}}</h5>
+      <p class="card-text">{{group.motto}}</p>
     </div>
   </div>
   <button class="btn btn-sm btn-primary" (click)="cancelSearch()">Cancel</button>

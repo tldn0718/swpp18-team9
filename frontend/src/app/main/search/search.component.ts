@@ -13,6 +13,7 @@ export class SearchComponent implements OnInit {
   searchTerm: string = '';
   showResult: boolean = false;
   profiles: any[] = [];
+  groups: any[] = [];
 
   constructor(private search: SearchService) { }
 
@@ -20,18 +21,10 @@ export class SearchComponent implements OnInit {
   }
 
   searchUser() {
-    this.search.search(this.searchTerm).pipe(
-      map((rawResult: any)=>{
-        return rawResult.persons.map((rawUserInfo) => { 
-          return {
-            ...rawUserInfo,
-            firstName: rawUserInfo.first_name,
-            lastName: rawUserInfo.last_name
-          };
-        });
-      })
-    ).subscribe((searchResult: User[])=>{
-      this.profiles = searchResult;
+    this.search.search(this.searchTerm)
+    .subscribe((searchResult: any)=>{
+      this.profiles = searchResult.persons;
+      this.groups = searchResult.groups
       this.showResult = true;
     });
   }
