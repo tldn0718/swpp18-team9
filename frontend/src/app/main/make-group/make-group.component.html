@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">Make Group</h4>
+  <button type="button" class="close" aria-label="Close" (click)="closeModal('Close Button Clicked')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="input-group">
+    <p>Name: <br></p>
+    <textarea class="form-control" rows="1" [(ngModel)]="name"></textarea>
+  </div>
+  <hr>
+  <div class="input-group">
+    <p>Introduction: <br></p>
+    <textarea class="form-control" rows="2" [(ngModel)]="motto"></textarea>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <span ngbAutoFocus></span> <!-- Invisible span to avoid focusing on any element -->
+  <button type="button" class="btn btn-primary" (click)="submit()">Create Group</button>
+  <button type="button" class="btn btn-outline-dark"
+          (click)="closeModal('Cancel Button Clicked')">Close</button>
+</div>
+  

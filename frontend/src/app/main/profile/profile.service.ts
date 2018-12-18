@@ -35,6 +35,15 @@ export class ProfileService {
     )
   }
 
+  makeGroup(selectedUsers: User[], groupInfo: {name: string, motto:string}) {
+    return this.http.post('api/group/', {
+      name: groupInfo.name,
+      motto: groupInfo.motto,
+      selectedUsers
+    }
+    )
+  }
+
   getPost(selectedUsers: User[]) {
     return this.http.post('/api/post/get/', {
       selectedUsers
