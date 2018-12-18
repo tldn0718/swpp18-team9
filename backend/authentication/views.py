@@ -4,7 +4,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
 import json
 from json.decoder import JSONDecodeError
-from .models import Account, Profile, Notification, Post, Group, UploadedImage
+from .models import Account, Profile, Notification, Post, Group, UploadedImage, Comment
 from django.db.models import Q
 from queue import Queue
 from django.utils import timezone
@@ -238,8 +238,7 @@ def getSelectedUsers(request):
     else:
         return HttpResponseNotAllowed(['POST'])
 
-from django.conf import settings
-from django.conf.urls.static import static
+
 # Get posts with the tags of given users
 def postingGet(request):
     if request.method == 'POST':
@@ -249,7 +248,7 @@ def postingGet(request):
         except:
             return HttpResponseBadRequest()
         selectedIDs = [user['id'] for user in selectedUsers]
-        posts = Post.objects.all().prefetch_related('tags')
+        posts = Post.objects.all().prefetch_related('author','tags')
         postResult = []
         for post in posts:
             image_path = []
@@ -258,7 +257,11 @@ def postingGet(request):
             tagID = post.tags.values_list('id', flat=True)
             if set(selectedIDs) == set(tagID):
                 postResult.append({'id': post.id, 'content': post.content,
-                                'tags': list(post.tags.values_list('id', flat=True)), 'images': ["http://localhost:8000/media/images/" + post.image]})
+                                'tags': list(post.tags.values_list('id', flat=True)),
+                                'author': post.author.get_full_name(),
+                                'createdTime': post.created_time,
+                                'likes': list(post.likes.values_list('id', flat=True)),
+                                'images': ["http://localhost:8000/media/images/" + post.image]})
         return JsonResponse({'posts': postResult})
     else:
         return HttpResponseNotAllowed(['POST'])
@@ -288,6 +291,41 @@ def postingWrite(request):
         return HttpResponseNotAllowed(['POST'])
 
 
+def posting_comment(request, id):
+    # Get comments of the post specified by postId
+    if request.method == 'GET':
+        comments = [{'id': comment.id,'content': comment.content,'author': comment.author.get_full_name()}
+             for comment in Comment.objects.filter(post_id=id).select_related('author')]
+        return JsonResponse(comments, safe=False)
+    # Post a comment on the post specified by postId
+    elif request.method == 'POST':
+        try:
+            body = request.body.decode()
+            content = json.loads(body)['content']
+            user_id = json.loads(body)['userId']
+        except:
+            return HttpResponseBadRequest()
+        Comment.objects.create(post_id=id, content=content, author_id=user_id)
+        return HttpResponse(status=201)
+    else:
+        return HttpResponseNotAllowed(['GET', 'POST'])
+
+
+# Like the post specified by postId
+def posting_like(request, id):
+    if request.method == 'POST':
+        try:
+            body = request.body.decode()
+            user_id = json.loads(body)['userId']
+        except:
+            return HttpResponseBadRequest()
+        post = Post.objects.get(id=id)
+        post.likes.add(user_id)
+        return JsonResponse({'likeCount': post.likes.count()})
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+
 def group(request):
     # create a group with the info given by Json
     if request.method == 'POST':
@@ -297,7 +335,7 @@ def group(request):
             motto = json.loads(body)['motto']
             selectedNodes = json.loads(body)['selectedNodes']
         except:
-            return HttpResponseNotFound()
+            return HttpResponseBadRequest()
         selectedIDs = [node['id'] for node in selectedNodes]
         created_group = Group.objects.create(name=name,motto=motto)
         created_group.members.add(*selectedIDs)

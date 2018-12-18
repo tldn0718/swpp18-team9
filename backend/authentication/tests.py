@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 import json
-from authentication.models import Account, Profile, Notification, Post, Group
+from authentication.models import Account, Profile, Notification, Post, Group, Comment
 
 class AuthenticationTestCase(TestCase):
     def test(self):
@@ -396,19 +396,30 @@ class PostingTestCase(TestCase):
             'password': 'nayeon'}), content_type = 'application/json')
         self.assertEqual(response.status_code, 200) # SignIn Succeed
 
-        newPost = Post(content='Likey')
-        newPost.save()
+        newPost = Post.objects.create(author=self.account2, content='Likey')
         newPost.tags.add(self.account1)
         newPost.tags.add(self.account2)
+        newComment = Comment.objects.create(post=newPost, content='c', author=self.account3)
+
+        response = client.post('/api/post/{}/like/'.format(newPost.id), json.dumps({
+                'userId': self.account2.id,
+            }), content_type='application/json')
+        self.assertJSONEqual(response.content, {'likeCount': 1})
+
         response = client.post('/api/post/get/', json.dumps({
             'selectedUsers': [
                 {'id': self.account1.id, 'first_name': 'Jihyo', 'last_name': 'Park'},
                 {'id': self.account2.id, 'first_name': 'Nayeon', 'last_name': 'Im'}
             ]}), content_type = 'application/json')
-        # The testing below should be corrected.
-        '''self.assertJSONEqual(response.content, {'posts': [
-                {'id':newPost.id, 'content': 'Likey', 'tags':[self.account1.id, self.account2.id]}
-            ]})'''
+
+        result = json.loads(response.content)['posts']
+        self.assertEqual(len(result), 1)
+        result = result[0]
+        self.assertEqual(result['id'], newPost.id)
+        self.assertEqual(result['content'], 'Likey')
+        self.assertEqual(result['tags'], [self.account1.id, self.account2.id])
+        self.assertEqual(result['author'], 'Nayeon Im')
+        self.assertEqual(result['likes'], [self.account2.id])
 
         response = client.post('/api/post/get/', json.dumps({
             'selectedUsers': [
@@ -703,3 +714,51 @@ class DistanceTestCase(TestCase):
              content_type='application/json')
         result = json.loads(response.content)
         self.assertEqual(result['distance'], -1)
+
+
+class PostLikeCommentTestCase(TestCase):
+    def setUp(self):
+        self.account1 = Account.objects.create_user(email='jihyo@twice.com',
+            first_name='Jihyo', last_name='Park', password='jihyo')
+        self.account2 = Account.objects.create_user(email='nayeon@twice.com',
+            first_name='Nayeon', last_name='Im', password='nayeon')
+        self.account3 = Account.objects.create_user(email='sana@twice.com',
+            first_name='Sana', last_name='Minatozaki', password='sana')
+        self.profile1 = Profile.objects.create(account=self.account1)
+        self.profile2 = Profile.objects.create(account=self.account2)
+        self.profile3 = Profile.objects.create(account=self.account3)
+        self.post = Post.objects.create(author=self.account1, content='The Best Thing I Ever Did')
+
+    def test_comment(self):
+        client = Client()
+        response = client.post('/api/signin/', json.dumps({'username': 'jihyo@twice.com',
+            'password': 'jihyo'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response = client.post('/api/post/{}/comment/'.format(self.post.id), json.dumps({
+                'content': 'Being Once',
+                'userId': self.account2.id,
+            }), content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        created_comment = Comment.objects.get(content='Being Once')
+        self.assertEqual(created_comment.post_id, self.post.id)
+        self.assertEqual(created_comment.author_id, self.account2.id)
+
+        response = client.get('/api/post/{}/comment/'.format(self.post.id))
+        self.assertJSONEqual(response.content, [{
+                'id': created_comment.id,
+                'content': 'Being Once',
+                'author': 'Nayeon Im'
+            }])
+
+
+    def test_like(self):
+        client = Client()
+        response = client.post('/api/signin/', json.dumps({'username': 'jihyo@twice.com',
+            'password': 'jihyo'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response = client.post('/api/post/{}/like/'.format(self.post.id), json.dumps({
+                'userId': self.account2.id,
+            }), content_type='application/json')
+        self.assertJSONEqual(response.content, {'likeCount': 1})

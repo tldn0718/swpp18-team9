@@ -116,12 +116,36 @@ class Notification(models.Model):
         return self.content
 
 class Post(models.Model):
+    author = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            on_delete=models.CASCADE,
+            related_name='posts_set',
+        )
     tags = models.ManyToManyField(
             settings.AUTH_USER_MODEL,
             related_name = 'posts'
         )
     content = models.TextField(blank = True)
+    likes = models.ManyToManyField(
+            settings.AUTH_USER_MODEL,
+            related_name='likes_set',
+        )
     image = models.CharField(max_length = 120, blank = True)
+    created_time = models.DateTimeField(auto_now_add=True)
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name='comments_set'
+        )
+    content = models.CharField(max_length=200)
+    author = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            on_delete=models.CASCADE,
+            related_name='comments',
+        )
+
 
 class UploadedImage(models.Model):
     image_file = models.ImageField('image', upload_to='images',blank=True) #stores uploaded image
