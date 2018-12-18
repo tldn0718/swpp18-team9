@@ -10,11 +10,13 @@
   </div>
 </div>
 <div *ngIf="showResult" class="result-list">
+  <h5 *ngIf="profiles.length>0&&showResult" class="mb-2">Profiles</h5>
   <div *ngFor="let profile of profiles" class="card profile-card">
     <div class="card-body">
       <h5 class="card-title">{{profile.first_name+' '+profile.last_name}}</h5>
     </div>
   </div>
+  <h5 *ngIf="groups.length>0&&showResult" class="mt-3">Groups</h5>
   <div *ngFor="let group of groups" class="card profile-card">
     <div class="card-body">
       <h5 class="card-title">{{group.name}}</h5>
