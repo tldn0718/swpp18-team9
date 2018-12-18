@@ -457,6 +457,8 @@ class DistanceTestCase(TestCase):
             first_name='chaeyoung', last_name='chaeyoung', password='sana')
         self.account9 = Account.objects.create_user(email='tzuyu@twice.com',
             first_name='tzuyu', last_name='tzuyu', password='sana')
+        self.isolated_account = Account.objects.create_user(email='isolated@twice.com',
+            first_name='isolated', last_name='isolated', password='sana')
         self.profile1 = Profile.objects.create(account=self.account1)
         self.profile2 = Profile.objects.create(account=self.account2)
         self.profile3 = Profile.objects.create(account=self.account3)
@@ -466,6 +468,7 @@ class DistanceTestCase(TestCase):
         self.profile7 = Profile.objects.create(account=self.account7)
         self.profile8 = Profile.objects.create(account=self.account8)
         self.profile9 = Profile.objects.create(account=self.account9)
+        self.isolated_profile = Profile.objects.create(account=self.isolated_account)
         self.profile1.friends.add(self.profile2)
         self.profile2.friends.add(self.profile3)
         self.profile2.friends.add(self.profile4)
@@ -519,6 +522,44 @@ class DistanceTestCase(TestCase):
         result = json.loads(response.content)
         self.assertEqual(result['distance'], 4)
 
-        response = client.
+        response = client.post('/api/profile/multi/', json.dumps({'selectedNodes':
+            [{'id': self.account6.id, 'label': 'mina'},
+             {'id': self.account8.id, 'label': 'chaeyoung'}]}),
+             content_type='application/json')
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 4)
 
+        response = client.post('/api/profile/multi/', json.dumps({'selectedNodes':
+            [{'id': self.account6.id, 'label': 'mina'},
+             {'id': self.account8.id, 'label': 'chaeyoung'},
+             {'id': self.account1.id, 'label': 'Jihyo'}
+             ]}),
+             content_type='application/json')
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 0)
+
+        # make a new edge
         self.profile1.friends.add(self.profile9)
+        self.profile4.friends.add(self.profile6)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account9.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 1)
+
+        response = client.post('/api/profile/multi/', json.dumps({'selectedNodes':
+            [{'id': self.account6.id, 'label': 'mina'},
+             {'id': self.account8.id, 'label': 'chaeyoung'}]}),
+             content_type='application/json')
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 3)
+
+        response = client.get('/api/profile/one/{}/'.format(self.isolated_account.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], -1)
+
+        response = client.post('/api/profile/multi/', json.dumps({'selectedNodes':
+            [{'id': self.account6.id, 'label': 'mina'},
+             {'id': self.isolated_account.id, 'label': 'isolated'}]}),
+             content_type='application/json')
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], -1)
