@@ -18,10 +18,14 @@ export class PostComponent implements OnInit {
     {id: 1, content: "test comment2", author: "Tester2"}
   ];
   commentContent: string;
+  images: any[];
 
   constructor(private postService: PostService, private auth: AuthService) { }
 
   ngOnInit() {
+    console.log('post', this.post);
+    this.images = this.post.images.filter((url)=>url!=='http://localhost:8000/media/images/')
+    console.log('images', this.images);
     // get post info
     // this.postService.getAuthor(this.post.author? this.post.author : 0).subscribe((user: User)=>{
     //   this.author = user;

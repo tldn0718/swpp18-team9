@@ -84,7 +84,9 @@ export class ProfileComponent implements OnInit {
     };
     const makeGroupModal = this.modal.open(MakeGroupComponent, modalConfig);
     makeGroupModal.result.then((groupInfo) =>{
-      this.profile.makeGroup(this.selectedUsers, groupInfo);
+      this.profile.makeGroup(this.selectedUsers, groupInfo).subscribe((res)=>{
+        console.log(res);
+      })
     })
   }
 

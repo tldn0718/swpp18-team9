@@ -4,12 +4,12 @@
     <p class="card-text" style="margin-bottom:2rem">
       {{post.content}}
     </p>
-    <ngb-carousel class="image-carousel mb-3" *ngIf="post?.images">
-      <ng-template ngbSlide *ngFor="let image of post.images">
-        <img [src]="image" class="post-image">
+    <ngb-carousel class="image-carousel mb-3" *ngIf="images.length>0">
+      <ng-template ngbSlide *ngFor="let image of images">
+        <img *ngIf="image!=='http://localhost:8000/media/images/'" [src]="image" class="post-image">
       </ng-template>
     </ngb-carousel>
-    <div class="comment-area">
+    <div class="comment-area" style="display:none">
       <h5>Comments</h5>
       <div class="like-area">
         <button class="btn btn-sm btn-outline-secondary" type="button" (click)="likePost()">

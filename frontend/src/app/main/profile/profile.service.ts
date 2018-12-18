@@ -39,7 +39,7 @@ export class ProfileService {
     return this.http.post('api/group/', {
       name: groupInfo.name,
       motto: groupInfo.motto,
-      selectedUsers
+      selectedNodes: selectedUsers
     }
     )
   }
