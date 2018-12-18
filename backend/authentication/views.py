@@ -93,7 +93,7 @@ def totalGraph(request):
         response_users = []
         response_friends = []
 
-        for user in Profile.objects.all().prefetch_related('friends'):
+        for user in Profile.objects.all().select_related('account').prefetch_related('friends'):
             response_users.append(user.user_toJSON())
             for friend in user.friends.all():
                 if user.account.id < friend.account.id:
@@ -108,7 +108,7 @@ def totalGraph(request):
 # from the user are less than or equal to value of 'level'
 def levelGraph(request, level):
     if request.method == 'GET':
-        users = Profile.objects.prefetch_related('friends', 'account')
+        users = Profile.objects.select_related('account').prefetch_related('friends')
         open_nodes = Queue()
         closed_nodes = set()
         login_user = Profile.objects.get(account_id=request.user.id)
