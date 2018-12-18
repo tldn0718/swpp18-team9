@@ -21,7 +21,7 @@
         <h5>Groups</h5>
         <h6><span *ngFor="let group of info.groups">{{group+' '}}</span></h6>
       </div>
-      <div class="mutuals" *ngIf="info?.mutual_friends&&info.mutual_friends.length>0">
+      <div class="mutuals mt-3" *ngIf="info?.mutual_friends&&info.mutual_friends.length>0">
         <h5>Mutual Friends</h5>
         <h6><span *ngFor="let friend of info.mutual_friends">{{friend.name+' '}}</span></h6>
       </div>
