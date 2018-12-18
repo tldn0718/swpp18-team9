@@ -435,3 +435,86 @@ class GroupTestCase(TestCase):
         self.assertIn(self.profile3, self.group1.members.all())
         response = client.delete('/api/group/{}/'.format(self.group1.id))
         self.assertNotIn(self.profile3, self.group1.members.all())
+
+
+class DistanceTestCase(TestCase):
+    def setUp(self):
+        self.account1 = Account.objects.create_user(email='jihyo@twice.com',
+            first_name='Jihyo', last_name='Park', password='jihyo')
+        self.account2 = Account.objects.create_user(email='nayeon@twice.com',
+            first_name='Nayeon', last_name='Im', password='nayeon')
+        self.account3 = Account.objects.create_user(email='sana@twice.com',
+            first_name='Sana', last_name='Minatozaki', password='sana')
+        self.account4 = Account.objects.create_user(email='jeongyeon@twice.com',
+            first_name='jeongyeon', last_name='jeongyeon', password='sana')
+        self.account5 = Account.objects.create_user(email='momo@twice.com',
+            first_name='momo', last_name='momo', password='sana')
+        self.account6 = Account.objects.create_user(email='mina@twice.com',
+            first_name='mina', last_name='mina', password='sana')
+        self.account7 = Account.objects.create_user(email='dahyun@twice.com',
+            first_name='dahyun', last_name='dahyun', password='sana')
+        self.account8 = Account.objects.create_user(email='chaeyoung@twice.com',
+            first_name='chaeyoung', last_name='chaeyoung', password='sana')
+        self.account9 = Account.objects.create_user(email='tzuyu@twice.com',
+            first_name='tzuyu', last_name='tzuyu', password='sana')
+        self.profile1 = Profile.objects.create(account=self.account1)
+        self.profile2 = Profile.objects.create(account=self.account2)
+        self.profile3 = Profile.objects.create(account=self.account3)
+        self.profile4 = Profile.objects.create(account=self.account4)
+        self.profile5 = Profile.objects.create(account=self.account5)
+        self.profile6 = Profile.objects.create(account=self.account6)
+        self.profile7 = Profile.objects.create(account=self.account7)
+        self.profile8 = Profile.objects.create(account=self.account8)
+        self.profile9 = Profile.objects.create(account=self.account9)
+        self.profile1.friends.add(self.profile2)
+        self.profile2.friends.add(self.profile3)
+        self.profile2.friends.add(self.profile4)
+        self.profile3.friends.add(self.profile4)
+        self.profile3.friends.add(self.profile8)
+        self.profile4.friends.add(self.profile5)
+        self.profile4.friends.add(self.profile7)
+        self.profile5.friends.add(self.profile6)
+        self.profile6.friends.add(self.profile7)
+        self.profile7.friends.add(self.profile9)
+
+    def test_distance(self):
+        client = Client()
+        response = client.post('/api/signin/', json.dumps({'username': 'jihyo@twice.com',
+            'password': 'jihyo'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account1.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 0)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account2.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 1)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account3.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 2)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account4.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 2)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account5.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 3)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account6.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 4)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account7.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 3)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account8.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 3)
+
+        response = client.get('/api/profile/one/{}/'.format(self.account9.id))
+        result = json.loads(response.content)
+        self.assertEqual(result['distance'], 4)

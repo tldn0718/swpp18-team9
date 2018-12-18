@@ -25,6 +25,7 @@ def get_distance(start, target):
 
     while not open_nodes.empty():
         current_node = open_nodes.get()
+        print(current_node.account_id)
         next_distance = distances[current_node.account_id] + 1
         for next_node in current_node.friends.all():
             if next_node == target:
@@ -32,7 +33,7 @@ def get_distance(start, target):
             if next_node.account_id not in closed_nodes:
                 open_nodes.put(next_node)
                 distances[next_node.account_id] = next_distance
-        closed_nodes.append(current_node.account_id)
+        closed_nodes.add(current_node.account_id)
     return -1 # two users are not connected
 
 
