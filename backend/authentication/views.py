@@ -16,44 +16,22 @@ def index(request):
 
 # The parameters are Profile model.
 def get_distance(start, target):
-    #Use Dijkstra algorithm to find the target
-    dist = dijkstra(start)
-    target_dist = dist[target.account.id-1]
+    users = Profile.objects.prefetch_related('friends')
+    closed_nodes = set()
+    open_nodes = Queue()
+    openSet.put(start)
+    distances = {start.account_id: 0}
 
-    if target_dist == 9999:
-        return -1
-    return target_dist
-
-
-def dijkstra(source):
-    users = Profile.objects.all()
-    dist = dict();
-    Q = []
-    for user in users:
-        dist[user.account.id-1] = 9999
-        Q.append(user)
-    dist[source.account.id-1] = 0
-    while len(Q) > 1:
-        #Use min-heap for better performance
-        min_dist = 9999
-        min_user = None
-        id = -1
-        for v in Q:
-            if dist[v.account.id-1] < min_dist:
-                min_dist = dist[v.account.id-1]
-                id = v.account.id-1
-                min_user = v
-        for x in Q:
-            if x.account.id-1 == id:
-                Q.remove(min_user)
-                break
-        for friend in min_user.friends.all():
-            new_dist = dist[min_user.account.id-1] + 1
-            if new_dist < dist[friend.account.id-1]:
-                dist[friend.account.id-1] = new_dist
-    return dist
-
-
+    while not openSet.empty():
+        currentNode = openSet.get()
+        for nextNode in currentNode.friends.all():
+            if nextNode == target:
+                return distances[currentNode.account_id] + 1
+            if nextNode.account_id not in closedSet:
+                openSet.put(nextNode)
+                distances[nextNode.account_id] = distances[currentNode.account_id] + 1
+        closedSet.append(currentNode)
+    return -1
 
 
 def signup(request):
