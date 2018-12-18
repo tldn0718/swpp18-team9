@@ -7,20 +7,28 @@
 <div class="modal-body profile-container">
   <h5><span *ngFor="let user of selectedUsers">{{' @' + user.first_name}}</span></h5>
     <div *ngIf="one" class="info-body-one">
-      <pre class="motto">{{': ' + info?.motto}}</pre>
-      <pre class="disatnce">{{'(He is ' + info?.distance + ' nodes away from you)'}}</pre>
+      <pre class="motto" *ngIf="!mottoEditing" (click)="editMotto()">{{': ' + info?.motto}}</pre>
+      <div class="input-group" *ngIf="mottoEditing">
+        <textarea class="form-control" [(ngModel)]="mottoContent"></textarea>
+        <div class="input-group-append">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" (click)="saveMotto()">Save</button>
+          </div>
+        </div>
+      </div> 
+      <pre class="disatnce" *ngIf="!me">{{'(He is ' + info?.distance + ' nodes away from you)'}}</pre>
       <div class="group" *ngIf="info?.groups">
-        <h6>Groups</h6>
+        <h5>Groups</h5>
         <h6><span *ngFor="let group of info.groups">{{group+' '}}</span></h6>
       </div>
-      <div class="mutuals" *ngIf="info?.mutual_friends">
-        <h6>Mutual Friends</h6>
+      <div class="mutuals" *ngIf="info?.mutual_friends&&info.mutual_friends.length>0">
+        <h5>Mutual Friends</h5>
         <h6><span *ngFor="let friend of info.mutual_friends">{{friend.name+' '}}</span></h6>
       </div>
     </div>
     <div *ngIf="!one" class ="info-body-multi">
       <div class="group" *ngIf="info?.groups">
-        <h6>Mutual Groups</h6>
+        <h5>Mutual Groups</h5>
         <h6><span *ngFor="let group of info?.groups">{{group+' '}}</span></h6>
       </div>
     </div>

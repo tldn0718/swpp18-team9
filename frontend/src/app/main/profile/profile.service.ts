@@ -11,6 +11,10 @@ export class ProfileService {
 
   constructor(private http: HttpClient) { }
 
+  saveMotto(userId: string, content: string) {
+    return this.http.put(`/api/profile/one/${userId}/`, {motto: content});
+  }
+
   getUserInfo(selectedNodes: UserNode[]): Observable<User[]> {
     return this.http.post<User[]>('/api/user/', {selectedNodes});
   }

@@ -22,6 +22,8 @@ export class ProfileComponent implements OnInit {
   info: any;
   one: boolean = false
   me: boolean = false
+  mottoEditing: boolean = false;
+  mottoContent: string = '';
 
   constructor(
     private modal: NgbModal,
@@ -36,7 +38,7 @@ export class ProfileComponent implements OnInit {
         this.selectedUsers = users;
         if(this.selectedNodes.length === 1){
           this.one = true;
-          if(users[0].id === this.auth.userId){
+          if(users[0].id === parseInt(this.auth.userId)){
             this.me = true
           }
         }
@@ -49,6 +51,23 @@ export class ProfileComponent implements OnInit {
     ).subscribe((info: any) => {
       this.info = info;
       console.log(this.info)
+    });
+  }
+
+  editMotto() {
+    if(this.me) {
+      this.mottoEditing = true;
+    }
+  }
+
+  saveMotto() {
+    this.profile.saveMotto(this.auth.userId, this.mottoContent).subscribe(()=>{
+      console.log('motto saved:', this.mottoContent);
+      this.profile.getProfileInfo(this.selectedNodes).subscribe((info)=>{
+        this.info = info;
+        this.mottoContent = '';
+        this.mottoEditing = false;
+      });
     });
   }
 
