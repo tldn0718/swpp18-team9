@@ -18,22 +18,22 @@ def index(request):
 # The parameters are Profile model.
 def get_distance(start, target):
     users = Profile.objects.prefetch_related('friends')
-    closed_nodes = set()
+    # closed_nodes = set()
     open_nodes = Queue()
     open_nodes.put(start)
     distances = {start.account_id: 0}
 
     while not open_nodes.empty():
         current_node = open_nodes.get()
-        print(current_node.account_id)
+        # print("{0}, {1}".format(current_node.account_id, distances[current_node.account_id]))
         next_distance = distances[current_node.account_id] + 1
         for next_node in current_node.friends.all():
             if next_node == target:
                 return next_distance #
-            if next_node.account_id not in closed_nodes:
+            if next_node.account_id not in distances:#closed_nodes:
                 open_nodes.put(next_node)
                 distances[next_node.account_id] = next_distance
-        closed_nodes.add(current_node.account_id)
+                # closed_nodes.add(next_node.account_id)
     return -1 # two users are not connected
 
 
@@ -347,6 +347,10 @@ def group_detail(request, id):
 
 
 # Return or edit the profile of given user. The parameter is id of Account model.
+# If the user sees one's own profile,
+# then distance value will be zero. (magic number)
+# If the two users are not connected,
+# then distance value will be minus one. (magin number)
 def profile_one(request, id):
     if request.method == 'GET':
         target_user_q = Profile.objects.filter(account_id=id).prefetch_related('group_set', 'account','friends')
@@ -383,7 +387,12 @@ def profile_one(request, id):
         return HttpResponseNotAllowed(['GET', 'PUT'])
 
 # get names and common groups of users.
-# If users are more than two, then this also return the distance between two users.
+# If the number of users are equal to two,
+# then this also returns the distance between two users.
+# If the number of users are more than two,
+# then distance value will be zero. (magic number)
+# If the two users are not connected,
+# then distance value will be minus one. (magin number)
 def profile_multiple(request):
     if request.method == 'POST':
         try:

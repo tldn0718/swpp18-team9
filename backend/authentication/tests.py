@@ -518,3 +518,7 @@ class DistanceTestCase(TestCase):
         response = client.get('/api/profile/one/{}/'.format(self.account9.id))
         result = json.loads(response.content)
         self.assertEqual(result['distance'], 4)
+
+        response = client.
+
+        self.profile1.friends.add(self.profile9)
