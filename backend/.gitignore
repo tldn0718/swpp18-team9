@@ -5,6 +5,7 @@
 ### misc files ###
 *.swp
 *.pem
+*.sh
 
 ### Django ###
 *.log
