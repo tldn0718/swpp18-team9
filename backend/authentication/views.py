@@ -10,6 +10,7 @@ from queue import Queue
 from django.utils import timezone
 from .forms import UploadImageForm
 
+
 def index(request):
     return HttpResponse("index")
 
@@ -19,18 +20,19 @@ def get_distance(start, target):
     users = Profile.objects.prefetch_related('friends')
     closed_nodes = set()
     open_nodes = Queue()
-    openSet.put(start)
+    open_nodes.put(start)
     distances = {start.account_id: 0}
 
-    while not openSet.empty():
-        currentNode = openSet.get()
-        for nextNode in currentNode.friends.all():
-            if nextNode == target:
-                return distances[currentNode.account_id] + 1
-            if nextNode.account_id not in closedSet:
-                openSet.put(nextNode)
-                distances[nextNode.account_id] = distances[currentNode.account_id] + 1
-        closedSet.append(currentNode)
+    while not open_nodes.empty():
+        current_node = open_nodes.get()
+        next_distance = distances[current_node.account_id] + 1
+        for next_node in current_node.friends.all():
+            if next_node == target:
+                return next_distance
+            if next_node.account_id not in closed_nodes:
+                open_nodes.put(next_node)
+                distances[next_node.account_id] = next_distance
+        closed_nodes.append(current_node.account_id)
     return -1
 
 
