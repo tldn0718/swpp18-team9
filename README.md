@@ -2,6 +2,45 @@
 
 ## API
 
+### /api/post/:postId/comment/
+- **method: GET**
+`Get comments of the post specified by postId`
+- **request body:**
+- **response body:**
+```
+{
+  id: int,
+  content: string,
+  author: string // author's name
+}
+```
+- **method: POST**
+`Post a comment on the post specified by postId`
+- **request body:**
+```
+{
+  postId: number,
+  content: string,
+  userId: number
+}
+```
+- **response body:**
+
+### /api/post/:postId/like/
+- **method: POST**
+`Like the post specified by postId`
+- **request body:**
+{
+  userId: number
+}
+- **response body:**
+```
+// 가능하면
+{
+  likeCount: number // new like count
+}
+```
+
 ### /api/token/
 - **method: GET**
 - **params:** `none required`
@@ -194,8 +233,15 @@ Profile {
 ```
 {
   posts<Post[]>: [
-    {id: 1, content: 'First Post', tags: [3, 15, ...]},
-    {id: 2, content: 'Second Post', tags: [3, 15, ...]}, 
+    {
+      id: 1, 
+      content: 'First Post',
+      tags: [3, 15, ...], // user id array
+      likes: [4, 5, 6, ...], // user id array
+      createdTime: DateTime,
+      author: 3 // user id
+      images: ['path_to_image', ...]
+    },
     ...
   ]
 }
