@@ -108,22 +108,22 @@ def totalGraph(request):
 # from the user are less than or equal to value of 'level'
 def levelGraph(request, level):
     if request.method == 'GET':
-        users = Profile.objects.prefetch_related('friends')
-        login_user = Profile.objects.get(account_id=request.user.id)
-        open_nodes = Queue()
-        open_nodes.put(login_user)
-        distances = {request.user.id: 0}
+        closedSet = []
+        openSet = Queue()
         edges = []
+        loginProfile = Profile.objects.get(account=request.user)
+        openSet.put({'node': loginProfile, 'level': 0})
 
-        while not open_nodes.empty():
-            current_node = open_nodes.get()
-            next_distance = distances[current_node.account_id] + 1
-            for next_node in current_node.friends.all():
-                if (next_node.account_id not in distances) and (next_distance <= level):
-                    open_nodes.put(next_node)
-                    distances[next_node.account_id] = next_distance
-                    edges.append(current_node.friend_toJSON(next_node))
-        nodes = list(distances.keys())
+        while not openSet.empty():
+            currentNode = openSet.get()
+            if currentNode['level'] < level:
+                for nextNode in currentNode['node'].friends.all():
+                    if nextNode not in map(lambda x: x['node'], closedSet):
+                        openSet.put({'node': nextNode, 'level': currentNode['level']+1})
+                        edges.append(currentNode['node'].friend_toJSON(nextNode))
+            if currentNode['node'] not in map(lambda x: x['node'], closedSet):
+                closedSet.append(currentNode)
+        nodes = [nodeDictionary['node'].user_toJSON() for nodeDictionary in closedSet]
         return JsonResponse({'users': nodes, 'friends': edges})
     else:
         return HttpResponseNotAllowed(['GET'])
