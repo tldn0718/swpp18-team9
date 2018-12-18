@@ -19,6 +19,10 @@
     <div class="card-body">
       <h5 class="card-title">{{group.name}}</h5>
       <p class="card-text">{{group.motto}}</p>
+      <div class="btn-group">
+        <button [disabled]="joinedAlready(group.name)" class="btn btn-sm btn-secondary" (click)="joinGroup(group.id)">Join</button>
+        <button class="btn btn-sm btn-secondary" (click)="showGroup(group.id)">Show</button>
+      </div>
     </div>
   </div>
   <button class="btn btn-sm btn-primary" (click)="cancelSearch()">Cancel</button>

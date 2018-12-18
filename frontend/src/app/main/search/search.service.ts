@@ -11,4 +11,8 @@ export class SearchService {
   search(searchTerm: string) {
     return this.http.get(`/api/search/${searchTerm}`);
   }
+
+  join(groupId: number) {
+    return this.http.put(`/api/group/${groupId}/`, {});
+  }
 }

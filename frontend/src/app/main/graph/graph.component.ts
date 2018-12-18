@@ -53,7 +53,9 @@ export class GraphComponent implements OnInit, AfterViewInit {
     } else if(!direction && this.level > 1) {
       this.level--;
     }
-    this.graph.makeLevelNetwork(this.level).subscribe();
+    this.graph.makeLevelNetwork(this.level).subscribe((res)=>{
+      console.log('make level network res', res);
+    });
   }
 
 }

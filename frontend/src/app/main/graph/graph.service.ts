@@ -56,15 +56,17 @@ export class GraphService {
   makeNodesDataset(nodes) {
     this.nodesDataset = new DataSet(nodes);
     const currUserNode = <Node>this.nodesDataset.get(this.auth.userId);
-    currUserNode.color = {
-      background: '#f8ff96',
-      border: '#6a6d40',
-      highlight: {
+    if(currUserNode) {
+      currUserNode.color = {
         background: '#f8ff96',
         border: '#6a6d40',
-      }
-    };
-    this.nodesDataset.update(currUserNode);
+        highlight: {
+          background: '#f8ff96',
+          border: '#6a6d40',
+        }
+      };
+      this.nodesDataset.update(currUserNode);
+    }
   }
 
   initializeView() {
@@ -107,6 +109,20 @@ export class GraphService {
     this.displayMode = 'level';
     this.level = level;
     return this.getLevel(level).pipe(
+      tap((res: {users: UserNode[], friends: Friend[]}) => {
+        this.makeNodesDataset(res.users);
+        const graphData: Data = {
+          nodes: this.nodesDataset,
+          edges: res.friends
+        };
+        this.network.setData(graphData);
+        this.initializeView();
+      })
+    );
+  }
+
+  makeGroupNetwork(groupId: number) {
+    return this.http.get(`/api/group/${groupId}/`).pipe(
       tap((res: {users: UserNode[], friends: Friend[]}) => {
         this.makeNodesDataset(res.users);
         const graphData: Data = {
