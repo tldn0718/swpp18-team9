@@ -233,8 +233,15 @@ Profile {
 ```
 {
   posts<Post[]>: [
-    {id: 1, content: 'First Post', tags: [3, 15, ...]},
-    {id: 2, content: 'Second Post', tags: [3, 15, ...]}, 
+    {
+      id: 1, 
+      content: 'First Post',
+      tags: [3, 15, ...], // user id array
+      likes: [4, 5, 6, ...], // user id array
+      createdTime: DateTime,
+      author: 3 // user id
+      images: ['path_to_image', ...]
+    },
     ...
   ]
 }
