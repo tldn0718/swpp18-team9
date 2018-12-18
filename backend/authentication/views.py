@@ -10,50 +10,29 @@ from queue import Queue
 from django.utils import timezone
 from .forms import UploadImageForm
 
+
 def index(request):
     return HttpResponse("index")
 
 
 # The parameters are Profile model.
 def get_distance(start, target):
-    #Use Dijkstra algorithm to find the target
-    dist = dijkstra(start)
-    target_dist = dist[target.account.id-1]
+    users = Profile.objects.prefetch_related('friends')
+    open_nodes = Queue()
+    open_nodes.put(start)
+    distances = {start.account_id: 0}
 
-    if target_dist == 9999:
-        return -1
-    return target_dist
+    while not open_nodes.empty():
+        current_node = open_nodes.get()
+        next_distance = distances[current_node.account_id] + 1
+        for next_node in current_node.friends.all():
+            if next_node == target:
+                return next_distance
+            if next_node.account_id not in distances:
+                open_nodes.put(next_node)
+                distances[next_node.account_id] = next_distance
 
-
-def dijkstra(source):
-    users = Profile.objects.all()
-    dist = dict();
-    Q = []
-    for user in users:
-        dist[user.account.id-1] = 9999
-        Q.append(user)
-    dist[source.account.id-1] = 0
-    while len(Q) > 1:
-        #Use min-heap for better performance
-        min_dist = 9999
-        min_user = None
-        id = -1
-        for v in Q:
-            if dist[v.account.id-1] < min_dist:
-                min_dist = dist[v.account.id-1]
-                id = v.account.id-1
-                min_user = v
-        for x in Q:
-            if x.account.id-1 == id:
-                Q.remove(min_user)
-                break
-        for friend in min_user.friends.all():
-            new_dist = dist[min_user.account.id-1] + 1
-            if new_dist < dist[friend.account.id-1]:
-                dist[friend.account.id-1] = new_dist
-    return dist
-
-
+    return -1 # two users are not connected
 
 
 def signup(request):
@@ -129,27 +108,26 @@ def totalGraph(request):
 # from the user are less than or equal to value of 'level'
 def levelGraph(request, level):
     if request.method == 'GET':
-        closedSet = []
-        openSet = Queue()
-        edges = []
-        loginProfile = Profile.objects.get(account=request.user)
-        openSet.put({'node': loginProfile, 'level': 0})
+        users = Profile.objects.prefetch_related('friends', 'account')
+        open_nodes = Queue()
+        closed_nodes = set()
+        login_user = Profile.objects.get(account_id=request.user.id)
+        open_nodes.put(login_user)
+        distances = {request.user.id: 0}
+        nodes, edges = ([], [])
 
-        while not openSet.empty():
-            currentNode = openSet.get()
-            if currentNode['level'] < level:
-                for nextNode in currentNode['node'].friends.all():
-                    if nextNode not in map(lambda x: x['node'], closedSet):
-                        openSet.put({'node': nextNode,
-                                    'level': currentNode['level']+1})
-                        edges.append(
-                            currentNode['node'].friend_toJSON(nextNode))
-            if currentNode['node'] not in map(lambda x: x['node'], closedSet):
-                closedSet.append(currentNode)
-        nodes = [nodeDictionary['node'].user_toJSON()
-                 for nodeDictionary in closedSet]
+        while not open_nodes.empty():
+            current_node = open_nodes.get()
+            nodes.append({'id': current_node.account_id, 'label': current_node.account.first_name})
+            next_distance = distances[current_node.account_id] + 1
+            for next_node in current_node.friends.all():
+                if (next_node.account_id not in distances) and (next_distance <= level):
+                    open_nodes.put(next_node)
+                    distances[next_node.account_id] = next_distance
+                if (next_node.account_id not in closed_nodes) and (next_node.account_id in distances):
+                    edges.append({'from': current_node.account_id, 'to': next_node.account_id})
+            closed_nodes.add(current_node.account_id)
         return JsonResponse({'users': nodes, 'friends': edges})
-
     else:
         return HttpResponseNotAllowed(['GET'])
 
@@ -366,6 +344,10 @@ def group_detail(request, id):
 
 
 # Return or edit the profile of given user. The parameter is id of Account model.
+# If the user sees one's own profile,
+# then distance value will be zero. (magic number)
+# If the two users are not connected,
+# then distance value will be minus one. (magin number)
 def profile_one(request, id):
     if request.method == 'GET':
         target_user_q = Profile.objects.filter(account_id=id).prefetch_related('group_set', 'account','friends')
@@ -376,7 +358,7 @@ def profile_one(request, id):
         mutual_friends_result = []
         if(request.user.id == id):
             distance = 0
-            mutual_friends = []
+            mutual_friends_result = []
         else:
             distance = get_distance(request.user.account_of, target_user)
             target_friends_IDs = set(target_user.friends.values_list('account_id', flat=True))
@@ -402,7 +384,12 @@ def profile_one(request, id):
         return HttpResponseNotAllowed(['GET', 'PUT'])
 
 # get names and common groups of users.
-# If users are more than two, then this also return the distance between two users.
+# If the number of users are equal to two,
+# then this also returns the distance between two users.
+# If the number of users are more than two,
+# then distance value will be zero. (magic number)
+# If the two users are not connected,
+# then distance value will be minus one. (magin number)
 def profile_multiple(request):
     if request.method == 'POST':
         try:
