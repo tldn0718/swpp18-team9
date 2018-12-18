@@ -28,12 +28,12 @@ def get_distance(start, target):
         next_distance = distances[current_node.account_id] + 1
         for next_node in current_node.friends.all():
             if next_node == target:
-                return next_distance
+                return next_distance #
             if next_node.account_id not in closed_nodes:
                 open_nodes.put(next_node)
                 distances[next_node.account_id] = next_distance
         closed_nodes.append(current_node.account_id)
-    return -1
+    return -1 # two users are not connected
 
 
 def signup(request):
@@ -356,7 +356,7 @@ def profile_one(request, id):
         mutual_friends_result = []
         if(request.user.id == id):
             distance = 0
-            mutual_friends = []
+            mutual_friends_result = []
         else:
             distance = get_distance(request.user.account_of, target_user)
             target_friends_IDs = set(target_user.friends.values_list('account_id', flat=True))

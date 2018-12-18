@@ -376,6 +376,7 @@ class ProfileTest(TestCase):
                 'motto': 'ONE IN A MILLION'
             }), content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['distance'], 0)
         self.assertEqual(Profile.objects.get(account_id=2).motto,'ONE IN A MILLION')
 
     def test_get_multiple_profile(self):
