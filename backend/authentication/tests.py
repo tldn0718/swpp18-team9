@@ -147,7 +147,59 @@ class FriendTestCase(TestCase):
 
 
 class GraphTestCase(TestCase):
-    pass
+    def setUp(self):
+        self.account1 = Account.objects.create_user(email='jihyo@twice.com',
+            first_name='Jihyo', last_name='Park', password='jihyo')
+        self.account2 = Account.objects.create_user(email='nayeon@twice.com',
+            first_name='Nayeon', last_name='Im', password='nayeon')
+        self.account3 = Account.objects.create_user(email='sana@twice.com',
+            first_name='Sana', last_name='Minatozaki', password='sana')
+        self.account4 = Account.objects.create_user(email='jeongyeon@twice.com',
+            first_name='jeongyeon', last_name='jeongyeon', password='sana')
+        self.account5 = Account.objects.create_user(email='momo@twice.com',
+            first_name='momo', last_name='momo', password='sana')
+        self.account6 = Account.objects.create_user(email='mina@twice.com',
+            first_name='mina', last_name='mina', password='sana')
+        self.account7 = Account.objects.create_user(email='dahyun@twice.com',
+            first_name='dahyun', last_name='dahyun', password='sana')
+        self.account8 = Account.objects.create_user(email='chaeyoung@twice.com',
+            first_name='chaeyoung', last_name='chaeyoung', password='sana')
+        self.account9 = Account.objects.create_user(email='tzuyu@twice.com',
+            first_name='tzuyu', last_name='tzuyu', password='sana')
+        self.isolated_account = Account.objects.create_user(email='isolated@twice.com',
+            first_name='isolated', last_name='isolated', password='sana')
+        self.profile1 = Profile.objects.create(account=self.account1)
+        self.profile2 = Profile.objects.create(account=self.account2)
+        self.profile3 = Profile.objects.create(account=self.account3)
+        self.profile4 = Profile.objects.create(account=self.account4)
+        self.profile5 = Profile.objects.create(account=self.account5)
+        self.profile6 = Profile.objects.create(account=self.account6)
+        self.profile7 = Profile.objects.create(account=self.account7)
+        self.profile8 = Profile.objects.create(account=self.account8)
+        self.profile9 = Profile.objects.create(account=self.account9)
+        self.isolated_profile = Profile.objects.create(account=self.isolated_account)
+        self.profile1.friends.add(self.profile2)
+        self.profile2.friends.add(self.profile3)
+        self.profile2.friends.add(self.profile4)
+        self.profile3.friends.add(self.profile4)
+        self.profile3.friends.add(self.profile8)
+        self.profile4.friends.add(self.profile5)
+        self.profile4.friends.add(self.profile7)
+        self.profile5.friends.add(self.profile6)
+        self.profile6.friends.add(self.profile7)
+        self.profile7.friends.add(self.profile9)
+
+    def test_total_graph(self):
+        client = Client()
+        response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+            'password': 'nayeon'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
+
+    def test_level_graph(self):
+        client = Client()
+        response = client.post('/api/signin/', json.dumps({'username': 'nayeon@twice.com',
+            'password': 'nayeon'}), content_type = 'application/json')
+        self.assertEqual(response.status_code, 200) # SignIn Succeed
 
 class SearchTestCase(TestCase):
     def setUp(self):
