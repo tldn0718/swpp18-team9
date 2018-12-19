@@ -19,11 +19,13 @@ export class PostComponent implements OnInit {
   ];
   commentContent: string;
   images: any[];
+  likeCount: number;
 
   constructor(private postService: PostService, private auth: AuthService) { }
 
   ngOnInit() {
     console.log('post', this.post);
+    this.likeCount = this.post.likes.length;
     this.images = this.post.images.filter((url)=>url!=='http://localhost:8000/media/images/')
     console.log('images', this.images);
     // get post info
@@ -32,14 +34,14 @@ export class PostComponent implements OnInit {
     // });
 
     // get comments
-    // this.postService.getComments(this.post.id).subscribe((comments: any[])=>{
-    //   this.comments = comments;
-    // });
+    this.postService.getComments(this.post.id).subscribe((comments: any[])=>{
+      this.comments = comments;
+    });
   }
 
   likePost() {
-    this.postService.likePost(this.post.id, parseInt(this.auth.userId)).subscribe(()=>{
-      // refresh post here
+    this.postService.likePost(this.post.id, parseInt(this.auth.userId)).subscribe((res: any)=>{
+      this.likeCount = res.likeCount;
     })
   }
 
