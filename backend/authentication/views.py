@@ -276,14 +276,13 @@ def postingWrite(request):
             content = json.loads(body)['content']
             image_path = json.loads(body)['imagePaths']
             authorId = json.loads(body)['authorId']
-            author = Account.objects.get(id=authorId)
         except:
             return HttpResponseBadRequest()
 
         if len(image_path) == 0:
-            newPost = Post.objects.create(content=content, author=author)
+            newPost = Post.objects.create(content=content, author_id=authorId)
         else:
-            newPost = Post.objects.create(content=content, author=author, image=image_path[0])
+            newPost = Post.objects.create(content=content, author_id=authorId, image=image_path[0])
         tagedID = [user['id'] for user in selectedUsers]
         tagedUsers = Account.objects.filter(id__in=tagedID)
         newPost.tags.set(tagedUsers)
