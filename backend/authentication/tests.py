@@ -384,10 +384,12 @@ class PostingTestCase(TestCase):
                 {'id': self.account2.id, 'first_name': 'Nayeon', 'last_name': 'Im'}
             ],
             'content': 'The Best Thing I Ever Did',
-            'imagePaths': []
+            'imagePaths': [],
+            'authorId': self.account1.id
             }), content_type = 'application/json')
-        newPost = Post.objects.get(content='The Best Thing I Ever Did')
+
         self.assertEqual(response.status_code, 200)
+        newPost = Post.objects.get(content='The Best Thing I Ever Did')
         self.assertEqual(newPost.content, 'The Best Thing I Ever Did')
         self.assertEqual(list(newPost.tags.all()), [self.account1, self.account2])
     def test_post_get(self):
