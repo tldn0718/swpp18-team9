@@ -82,7 +82,8 @@ export class ProfileComponent implements OnInit {
     };
     const writePostModal = this.modal.open(WritePostComponent, modalConfig);
     writePostModal.result.then((postContent)=>{
-      this.profile.writePost(this.selectedUsers, postContent).pipe(
+      const authorId = parseInt(this.auth.userId);
+      this.profile.writePost(this.selectedUsers, postContent, authorId).pipe(
         concatMap((res: any)=>{
           if(res.message == 'success') return this.profile.getPost(this.selectedUsers);
           else return throwError('Write post failed');

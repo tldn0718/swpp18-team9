@@ -1,6 +1,6 @@
 <div class="card post">
   <div class="card-body">
-    <h5 class="card-title">{{post.author? author.name : "Test Author Name"}}</h5>
+    <h5 class="card-title">{{post.author}}</h5>
     <p class="card-text" style="margin-bottom:2rem">
       {{post.content}}
     </p>
@@ -9,7 +9,7 @@
         <img *ngIf="image!=='http://localhost:8000/media/images/'" [src]="image" class="post-image">
       </ng-template>
     </ngb-carousel>
-    <div class="comment-area" style="display:none">
+    <div class="comment-area">
       <h5>Comments</h5>
       <div class="like-area">
         <button class="btn btn-sm btn-outline-secondary" type="button" (click)="likePost()">

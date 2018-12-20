@@ -27,13 +27,14 @@ export class ProfileService {
     }
   }
 
-  writePost(selectedUsers: User[], postContent: {content: string, imageForm: FormData}) {
+  writePost(selectedUsers: User[], postContent: {content: string, imageForm: FormData}, authorId: number) {
     return this.http.post('/api/image/', postContent.imageForm).pipe(
       concatMap((paths: string[])=>{
         return this.http.post('/api/post/write/', {
           selectedUsers,
           content: postContent.content,
-          imagePaths: paths
+          imagePaths: paths,
+          authorId  
         });
       })
     )

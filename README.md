@@ -259,7 +259,8 @@ Profile {
     ...
   ],
   content<string>: 'New post content',
-  imagePaths<string[]>: ['./image1.png', './image2.png', ...]
+  imagePaths<string[]>: ['./image1.png', './image2.png', ...],
+  authorId: number
 }
 ```
 - **response body:**
