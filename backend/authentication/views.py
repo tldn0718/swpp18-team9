@@ -248,7 +248,7 @@ def postingGet(request):
         except:
             return HttpResponseBadRequest()
         selectedIDs = [user['id'] for user in selectedUsers]
-        posts = Post.objects.all().prefetch_related('author','tags')
+        posts = Post.objects.all().prefetch_related('author','tags', 'likes')
         postResult = []
         for post in posts:
             image_path = []
