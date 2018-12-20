@@ -14,8 +14,13 @@ class LoadTask(TaskSet):
         self.client.get('/api/signout/')
 
     @task
-    def index_page(self):
+    def total_graph(self):
         self.client.get('/api/graph/')
+
+    @task
+    def level_graph(self):
+        self.client.get('/api/graph/4/')
+
 
 
 class WebsiteUser(HttpLocust):
